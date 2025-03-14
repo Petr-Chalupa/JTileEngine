@@ -10,11 +10,12 @@ public class GameViewController implements Runnable {
     private static double deltaTime = 0;
 
     @FXML
-    private void switchToPrimary() throws IOException {
+    private void clickMainMenu() throws IOException {
+        stop();
         App.setRoot("main_menu");
     }
 
-    public void initialize() {
+    public void loadLvl(String lvlName) {
         MAIN_THREAD = new Thread(this);
         MAIN_THREAD.start();
     }

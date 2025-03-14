@@ -1,9 +1,8 @@
 package gameengine;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -15,25 +14,23 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("main_menu"), 640, 480);
-        stage.setScene(scene);
+        scene = new Scene(new Group(), 640, 480);
+        setRoot("main_menu");
+
         stage.setTitle("Game engine");
+        stage.setScene(scene);
         stage.show();
     }
 
     @Override
     public void stop() {
         GameViewController.stop();
-        Platform.exit();
     }
 
-    static void setRoot(String fxml) throws IOException {
-        scene.setRoot(loadFXML(fxml));
-    }
-
-    private static Parent loadFXML(String fxml) throws IOException {
+    static Object setRoot(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
-        return fxmlLoader.load();
+        scene.setRoot(fxmlLoader.load());
+        return fxmlLoader.getController();
     }
 
     public static void main(String[] args) {
