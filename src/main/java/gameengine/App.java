@@ -1,6 +1,7 @@
 package gameengine;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -14,9 +15,16 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("primary"), 640, 480);
+        scene = new Scene(loadFXML("main_menu"), 640, 480);
         stage.setScene(scene);
+        stage.setTitle("Game engine");
         stage.show();
+    }
+
+    @Override
+    public void stop() {
+        GameViewController.stop();
+        Platform.exit();
     }
 
     static void setRoot(String fxml) throws IOException {
@@ -31,5 +39,4 @@ public class App extends Application {
     public static void main(String[] args) {
         launch();
     }
-
 }
