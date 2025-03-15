@@ -24,11 +24,11 @@ public class App extends Application {
 
     @Override
     public void stop() {
-        GameViewController.stop();
+        GameView.stop();
     }
 
     static Object setRoot(String fxml) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("fxml/" + fxml + ".fxml"));
         scene.setRoot(fxmlLoader.load());
         return fxmlLoader.getController();
     }

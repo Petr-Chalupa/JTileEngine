@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import javafx.fxml.FXML;
 
-public class GameViewController implements Runnable {
+public class GameView implements Runnable {
     private static Thread MAIN_THREAD;
     private static int FPS = 60;
     private static double deltaTime = 0;
