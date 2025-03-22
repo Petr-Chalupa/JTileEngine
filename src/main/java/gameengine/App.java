@@ -14,17 +14,19 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(new Group(), 640, 480);
+        scene = new Scene(new Group(), 720, 540);
         setRoot("main_menu");
 
         stage.setTitle("Game engine");
         stage.setScene(scene);
+        stage.setMinWidth(720);
+        stage.setMinHeight(540);
         stage.show();
     }
 
     @Override
     public void stop() {
-        GameView.stop();
+        Renderer.stop();
     }
 
     static Object setRoot(String fxml) throws IOException {

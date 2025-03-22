@@ -10,7 +10,7 @@ public class MainMenu {
     @FXML
     private void clickPlay() throws IOException {
         GameView controller = (GameView) App.setRoot("game_view");
-        controller.loadLvl("Intro level");
+        controller.loadLvl("levels/1.json");
     }
 
     @FXML

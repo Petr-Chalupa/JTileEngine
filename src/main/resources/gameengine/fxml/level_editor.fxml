@@ -3,9 +3,11 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
 
-
-<BorderPane minHeight="380.0" minWidth="640.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gameengine.LevelEditor">
+<BorderPane minHeight="380.0" minWidth="640.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gameengine.LevelEditor">
    <top>
         <Button onAction="#clickMainMenu" text="Menu" textAlignment="CENTER" BorderPane.alignment="TOP_LEFT">
          <BorderPane.margin>
@@ -13,4 +15,22 @@
          </BorderPane.margin>
       </Button>
    </top>
+   <center>
+      <Pane fx:id="canvas" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+   </center>
+   <left>
+      <VBox alignment="TOP_CENTER" spacing="150.0" BorderPane.alignment="CENTER">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Game objects to add" />
+            <Text layoutX="10.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Game objects in game" />
+         </children>
+      </VBox>
+   </left>
+   <right>
+      <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Selected game object properties" />
+         </children>
+      </VBox>
+   </right>
 </BorderPane>
