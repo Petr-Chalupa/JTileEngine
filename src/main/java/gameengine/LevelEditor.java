@@ -18,7 +18,7 @@ public class LevelEditor {
     }
 
     public void loadLevel(String path) {
-        renderer = new Renderer(canvas, 10, null);
+        renderer = new Renderer(canvas, 48, 10, null);
         renderer.loadLevel(path);
     }
 }

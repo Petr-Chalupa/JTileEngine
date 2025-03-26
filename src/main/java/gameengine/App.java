@@ -14,13 +14,12 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(new Group(), 720, 540);
+        scene = new Scene(new Group(), 1024, 768);
         setRoot("main_menu");
 
         stage.setTitle("Game engine");
         stage.setScene(scene);
-        stage.setMinWidth(720);
-        stage.setMinHeight(540);
+        stage.setResizable(false);
         stage.show();
     }
 

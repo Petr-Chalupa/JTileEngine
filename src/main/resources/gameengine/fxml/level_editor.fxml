@@ -16,7 +16,7 @@
       </Button>
    </top>
    <center>
-      <Pane fx:id="canvas" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+      <Pane fx:id="canvas" prefHeight="576.0" prefWidth="768.0" BorderPane.alignment="CENTER" />
    </center>
    <left>
       <VBox alignment="TOP_CENTER" spacing="150.0" BorderPane.alignment="CENTER">

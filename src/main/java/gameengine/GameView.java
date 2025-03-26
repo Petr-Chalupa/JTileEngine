@@ -18,12 +18,12 @@ public class GameView implements UpdateListener {
     }
 
     public void loadLvl(String path) {
-        renderer = new Renderer(canvas, 60, this);
+        renderer = new Renderer(canvas, 64, 60, this);
         renderer.loadLevel(path);
     }
 
     @Override
     public void onUpdate(double deltaTime) {
-        System.out.println("Update: " + deltaTime);
+        // System.out.println("Update: " + deltaTime);
     }
 }

@@ -5,16 +5,16 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import gameengine.gameobjects.GameObject;
+import gameengine.gameobjects.Player;
+import gameengine.gameobjects.Tile;
 import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
 public class Renderer implements Runnable {
     private static Thread RENDER_THREAD;
@@ -23,17 +23,20 @@ public class Renderer implements Runnable {
     private UpdateListener updateListener;
 
     private Pane canvas;
-    private Timer resizeTimer;
-    private final int RESIZE_DELAY = 200;
 
     private JSONObject json;
-    private double tileWidth = 0, tileHeight = 0;
-    private ArrayList<Rectangle> tiles = new ArrayList<>();
+    private int tileRows = 12;
+    private int tileCols = 16;
+    private int tileSize;
+    private ArrayList<GameObject> gameObjects = new ArrayList<>();
 
-    public Renderer(Pane canvas, int FPS, UpdateListener updateListener) {
+    public Renderer(Pane canvas, int tileSize, int FPS, UpdateListener updateListener) {
         this.canvas = canvas;
+        this.tileSize = tileSize;
         this.FPS = FPS;
         this.updateListener = updateListener;
+
+        canvas.setPrefSize(tileCols * tileSize, tileRows * tileSize);
     }
 
     @Override
@@ -56,58 +59,46 @@ public class Renderer implements Runnable {
     }
 
     public static void stop() {
-        if (RENDER_THREAD != null) RENDER_THREAD.interrupt();
+        if (RENDER_THREAD == null) return;
+        RENDER_THREAD.interrupt();
+        RENDER_THREAD = null;
+    }
+
+    public void start() {
+        if (RENDER_THREAD != null) return;
+        RENDER_THREAD = new Thread(this);
+        RENDER_THREAD.start();
     }
 
     public void loadLevel(String path) {
-        try {
-            canvas.widthProperty().addListener((obs, oldVal, newVal) -> rescale());
-            canvas.heightProperty().addListener((obs, oldVal, newVal) -> rescale());
+        // stop if already rendering
+        stop();
 
+        try {
             String content = Files.readString(Path.of(App.class.getResource(path).toURI()));
             json = new JSONObject(content);
-
-            // create all gameObjects in advance
-            // stop thread if already running
-            RENDER_THREAD = new Thread(this);
-            RENDER_THREAD.start();
         } catch (IOException | URISyntaxException e) {
             System.err.println(e);
         }
-    }
 
-    private void rescale() {
-        if (resizeTimer != null) resizeTimer.cancel();
-        resizeTimer = new Timer();
-        resizeTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                tileWidth = canvas.getWidth() / json.getJSONObject("map").getInt("cols");
-                tileHeight = canvas.getHeight() / json.getJSONObject("map").getInt("rows");
-                // set shouldScale to true so it wont change scale every rendering cycle
-            }
-        }, RESIZE_DELAY);
+        // initialize game objects
+        gameObjects.clear();
+        JSONArray jsonTiles = json.getJSONObject("map").getJSONArray("tiles");
+        for (int i = 0; i < tileRows * tileCols; i++) {
+            Color color = jsonTiles.getInt(i) == 0 ? Color.BLACK : Color.BLUE;
+            gameObjects.add(new Tile((i % tileCols) * tileSize, (i / tileCols) * tileSize, tileSize, color, true));
+        }
+        gameObjects.add(new Player(2 * tileSize, 2 * tileSize, tileSize));
+
+        // start rendering
+        start();
     }
 
     private void render() {
-        JSONObject map = json.getJSONObject("map");
-        for (int i = 0; i < map.getInt("rows"); i++) {
-            JSONArray row = map.getJSONArray("tiles").getJSONArray(i);
-            for (int j = 0; j < map.getInt("cols"); j++) {
-                if (tiles.size() - 1 >= i * row.length() + j) {
-                    Rectangle tile = tiles.get(i * row.length() + j);
-                    tile.setWidth(tileWidth);
-                    tile.setHeight(tileHeight);
-                    tile.setX(j * tileWidth);
-                    tile.setY(i * tileHeight);
-                } else {
-                    // only render on their actual values
-                    int value = row.getInt(j);
-                    Rectangle tile = new Rectangle(tileWidth, tileHeight);
-                    tile.setFill(value == 0 ? Color.BLACK : Color.BLUE);
-                    tiles.add(tile);
-                    Platform.runLater(() -> canvas.getChildren().add(tile));
-                }
+        for (GameObject gameObject : gameObjects) {
+            if (!gameObject.rendered) {
+                Platform.runLater(() -> canvas.getChildren().add(gameObject.getSelf()));
+                gameObject.rendered = true;
             }
         }
     }
