@@ -7,4 +7,5 @@ module gameengine {
     opens gameengine to javafx.fxml;
 
     exports gameengine;
+    exports gameengine.gameobjects;
 }

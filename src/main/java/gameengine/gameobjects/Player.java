@@ -4,8 +4,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class Player extends GameObject {
-    // has input handling
-
     public Player(double posX, double posY, double size) {
         self = new Rectangle(size, size);
         ((Rectangle) self).setViewOrder(0);

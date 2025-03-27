@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,7 +21,7 @@ public class Renderer implements Runnable {
     private static Thread RENDER_THREAD;
     private int FPS;
     private double deltaTime = 0;
-    private UpdateListener updateListener;
+    private Consumer<ArrayList<GameObject>> updateCallback;
 
     private Pane canvas;
 
@@ -30,13 +31,17 @@ public class Renderer implements Runnable {
     private int tileSize;
     private ArrayList<GameObject> gameObjects = new ArrayList<>();
 
-    public Renderer(Pane canvas, int tileSize, int FPS, UpdateListener updateListener) {
+    public Renderer(Pane canvas, int tileSize, int FPS, Consumer<ArrayList<GameObject>> updateCallback) {
         this.canvas = canvas;
         this.tileSize = tileSize;
         this.FPS = FPS;
-        this.updateListener = updateListener;
+        this.updateCallback = updateCallback;
 
         canvas.setPrefSize(tileCols * tileSize, tileRows * tileSize);
+    }
+
+    public ArrayList<GameObject> getGameObjects() {
+        return gameObjects;
     }
 
     @Override
@@ -50,7 +55,7 @@ public class Renderer implements Runnable {
             lastTime = currentTime;
 
             while (deltaTime >= 1) {
-                if (updateListener != null) updateListener.onUpdate(deltaTime);
+                if (updateCallback != null) updateCallback.accept(gameObjects);
                 deltaTime--;
             }
 
@@ -88,7 +93,9 @@ public class Renderer implements Runnable {
             Color color = jsonTiles.getInt(i) == 0 ? Color.BLACK : Color.BLUE;
             gameObjects.add(new Tile((i % tileCols) * tileSize, (i / tileCols) * tileSize, tileSize, color, true));
         }
-        gameObjects.add(new Player(2 * tileSize, 2 * tileSize, tileSize));
+        JSONArray jsonPlayerPos = json.getJSONObject("player").getJSONArray("start");
+        gameObjects.add(
+                new Player(jsonPlayerPos.getDouble(0) * tileSize, jsonPlayerPos.getDouble(1) * tileSize, tileSize));
 
         // start rendering
         start();

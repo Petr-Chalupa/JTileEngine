@@ -1,5 +1,6 @@
 {
     "player": {
+        "start": [2.3, 4],
         "health": 10
     },
     "map": {

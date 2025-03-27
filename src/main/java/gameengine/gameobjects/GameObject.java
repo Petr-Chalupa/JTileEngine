@@ -20,10 +20,10 @@ public class GameObject {
     }
 
     public void moveX(double dist) {
-        self.setTranslateX(dist);
+        self.setTranslateX(self.getTranslateX() + dist);
     }
 
     public void moveY(double dist) {
-        self.setTranslateY(dist);
+        self.setTranslateY(self.getTranslateY() + dist);
     }
 }
