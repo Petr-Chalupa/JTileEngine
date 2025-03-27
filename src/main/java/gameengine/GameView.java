@@ -8,6 +8,7 @@ import gameengine.gameobjects.Player;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 
 public class GameView {
     private final Set<KeyCode> pressedKeys = new HashSet<>();
@@ -15,6 +16,9 @@ public class GameView {
 
     @FXML
     private Pane canvas;
+
+    @FXML
+    private VBox pauseMenu;
 
     @FXML
     private void clickMainMenu() throws IOException {
@@ -30,7 +34,13 @@ public class GameView {
         renderer.addGameObjects(levelData.gameObjects);
         renderer.start();
 
-        canvas.getScene().setOnKeyPressed(event -> pressedKeys.add(event.getCode()));
+        canvas.getScene().setOnKeyPressed(event -> {
+            pressedKeys.add(event.getCode());
+            if (event.getCode() == KeyCode.ESCAPE) {
+                renderer.setPaused(!renderer.isPaused());
+                pauseMenu.setVisible(renderer.isPaused());
+            }
+        });
         canvas.getScene().setOnKeyReleased(event -> pressedKeys.remove(event.getCode()));
     }
 

@@ -120,6 +120,10 @@ public class Renderer implements Runnable {
         RENDER_THREAD = null;
     }
 
+    public boolean isPaused() {
+        return isPaused;
+    }
+
     public void setPaused(boolean paused) {
         isPaused = paused;
     }
