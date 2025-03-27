@@ -1,44 +1,46 @@
 package gameengine;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import gameengine.gameobjects.GameObject;
 import gameengine.gameobjects.Player;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 
 public class GameView {
-    private Renderer renderer;
     private final Set<KeyCode> pressedKeys = new HashSet<>();
+    private final LevelData levelData = new LevelData();
 
     @FXML
     private Pane canvas;
 
     @FXML
     private void clickMainMenu() throws IOException {
-        Renderer.stop();
+        App.getRenderer().stop();
         App.setRoot("main_menu");
     }
 
     public void loadLvl(String path) {
-        renderer = new Renderer(canvas, 64, 60, this::update);
-        renderer.loadLevel(path);
+        levelData.parseFile(path, 64);
+
+        Renderer renderer = new Renderer(canvas, 60, levelData.tileRows, levelData.tileCols, this::update);
+        App.setRenderer(renderer);
+        renderer.addGameObjects(levelData.gameObjects);
+        renderer.start();
 
         canvas.getScene().setOnKeyPressed(event -> pressedKeys.add(event.getCode()));
         canvas.getScene().setOnKeyReleased(event -> pressedKeys.remove(event.getCode()));
     }
 
-    public void update(ArrayList<GameObject> gameObjects) {
-        Player player = (Player) gameObjects.stream().filter(go -> go instanceof Player).findFirst().orElse(null);
+    public void update(double deltaTime) {
+        Player player = levelData.player;
         if (player != null && player.rendered) {
-            if (pressedKeys.contains(KeyCode.W)) player.moveY(-10); // Move up
-            if (pressedKeys.contains(KeyCode.A)) player.moveX(-10); // Move left
-            if (pressedKeys.contains(KeyCode.S)) player.moveY(10); // Move down
-            if (pressedKeys.contains(KeyCode.D)) player.moveX(10); // Move right
+            if (pressedKeys.contains(KeyCode.W)) player.moveY(-player.speed * deltaTime); // Up
+            if (pressedKeys.contains(KeyCode.A)) player.moveX(-player.speed * deltaTime); // Left
+            if (pressedKeys.contains(KeyCode.S)) player.moveY(player.speed * deltaTime); // Down
+            if (pressedKeys.contains(KeyCode.D)) player.moveX(player.speed * deltaTime); // Right
         }
     }
 }

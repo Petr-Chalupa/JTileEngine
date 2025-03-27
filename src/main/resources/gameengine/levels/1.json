@@ -1,7 +1,8 @@
 {
     "player": {
         "start": [2.3, 4],
-        "health": 10
+        "health": 10,
+        "speed": 5
     },
     "map": {
         "tiles": [

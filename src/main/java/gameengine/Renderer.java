@@ -1,104 +1,127 @@
 package gameengine;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.function.Consumer;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import gameengine.gameobjects.GameObject;
-import gameengine.gameobjects.Player;
-import gameengine.gameobjects.Tile;
 import javafx.application.Platform;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 public class Renderer implements Runnable {
     private static Thread RENDER_THREAD;
     private int FPS;
-    private double deltaTime = 0;
-    private Consumer<ArrayList<GameObject>> updateCallback;
-
+    private int RESCALE_DELAY = 100;
+    private Timer rescaleTimer;
+    private volatile boolean isPaused = false;;
+    private Consumer<Double> updateCallback;
     private Pane canvas;
-
-    private JSONObject json;
-    private int tileRows = 12;
-    private int tileCols = 16;
+    private int rows;
+    private int cols;
     private int tileSize;
     private ArrayList<GameObject> gameObjects = new ArrayList<>();
 
-    public Renderer(Pane canvas, int tileSize, int FPS, Consumer<ArrayList<GameObject>> updateCallback) {
+    public Renderer(Pane canvas, int FPS, int rows, int cols, Consumer<Double> updateCallback) {
         this.canvas = canvas;
-        this.tileSize = tileSize;
+        this.rows = rows;
+        this.cols = cols;
         this.FPS = FPS;
         this.updateCallback = updateCallback;
 
-        canvas.setPrefSize(tileCols * tileSize, tileRows * tileSize);
+        canvas.widthProperty().addListener((obs, oldVal, newVal) -> rescale());
+        canvas.heightProperty().addListener((obs, oldVal, newVal) -> rescale());
+        rescale();
     }
 
     public ArrayList<GameObject> getGameObjects() {
         return gameObjects;
     }
 
+    public void addGameObject(GameObject gameObject) {
+        this.gameObjects.add(gameObject);
+    }
+
+    public void addGameObjects(ArrayList<GameObject> gameObjects) {
+        this.gameObjects.clear();
+        this.gameObjects.addAll(gameObjects);
+    }
+
+    public void removeGameObject(GameObject gameObject) {
+        this.gameObjects.remove(gameObject);
+    }
+
+    public void rescale() {
+        if (rescaleTimer != null) rescaleTimer.cancel();
+
+        rescaleTimer = new Timer();
+        rescaleTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    setPaused(true);
+
+                    tileSize = Math.min((int) canvas.getWidth() / cols, (int) canvas.getHeight() / rows);
+                    for (GameObject gameObject : gameObjects) {
+                        ((Rectangle) gameObject.getSelf()).setWidth(tileSize * gameObject.scale);
+                        ((Rectangle) gameObject.getSelf()).setHeight(tileSize * gameObject.scale);
+                        gameObject.getSelf().setTranslateX(gameObject.posX * tileSize);
+                        gameObject.getSelf().setTranslateY(gameObject.posY * tileSize);
+                    }
+
+                    setPaused(false);
+                });
+            }
+        }, RESCALE_DELAY);
+    }
+
     @Override
     public void run() {
-        double interval = 1_000_000_000 / FPS;
+        double interval = 1.0 / FPS;
         long lastTime = System.nanoTime();
+        double deltaTime = 0;
 
         while (RENDER_THREAD != null && !RENDER_THREAD.isInterrupted()) {
+            if (isPaused) {
+                try {
+                    Thread.sleep(100);
+                    continue;
+                } catch (InterruptedException e) {
+                    stop();
+                }
+            }
+
             long currentTime = System.nanoTime();
-            deltaTime += (currentTime - lastTime) / interval;
+            deltaTime += (double) (currentTime - lastTime) / 1_000_000_000.0;
             lastTime = currentTime;
 
-            while (deltaTime >= 1) {
-                if (updateCallback != null) updateCallback.accept(gameObjects);
-                deltaTime--;
+            if (deltaTime >= interval) {
+                if (updateCallback != null) updateCallback.accept(deltaTime);
+                deltaTime -= interval;
             }
 
             render();
         }
     }
 
-    public static void stop() {
+    public void start() {
+        if (RENDER_THREAD != null) return;
+        RENDER_THREAD = new Thread(this);
+        RENDER_THREAD.setDaemon(true);
+        RENDER_THREAD.start();
+        isPaused = false;
+    }
+
+    public void stop() {
         if (RENDER_THREAD == null) return;
+        if (rescaleTimer != null) rescaleTimer.cancel();
         RENDER_THREAD.interrupt();
         RENDER_THREAD = null;
     }
 
-    public void start() {
-        if (RENDER_THREAD != null) return;
-        RENDER_THREAD = new Thread(this);
-        RENDER_THREAD.start();
-    }
-
-    public void loadLevel(String path) {
-        // stop if already rendering
-        stop();
-
-        try {
-            String content = Files.readString(Path.of(App.class.getResource(path).toURI()));
-            json = new JSONObject(content);
-        } catch (IOException | URISyntaxException e) {
-            System.err.println(e);
-        }
-
-        // initialize game objects
-        gameObjects.clear();
-        JSONArray jsonTiles = json.getJSONObject("map").getJSONArray("tiles");
-        for (int i = 0; i < tileRows * tileCols; i++) {
-            Color color = jsonTiles.getInt(i) == 0 ? Color.BLACK : Color.BLUE;
-            gameObjects.add(new Tile((i % tileCols) * tileSize, (i / tileCols) * tileSize, tileSize, color, true));
-        }
-        JSONArray jsonPlayerPos = json.getJSONObject("player").getJSONArray("start");
-        gameObjects.add(
-                new Player(jsonPlayerPos.getDouble(0) * tileSize, jsonPlayerPos.getDouble(1) * tileSize, tileSize));
-
-        // start rendering
-        start();
+    public void setPaused(boolean paused) {
+        isPaused = paused;
     }
 
     private void render() {
@@ -107,6 +130,11 @@ public class Renderer implements Runnable {
                 Platform.runLater(() -> canvas.getChildren().add(gameObject.getSelf()));
                 gameObject.rendered = true;
             }
+
+            gameObject.getSelf().setViewOrder(gameObject.layer);
+            gameObject.getSelf().setTranslateX(gameObject.posX * tileSize);
+            gameObject.getSelf().setTranslateY(gameObject.posY * tileSize);
+            ((Rectangle) gameObject.getSelf()).setFill(gameObject.color);
         }
     }
 }
