@@ -8,7 +8,6 @@ import java.util.function.Consumer;
 import gameengine.gameobjects.GameObject;
 import javafx.application.Platform;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Rectangle;
 
 public class Renderer implements Runnable {
     private static Thread RENDER_THREAD;
@@ -54,24 +53,11 @@ public class Renderer implements Runnable {
 
     public void rescale() {
         if (rescaleTimer != null) rescaleTimer.cancel();
-
         rescaleTimer = new Timer();
         rescaleTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                Platform.runLater(() -> {
-                    setPaused(true);
-
-                    tileSize = Math.min((int) canvas.getWidth() / cols, (int) canvas.getHeight() / rows);
-                    for (GameObject gameObject : gameObjects) {
-                        ((Rectangle) gameObject.getSelf()).setWidth(tileSize * gameObject.scale);
-                        ((Rectangle) gameObject.getSelf()).setHeight(tileSize * gameObject.scale);
-                        gameObject.getSelf().setTranslateX(gameObject.posX * tileSize);
-                        gameObject.getSelf().setTranslateY(gameObject.posY * tileSize);
-                    }
-
-                    setPaused(false);
-                });
+                tileSize = Math.min((int) canvas.getWidth() / cols, (int) canvas.getHeight() / rows);
             }
         }, RESCALE_DELAY);
     }
@@ -138,7 +124,7 @@ public class Renderer implements Runnable {
             gameObject.getSelf().setViewOrder(gameObject.layer);
             gameObject.getSelf().setTranslateX(gameObject.posX * tileSize);
             gameObject.getSelf().setTranslateY(gameObject.posY * tileSize);
-            ((Rectangle) gameObject.getSelf()).setFill(gameObject.color);
+            gameObject.rescale(tileSize, tileSize);
         }
     }
 }

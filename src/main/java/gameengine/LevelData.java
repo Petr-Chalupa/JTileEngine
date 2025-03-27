@@ -34,7 +34,7 @@ public class LevelData {
 
         JSONArray jsonTiles = json.getJSONObject("map").getJSONArray("tiles");
         for (int i = 0; i < tileRows * tileCols; i++) {
-            Color color = jsonTiles.getInt(i) == 0 ? Color.BLACK : Color.BLUE;
+            Color color = jsonTiles.getInt(i) == 0 ? Color.GREEN : Color.BLUE;
             gameObjects.add(new Tile((i % tileCols), (i / tileCols), tileSize, color, true));
         }
 

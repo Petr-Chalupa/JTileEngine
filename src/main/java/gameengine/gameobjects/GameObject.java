@@ -3,7 +3,7 @@ package gameengine.gameobjects;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 
-public class GameObject {
+public abstract class GameObject {
     protected Node self;
     public boolean rendered = false;
     public boolean solid;
@@ -13,9 +13,9 @@ public class GameObject {
     public double posX;
     public double posY;
 
-    public Node getSelf() {
-        return self;
-    }
+    public abstract Node getSelf();
+
+    public abstract void rescale(double width, double height);
 
     public void moveX(double dist) {
         posX += dist;
