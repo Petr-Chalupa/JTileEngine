@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -21,6 +22,7 @@ public class App extends Application {
         setRoot("main_menu");
 
         stage.setTitle("Game engine");
+        stage.getIcons().add(new Image(getClass().getResource("/gameengine/img/logo.png").toExternalForm()));
         stage.setScene(scene);
         stage.show();
     }

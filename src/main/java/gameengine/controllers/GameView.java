@@ -14,7 +14,6 @@ import javafx.scene.text.Text;
 
 public class GameView {
     private InputHandler inputHandler;
-    // private final Set<KeyCode> pressedKeys = new HashSet<>();
     private final LevelData levelData = new LevelData();
 
     @FXML
