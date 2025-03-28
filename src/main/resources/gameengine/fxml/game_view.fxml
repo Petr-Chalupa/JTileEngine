@@ -9,7 +9,7 @@
 <?import javafx.scene.text.Text?>
 
 
-<StackPane prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gameengine.GameView">
+<StackPane prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gameengine.controllers.GameView">
    <children>
       <Pane fx:id="canvas" prefHeight="768.0" prefWidth="1024.0" StackPane.alignment="CENTER" />
       <VBox fx:id="pauseMenu" alignment="TOP_CENTER" spacing="100.0" style="-fx-background-color: #ffffffcc;" visible="false">

@@ -1,10 +1,10 @@
-package gameengine.gameobjects;
+package gameengine.core.gameobjects;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class Tile extends GameObject {
-    public Tile(double posX, double posY, double size, Color color, boolean solid) {
+    public Tile(double posX, double posY, Color color, boolean solid) {
         self = new Rectangle();
         ((Rectangle) self).setFill(color);
         this.color = color;

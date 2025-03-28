@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane minHeight="380.0" minWidth="640.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gameengine.LevelEditor">
+<BorderPane minHeight="380.0" minWidth="640.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gameengine.controllers.LevelEditor">
    <top>
         <Button onAction="#clickMainMenu" text="Menu" textAlignment="CENTER" BorderPane.alignment="TOP_LEFT">
          <BorderPane.margin>

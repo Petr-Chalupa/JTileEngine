@@ -1,4 +1,4 @@
-package gameengine.gameobjects;
+package gameengine.core.gameobjects;
 
 import gameengine.App;
 import javafx.scene.image.Image;
@@ -9,13 +9,13 @@ public class Player extends GameObject {
     public ImageView sprite;
     public double speed;
 
-    public Player(double posX, double posY, double size, double speed) {
+    public Player(double posX, double posY, double scale, double speed) {
         Image playerImage = new Image(App.class.getResourceAsStream("/gameengine/img/player_sprite.png"));
         self = new ImageView(playerImage);
 
         this.color = Color.RED;
         this.layer = 0;
-        this.scale = 0.75;
+        this.scale = scale;
         this.posX = posX;
         this.posY = posY;
         this.speed = speed;

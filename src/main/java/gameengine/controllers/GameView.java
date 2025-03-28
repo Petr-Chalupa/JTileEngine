@@ -1,10 +1,13 @@
-package gameengine;
+package gameengine.controllers;
 
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import gameengine.gameobjects.Player;
+import gameengine.App;
+import gameengine.core.LevelData;
+import gameengine.core.Renderer;
+import gameengine.core.gameobjects.Player;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
@@ -27,11 +30,10 @@ public class GameView {
     }
 
     public void loadLvl(String path) {
-        levelData.parseFile(path, 64);
+        levelData.loadFile(path);
 
-        Renderer renderer = new Renderer(canvas, 60, levelData.tileRows, levelData.tileCols, this::update);
+        Renderer renderer = new Renderer(canvas, 60, levelData, this::update);
         App.setRenderer(renderer);
-        renderer.addGameObjects(levelData.gameObjects);
         renderer.start();
 
         canvas.getScene().setOnKeyPressed(event -> {

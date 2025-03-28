@@ -1,7 +1,10 @@
-package gameengine;
+package gameengine.controllers;
 
 import java.io.IOException;
 
+import gameengine.App;
+import gameengine.core.LevelData;
+import gameengine.core.Renderer;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 
@@ -18,11 +21,10 @@ public class LevelEditor {
     }
 
     public void loadLevel(String path) {
-        levelData.parseFile(path, 48);
+        levelData.loadFile(path);
 
-        Renderer renderer = new Renderer(canvas, 10, levelData.tileRows, levelData.tileCols, null);
+        Renderer renderer = new Renderer(canvas, 10, levelData, null);
         App.setRenderer(renderer);
-        renderer.addGameObjects(levelData.gameObjects);
         renderer.start();
     }
 }

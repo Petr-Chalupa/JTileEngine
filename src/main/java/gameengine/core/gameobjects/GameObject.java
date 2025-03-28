@@ -1,4 +1,4 @@
-package gameengine.gameobjects;
+package gameengine.core.gameobjects;
 
 import javafx.scene.Node;
 import javafx.scene.paint.Color;

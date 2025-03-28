@@ -5,7 +5,9 @@ module gameengine {
     requires org.json;
 
     opens gameengine to javafx.fxml;
+    opens gameengine.controllers to javafx.fxml;
 
     exports gameengine;
-    exports gameengine.gameobjects;
+    exports gameengine.core;
+    exports gameengine.core.gameobjects;
 }

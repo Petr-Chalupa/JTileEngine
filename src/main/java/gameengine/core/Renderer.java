@@ -1,11 +1,11 @@
-package gameengine;
+package gameengine.core;
 
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Consumer;
 
-import gameengine.gameobjects.GameObject;
+import gameengine.core.gameobjects.GameObject;
 import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 
@@ -17,15 +17,13 @@ public class Renderer implements Runnable {
     private volatile boolean isPaused = false;;
     private Consumer<Double> updateCallback;
     private Pane canvas;
-    private int rows;
-    private int cols;
+    private LevelData levelData;
     private int tileSize;
     private ArrayList<GameObject> gameObjects = new ArrayList<>();
 
-    public Renderer(Pane canvas, int FPS, int rows, int cols, Consumer<Double> updateCallback) {
+    public Renderer(Pane canvas, int FPS, LevelData levelData, Consumer<Double> updateCallback) {
         this.canvas = canvas;
-        this.rows = rows;
-        this.cols = cols;
+        this.levelData = levelData;
         this.FPS = FPS;
         this.updateCallback = updateCallback;
 
@@ -57,7 +55,7 @@ public class Renderer implements Runnable {
         rescaleTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                tileSize = Math.min((int) canvas.getWidth() / cols, (int) canvas.getHeight() / rows);
+                tileSize = (int) Math.min(canvas.getWidth() / levelData.cols, canvas.getHeight() / levelData.rows);
             }
         }, RESCALE_DELAY);
     }

@@ -9,6 +9,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import gameengine.core.Renderer;
+
 public class App extends Application {
     private static Scene scene;
     private static Renderer renderer;
@@ -30,7 +32,7 @@ public class App extends Application {
         System.exit(0);
     }
 
-    static Object setRoot(String fxml) throws IOException {
+    public static Object setRoot(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("fxml/" + fxml + ".fxml"));
         scene.setRoot(fxmlLoader.load());
         return fxmlLoader.getController();

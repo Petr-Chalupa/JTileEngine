@@ -1,7 +1,8 @@
-package gameengine;
+package gameengine.controllers;
 
 import java.io.IOException;
 
+import gameengine.App;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 
