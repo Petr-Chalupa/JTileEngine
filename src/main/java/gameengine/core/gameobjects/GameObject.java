@@ -24,6 +24,14 @@ public abstract class GameObject {
         return sprite;
     }
 
+    public void setSprite(String spritePath) {
+        try {
+            this.sprite = new Image(getClass().getResourceAsStream(spritePath));
+        } catch (NullPointerException e) {
+            System.out.println("Invalid sprite path");
+        }
+    }
+
     public void moveX(double dist) {
         posX += dist;
     }

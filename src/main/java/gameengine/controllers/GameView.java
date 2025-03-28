@@ -9,7 +9,6 @@ import gameengine.core.LevelData;
 import gameengine.core.Renderer;
 import gameengine.core.gameobjects.Player;
 import javafx.fxml.FXML;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;

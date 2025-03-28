@@ -14,11 +14,11 @@
         ],
         "tileTypes": {
             "0": {
-                "color": "#0000ff",
+                "sprite": "/gameengine/img/tile_sprite0.png",
                 "solid": false
             },
             "1": {
-                "color": "#00ff00",
+                "sprite": "/gameengine/img/tile_sprite1.png",
                 "solid": true
             }
         }

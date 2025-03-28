@@ -6,7 +6,6 @@ import gameengine.App;
 import gameengine.core.LevelData;
 import gameengine.core.Renderer;
 import javafx.fxml.FXML;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.Pane;
 
 public class LevelEditor {

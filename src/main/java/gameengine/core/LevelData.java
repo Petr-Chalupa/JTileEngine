@@ -13,7 +13,6 @@ import gameengine.App;
 import gameengine.core.gameobjects.GameObject;
 import gameengine.core.gameobjects.Player;
 import gameengine.core.gameobjects.Tile;
-import javafx.scene.paint.Color;
 
 public class LevelData {
     // level
@@ -49,9 +48,10 @@ public class LevelData {
         this.cols = map.getInt("cols");
         for (int i = 0; i < rows * cols; i++) {
             JSONObject tileData = mapTileTypes.getJSONObject(Integer.toString(mapTiles.getInt(i)));
-            Color tileColor = Color.web(tileData.getString("color"));
             boolean tileSolid = tileData.getBoolean("solid");
+            String tileSprite = tileData.getString("sprite");
             Tile tile = new Tile(i % cols, i / cols, tileSolid);
+            tile.setSprite(tileSprite);
             gameObjects.add(tile);
         }
 
@@ -60,7 +60,9 @@ public class LevelData {
         JSONArray playerStart = player.getJSONArray("start");
         double playerScale = player.getDouble("scale");
         double playerSpeed = player.getDouble("speed");
+        String playerSprite = player.getString("sprite");
         this.player = new Player(playerStart.getDouble(0), playerStart.getDouble(1), playerScale, playerSpeed);
+        this.player.setSprite(playerSprite);
         gameObjects.add(this.player);
     }
 

@@ -5,7 +5,6 @@ import java.util.TimerTask;
 import java.util.function.Consumer;
 
 import gameengine.core.gameobjects.GameObject;
-import gameengine.core.gameobjects.Player;
 import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -108,17 +107,5 @@ public class Renderer implements Runnable {
             context.drawImage(gameObject.getSprite(), gameObject.posX * tileSize, gameObject.posY * tileSize, size,
                     size);
         }
-
-        // for (GameObject gameObject : levelData.gameObjects) {
-        // if (!gameObject.rendered) {
-        // Platform.runLater(() -> canvas.getChildren().add(gameObject.getSelf()));
-        // gameObject.rendered = true;
-        // }
-
-        // gameObject.getSelf().setViewOrder(gameObject.layer);
-        // gameObject.getSelf().setTranslateX(gameObject.posX * tileSize);
-        // gameObject.getSelf().setTranslateY(gameObject.posY * tileSize);
-        // gameObject.rescale(tileSize, tileSize);
-        // }
     }
 }
