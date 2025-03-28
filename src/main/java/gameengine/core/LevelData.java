@@ -22,6 +22,7 @@ public class LevelData {
     // map
     public int rows;
     public int cols;
+    public int tileSize;
     // player
     public Player player;
 

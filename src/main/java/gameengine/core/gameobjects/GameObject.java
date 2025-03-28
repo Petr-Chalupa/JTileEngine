@@ -1,24 +1,25 @@
 package gameengine.core.gameobjects;
 
+import gameengine.core.LevelData;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 public abstract class GameObject {
     protected Image sprite;
-    public boolean rendered = false;
     public double posX;
     public double posY;
-    public double posZ;
-    public double width;
-    public double height;
     public double scale;
 
-    public GameObject(double posX, double posY, double posZ, double scale) {
+    public GameObject(double posX, double posY, double scale) {
         this.posX = posX;
         this.posY = posY;
-        this.posZ = posZ;
         this.scale = scale;
         this.sprite = new Image(getClass().getResourceAsStream("/gameengine/img/default_sprite.png"));
     }
+
+    public abstract void update(double deltaTime, LevelData levelData);
+
+    public abstract void render(GraphicsContext context, LevelData levelData);
 
     public Image getSprite() {
         return sprite;

@@ -23,7 +23,7 @@ public class LevelEditor {
     public void loadLevel(String path) {
         levelData.loadFile(path);
 
-        Renderer renderer = new Renderer(canvasParent, 10, levelData, null);
+        Renderer renderer = new Renderer(canvasParent, 10, levelData);
         App.setRenderer(renderer);
         renderer.start();
     }

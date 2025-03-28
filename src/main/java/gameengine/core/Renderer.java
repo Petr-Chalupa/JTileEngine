@@ -2,7 +2,6 @@ package gameengine.core;
 
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.function.Consumer;
 
 import gameengine.core.gameobjects.GameObject;
 import javafx.application.Platform;
@@ -16,18 +15,15 @@ public class Renderer implements Runnable {
     private int RESCALE_DELAY = 100;
     private Timer rescaleTimer;
     private volatile boolean isPaused = false;;
-    private Consumer<Double> updateCallback;
     private Pane parent;
     private Canvas canvas;
     private LevelData levelData;
-    private int tileSize;
 
-    public Renderer(Pane parent, int FPS, LevelData levelData, Consumer<Double> updateCallback) {
+    public Renderer(Pane parent, int FPS, LevelData levelData) {
         this.parent = parent;
         this.canvas = new Canvas();
         this.levelData = levelData;
         this.FPS = FPS;
-        this.updateCallback = updateCallback;
 
         parent.getChildren().add(canvas);
         parent.widthProperty().addListener((obs, oldVal, newVal) -> Platform.runLater(this::rescale));
@@ -40,9 +36,10 @@ public class Renderer implements Runnable {
         rescaleTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                tileSize = (int) Math.min(parent.getWidth() / levelData.cols, parent.getHeight() / levelData.rows);
-                canvas.setWidth(tileSize * levelData.cols);
-                canvas.setHeight(tileSize * levelData.rows);
+                levelData.tileSize = (int) Math.min(parent.getWidth() / levelData.cols,
+                        parent.getHeight() / levelData.rows);
+                canvas.setWidth(levelData.tileSize * levelData.cols);
+                canvas.setHeight(levelData.tileSize * levelData.rows);
             }
         }, RESCALE_DELAY);
     }
@@ -68,7 +65,7 @@ public class Renderer implements Runnable {
             lastTime = currentTime;
 
             if (deltaTime >= interval) {
-                if (updateCallback != null) updateCallback.accept(deltaTime);
+                update(deltaTime);
                 Platform.runLater(this::render);
                 deltaTime -= interval;
             }
@@ -98,14 +95,18 @@ public class Renderer implements Runnable {
         isPaused = paused;
     }
 
+    private void update(double deltaTime) {
+        for (GameObject gameObject : levelData.gameObjects) {
+            gameObject.update(deltaTime, levelData);
+        }
+    }
+
     private void render() {
         GraphicsContext context = canvas.getGraphicsContext2D();
         context.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
         for (GameObject gameObject : levelData.gameObjects) {
-            double size = tileSize * gameObject.scale;
-            context.drawImage(gameObject.getSprite(), gameObject.posX * tileSize, gameObject.posY * tileSize, size,
-                    size);
+            gameObject.render(context, levelData);
         }
     }
 }
