@@ -8,21 +8,10 @@
 #set par(leading: 0.55em, spacing: 0.55em, first-line-indent: 1.8em, justify: true)
 #set text(font: "New Computer Modern", size: 14pt, lang: "cs")
 
-== Objektový návrh
+= Uživatelský manuál
 
-=== Technologie
-...
+- Screens
+- Level structure
+- ...
 
-=== Externí knihovny
-...
 
-=== Stavy hry
-...
-
-#pagebreak()
-#set page(margin: (x: 0.5in, y: 0.5in))
-
-#figure(
-  image("UML.svg", width: 100%, height: 95%),
-  caption: [UML diagram],
-)
