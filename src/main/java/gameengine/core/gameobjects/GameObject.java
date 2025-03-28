@@ -1,21 +1,28 @@
 package gameengine.core.gameobjects;
 
-import javafx.scene.Node;
-import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
 
 public abstract class GameObject {
-    protected Node self;
+    protected Image sprite;
     public boolean rendered = false;
-    public boolean solid;
-    public Color color;
-    public int layer;
-    public double scale;
     public double posX;
     public double posY;
+    public double posZ;
+    public double width;
+    public double height;
+    public double scale;
 
-    public abstract Node getSelf();
+    public GameObject(double posX, double posY, double posZ, double scale) {
+        this.posX = posX;
+        this.posY = posY;
+        this.posZ = posZ;
+        this.scale = scale;
+        this.sprite = new Image(getClass().getResourceAsStream("/gameengine/img/default_sprite.png"));
+    }
 
-    public abstract void rescale(double width, double height);
+    public Image getSprite() {
+        return sprite;
+    }
 
     public void moveX(double dist) {
         posX += dist;

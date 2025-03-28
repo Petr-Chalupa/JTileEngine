@@ -51,7 +51,7 @@ public class LevelData {
             JSONObject tileData = mapTileTypes.getJSONObject(Integer.toString(mapTiles.getInt(i)));
             Color tileColor = Color.web(tileData.getString("color"));
             boolean tileSolid = tileData.getBoolean("solid");
-            Tile tile = new Tile(i % cols, i / cols, tileColor, tileSolid);
+            Tile tile = new Tile(i % cols, i / cols, tileSolid);
             gameObjects.add(tile);
         }
 

@@ -10,7 +10,7 @@
 
 <StackPane prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gameengine.controllers.GameView">
    <children>
-      <Pane fx:id="canvas" prefHeight="768.0" prefWidth="1024.0" StackPane.alignment="CENTER" />
+      <Pane fx:id="canvasParent" StackPane.alignment="CENTER" />
       <Button onAction="#buttonPauseGame" text="| |" textAlignment="CENTER" StackPane.alignment="TOP_LEFT">
          <font>
             <Font size="15.0" />

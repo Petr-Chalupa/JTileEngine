@@ -3,33 +3,34 @@ package gameengine.core.gameobjects;
 import gameengine.App;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
 
 public class Player extends GameObject {
-    public ImageView sprite;
+    // public ImageView sprite;
     public double speed;
 
     public Player(double posX, double posY, double scale, double speed) {
-        Image playerImage = new Image(App.class.getResourceAsStream("/gameengine/img/player_sprite.png"));
-        self = new ImageView(playerImage);
+        super(posX, posY, 0, scale);
 
-        this.color = Color.RED;
-        this.layer = 0;
-        this.scale = scale;
-        this.posX = posX;
-        this.posY = posY;
+        // Image playerImage = new
+        // Image(App.class.getResourceAsStream("/gameengine/img/player_sprite.png"));
+        // self = new ImageView(playerImage);
+
+        // this.layer = 0;
+        // this.scale = scale;
+        // this.posX = posX;
+        // this.posY = posY;
         this.speed = speed;
-        this.solid = true;
+        // this.solid = true;
     }
 
-    @Override
-    public ImageView getSelf() {
-        return (ImageView) self;
-    }
+    // @Override
+    // public ImageView getSelf() {
+    // return (ImageView) self;
+    // }
 
-    @Override
-    public void rescale(double width, double height) {
-        getSelf().setFitWidth(width * scale);
-        getSelf().setFitHeight(height * scale);
-    }
+    // @Override
+    // public void rescale(double width, double height) {
+    // getSelf().setFitWidth(width * scale);
+    // getSelf().setFitHeight(height * scale);
+    // }
 }

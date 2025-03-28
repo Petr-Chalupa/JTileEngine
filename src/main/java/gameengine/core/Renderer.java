@@ -5,7 +5,10 @@ import java.util.TimerTask;
 import java.util.function.Consumer;
 
 import gameengine.core.gameobjects.GameObject;
+import gameengine.core.gameobjects.Player;
 import javafx.application.Platform;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 
 public class Renderer implements Runnable {
@@ -15,19 +18,21 @@ public class Renderer implements Runnable {
     private Timer rescaleTimer;
     private volatile boolean isPaused = false;;
     private Consumer<Double> updateCallback;
-    private Pane canvas;
+    private Pane parent;
+    private Canvas canvas;
     private LevelData levelData;
     private int tileSize;
 
-    public Renderer(Pane canvas, int FPS, LevelData levelData, Consumer<Double> updateCallback) {
-        this.canvas = canvas;
+    public Renderer(Pane parent, int FPS, LevelData levelData, Consumer<Double> updateCallback) {
+        this.parent = parent;
+        this.canvas = new Canvas();
         this.levelData = levelData;
         this.FPS = FPS;
         this.updateCallback = updateCallback;
 
-        canvas.widthProperty().addListener((obs, oldVal, newVal) -> rescale());
-        canvas.heightProperty().addListener((obs, oldVal, newVal) -> rescale());
-        rescale();
+        parent.getChildren().add(canvas);
+        parent.widthProperty().addListener((obs, oldVal, newVal) -> Platform.runLater(this::rescale));
+        parent.heightProperty().addListener((obs, oldVal, newVal) -> Platform.runLater(this::rescale));
     }
 
     public void rescale() {
@@ -36,7 +41,9 @@ public class Renderer implements Runnable {
         rescaleTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                tileSize = (int) Math.min(canvas.getWidth() / levelData.cols, canvas.getHeight() / levelData.rows);
+                tileSize = (int) Math.min(parent.getWidth() / levelData.cols, parent.getHeight() / levelData.rows);
+                canvas.setWidth(tileSize * levelData.cols);
+                canvas.setHeight(tileSize * levelData.rows);
             }
         }, RESCALE_DELAY);
     }
@@ -63,10 +70,9 @@ public class Renderer implements Runnable {
 
             if (deltaTime >= interval) {
                 if (updateCallback != null) updateCallback.accept(deltaTime);
+                Platform.runLater(this::render);
                 deltaTime -= interval;
             }
-
-            render();
         }
     }
 
@@ -94,16 +100,25 @@ public class Renderer implements Runnable {
     }
 
     private void render() {
-        for (GameObject gameObject : levelData.gameObjects) {
-            if (!gameObject.rendered) {
-                Platform.runLater(() -> canvas.getChildren().add(gameObject.getSelf()));
-                gameObject.rendered = true;
-            }
+        GraphicsContext context = canvas.getGraphicsContext2D();
+        context.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-            gameObject.getSelf().setViewOrder(gameObject.layer);
-            gameObject.getSelf().setTranslateX(gameObject.posX * tileSize);
-            gameObject.getSelf().setTranslateY(gameObject.posY * tileSize);
-            gameObject.rescale(tileSize, tileSize);
+        for (GameObject gameObject : levelData.gameObjects) {
+            double size = tileSize * gameObject.scale;
+            context.drawImage(gameObject.getSprite(), gameObject.posX * tileSize, gameObject.posY * tileSize, size,
+                    size);
         }
+
+        // for (GameObject gameObject : levelData.gameObjects) {
+        // if (!gameObject.rendered) {
+        // Platform.runLater(() -> canvas.getChildren().add(gameObject.getSelf()));
+        // gameObject.rendered = true;
+        // }
+
+        // gameObject.getSelf().setViewOrder(gameObject.layer);
+        // gameObject.getSelf().setTranslateX(gameObject.posX * tileSize);
+        // gameObject.getSelf().setTranslateY(gameObject.posY * tileSize);
+        // gameObject.rescale(tileSize, tileSize);
+        // }
     }
 }
