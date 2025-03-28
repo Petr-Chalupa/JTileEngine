@@ -8,21 +8,44 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
 <StackPane prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gameengine.controllers.GameView">
    <children>
       <Pane fx:id="canvas" prefHeight="768.0" prefWidth="1024.0" StackPane.alignment="CENTER" />
-      <VBox fx:id="pauseMenu" alignment="TOP_CENTER" spacing="100.0" style="-fx-background-color: #ffffffcc;" visible="false">
+      <Button onAction="#buttonPauseGame" text="| |" textAlignment="CENTER" StackPane.alignment="TOP_LEFT">
+         <font>
+            <Font size="15.0" />
+         </font>
+         <StackPane.margin>
+            <Insets left="10.0" top="10.0" />
+         </StackPane.margin>
+      </Button>
+      <VBox fx:id="pauseMenu" alignment="TOP_CENTER" spacing="25.0" style="-fx-background-color: #ffffffcc;" visible="false">
          <children>
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Paused">
                <font>
                   <Font name="System Bold" size="60.0" />
                </font>
             </Text>
-              <Button fx:id="menuButton" onAction="#clickMainMenu" text="Menu" textAlignment="CENTER">
+            <Text fx:id="pauseMenuLevelName" layoutX="422.0" layoutY="125.0" strokeType="OUTSIDE" strokeWidth="0.0" text="-">
+               <font>
+                  <Font name="System Italic" size="30.0" />
+               </font>
+            </Text>
+              <Button onAction="#buttonResumeGame" prefWidth="200.0" text="Resume" textAlignment="CENTER">
                <font>
                   <Font size="25.0" />
                </font>
+               <VBox.margin>
+                  <Insets top="50.0" />
+               </VBox.margin>
+            </Button>
+            <Button layoutX="474.0" layoutY="240.0" onAction="#buttonMainMenu" prefWidth="200.0" text="Menu" textAlignment="CENTER">
+               <font>
+                  <Font size="25.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="25.0" />
+               </VBox.margin>
             </Button>
          </children>
          <StackPane.margin>

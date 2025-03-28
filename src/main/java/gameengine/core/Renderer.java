@@ -1,6 +1,5 @@
 package gameengine.core;
 
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Consumer;
@@ -19,7 +18,6 @@ public class Renderer implements Runnable {
     private Pane canvas;
     private LevelData levelData;
     private int tileSize;
-    private ArrayList<GameObject> gameObjects = new ArrayList<>();
 
     public Renderer(Pane canvas, int FPS, LevelData levelData, Consumer<Double> updateCallback) {
         this.canvas = canvas;
@@ -30,23 +28,6 @@ public class Renderer implements Runnable {
         canvas.widthProperty().addListener((obs, oldVal, newVal) -> rescale());
         canvas.heightProperty().addListener((obs, oldVal, newVal) -> rescale());
         rescale();
-    }
-
-    public ArrayList<GameObject> getGameObjects() {
-        return gameObjects;
-    }
-
-    public void addGameObject(GameObject gameObject) {
-        this.gameObjects.add(gameObject);
-    }
-
-    public void addGameObjects(ArrayList<GameObject> gameObjects) {
-        this.gameObjects.clear();
-        this.gameObjects.addAll(gameObjects);
-    }
-
-    public void removeGameObject(GameObject gameObject) {
-        this.gameObjects.remove(gameObject);
     }
 
     public void rescale() {
@@ -113,7 +94,7 @@ public class Renderer implements Runnable {
     }
 
     private void render() {
-        for (GameObject gameObject : gameObjects) {
+        for (GameObject gameObject : levelData.gameObjects) {
             if (!gameObject.rendered) {
                 Platform.runLater(() -> canvas.getChildren().add(gameObject.getSelf()));
                 gameObject.rendered = true;
