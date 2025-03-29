@@ -1,8 +1,6 @@
 package gameengine.core.gameobjects;
 
 import gameengine.core.LevelData;
-import javafx.geometry.Bounds;
-import javafx.scene.canvas.GraphicsContext;
 
 public class Tile extends GameObject {
     public boolean solid;

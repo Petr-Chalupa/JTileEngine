@@ -2,7 +2,6 @@ package gameengine.core.gameobjects;
 
 import gameengine.core.InputHandler;
 import gameengine.core.LevelData;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 
 public class Player extends GameObject {

@@ -22,8 +22,6 @@ public class LevelData {
     // map
     public int rows;
     public int cols;
-    public int viewRows;
-    public int viewCols;
     public int tileSize;
     // player
     public Player player;
@@ -49,8 +47,7 @@ public class LevelData {
         JSONObject mapTileTypes = map.getJSONObject("tileTypes");
         this.rows = map.getJSONArray("size").getInt(0);
         this.cols = map.getJSONArray("size").getInt(1);
-        this.viewRows = map.getJSONArray("view").getInt(0);
-        this.viewCols = map.getJSONArray("view").getInt(1);
+        this.tileSize = map.getInt("tileSize");
         for (int i = 0; i < rows * cols; i++) {
             JSONObject tileData = mapTileTypes.getJSONObject(Integer.toString(mapTiles.getInt(i)));
             boolean tileSolid = tileData.getBoolean("solid");

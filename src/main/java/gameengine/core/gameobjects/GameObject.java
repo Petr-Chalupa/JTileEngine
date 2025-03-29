@@ -1,8 +1,6 @@
 package gameengine.core.gameobjects;
 
 import gameengine.core.LevelData;
-import javafx.geometry.Bounds;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 public abstract class GameObject {

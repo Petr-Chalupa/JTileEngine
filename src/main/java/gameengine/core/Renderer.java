@@ -2,53 +2,32 @@ package gameengine.core;
 
 import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import gameengine.core.gameobjects.GameObject;
-import gameengine.core.gameobjects.Player;
 import javafx.application.Platform;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 
 public class Renderer implements Runnable {
     private static Thread RENDER_THREAD;
     private int FPS;
-    private int RESCALE_DELAY = 100;
     private Timer rescaleTimer;
     private volatile boolean isPaused = false;;
-    private Pane parent;
     private Canvas canvas;
     private LevelData levelData;
 
     public Renderer(Pane parent, int FPS, LevelData levelData) {
-        this.parent = parent;
         this.canvas = new Canvas();
         this.levelData = levelData;
         this.FPS = FPS;
 
         parent.getChildren().add(canvas);
-        parent.widthProperty().addListener((obs, oldVal, newVal) -> Platform.runLater(this::rescale));
-        parent.heightProperty().addListener((obs, oldVal, newVal) -> Platform.runLater(this::rescale));
-    }
-
-    public void rescale() {
-        if (rescaleTimer != null) rescaleTimer.cancel();
-        rescaleTimer = new Timer();
-        rescaleTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                levelData.tileSize = (int) Math.min(parent.getWidth() / levelData.viewCols,
-                        parent.getHeight() / levelData.viewRows);
-                canvas.setWidth(levelData.tileSize * levelData.viewCols);
-                canvas.setHeight(levelData.tileSize * levelData.viewRows);
-            }
-        }, RESCALE_DELAY);
+        canvas.widthProperty().bind(parent.widthProperty());
+        canvas.heightProperty().bind(parent.heightProperty());
     }
 
     @Override
@@ -112,19 +91,8 @@ public class Renderer implements Runnable {
         GraphicsContext context = canvas.getGraphicsContext2D();
         context.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-        // Calculate camera position based on player position
-        double playerSize = levelData.tileSize * levelData.player.scale;
-        double viewWorldCenterX = levelData.player.posX * levelData.tileSize + (playerSize / 2);
-        double viewWorldCenterY = levelData.player.posY * levelData.tileSize + (playerSize / 2);
-        double viewScreenCenterX = (canvas.getWidth() - playerSize) / 2;
-        double viewScreenCenterY = (canvas.getHeight() - playerSize) / 2;
-
         // Calculate camera view bounds
-        double viewLeft = viewWorldCenterX - (levelData.viewCols * levelData.tileSize) / 2.0;
-        double viewRight = viewWorldCenterX + (levelData.viewCols * levelData.tileSize) / 2.0;
-        double viewTop = viewWorldCenterY - (levelData.viewRows * levelData.tileSize) / 2.0;
-        double viewBottom = viewWorldCenterY + (levelData.viewRows * levelData.tileSize) / 2.0;
-        Bounds viewBounds = new BoundingBox(viewLeft, viewTop, viewRight - viewLeft, viewBottom - viewTop);
+        Bounds viewBounds = calculateViewBounds();
 
         // Sort game objects based on layer
         List<GameObject> sortedObjects = levelData.gameObjects.stream()
@@ -136,21 +104,37 @@ public class Renderer implements Runnable {
             double worldY = gameObject.posY * levelData.tileSize;
             double gameObjectSize = levelData.tileSize * gameObject.scale;
 
-            Bounds objectBounds = new BoundingBox(worldX, worldY, gameObjectSize, gameObjectSize);
-            Bounds intersection = calculateIntersection(objectBounds, viewBounds);
+            Bounds gameObjectBounds = new BoundingBox(worldX, worldY, gameObjectSize, gameObjectSize);
+            Bounds intersection = calculateIntersection(gameObjectBounds, viewBounds);
             if (intersection == null) continue;
 
-            double sourceX = (intersection.getMinX() - worldX) / gameObject.scale;
-            double sourceY = (intersection.getMinY() - worldY) / gameObject.scale;
-            double sourceWidth = intersection.getWidth() / gameObject.scale;
-            double sourceHeight = intersection.getHeight() / gameObject.scale;
-            double screenX = intersection.getMinX() - viewBounds.getMinX() + viewScreenCenterX
-                    - (levelData.viewCols * levelData.tileSize) / 2.0;
-            double screenY = intersection.getMinY() - viewBounds.getMinY() + viewScreenCenterY
-                    - (levelData.viewRows * levelData.tileSize) / 2.0;
-            context.drawImage(gameObject.getSprite(), sourceX, sourceY, sourceWidth, sourceHeight, screenX, screenY,
-                    levelData.tileSize * gameObject.scale, levelData.tileSize * gameObject.scale);
+            double sourceX = intersection.getMinX() - worldX;
+            double sourceY = intersection.getMinY() - worldY;
+            double sourceSize = (intersection.getWidth() / gameObject.scale)
+                    * (gameObject.getSprite().getWidth() / levelData.tileSize);
+            double sourceHeight = (intersection.getHeight() / gameObject.scale)
+                    * (gameObject.getSprite().getHeight() / levelData.tileSize);
+            double screenX = worldX - viewBounds.getMinX();
+            double screenY = worldY - viewBounds.getMinY();
+            context.drawImage(gameObject.getSprite(), sourceX, sourceY, sourceSize, sourceHeight, screenX, screenY,
+                    gameObjectSize, gameObjectSize);
         }
+    }
+
+    private Bounds calculateViewBounds() {
+        double playerSize = levelData.tileSize * levelData.player.scale;
+        double viewWorldCenterX = levelData.player.posX * levelData.tileSize + (playerSize / 2.0);
+        double viewWorldCenterY = levelData.player.posY * levelData.tileSize + (playerSize / 2.0);
+
+        double viewCols = canvas.getWidth() / levelData.tileSize;
+        double viewRows = canvas.getHeight() / levelData.tileSize;
+
+        double viewLeft = viewWorldCenterX - (viewCols * levelData.tileSize) / 2.0;
+        double viewRight = viewWorldCenterX + (viewCols * levelData.tileSize) / 2.0;
+        double viewTop = viewWorldCenterY - (viewRows * levelData.tileSize) / 2.0;
+        double viewBottom = viewWorldCenterY + (viewRows * levelData.tileSize) / 2.0;
+
+        return new BoundingBox(viewLeft, viewTop, viewRight - viewLeft, viewBottom - viewTop);
     }
 
     private Bounds calculateIntersection(Bounds a, Bounds b) {
