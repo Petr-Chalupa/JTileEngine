@@ -1,6 +1,7 @@
 package gameengine.core.gameobjects;
 
 import gameengine.core.LevelData;
+import javafx.geometry.Bounds;
 import javafx.scene.canvas.GraphicsContext;
 
 public class Tile extends GameObject {
@@ -14,11 +15,5 @@ public class Tile extends GameObject {
 
     @Override
     public void update(double deltaTime, LevelData levelData) {
-    }
-
-    @Override
-    public void render(GraphicsContext context, LevelData levelData) {
-        double size = levelData.tileSize * scale;
-        context.drawImage(sprite, posX * levelData.tileSize, posY * levelData.tileSize, size, size);
     }
 }

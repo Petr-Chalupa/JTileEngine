@@ -27,11 +27,24 @@ public class Player extends GameObject {
             if (inputHandler.isKeyPressed(KeyCode.S)) moveY(speed * deltaTime); // Down
             if (inputHandler.isKeyPressed(KeyCode.D)) moveX(speed * deltaTime); // Right
         }
+
+        // Tile tile = (Tile) levelData.gameObjects.stream()
+        // .filter(gameObject -> (gameObject.layer + 1 == this.layer)
+        // && isPointInsideTile(posX, posY, gameObject.posX, gameObject.posY,
+        // levelData.tileSize))
+        // .findFirst().orElse(null);
+        // if (tile != null) System.out.println(tile.solid);
     }
 
-    @Override
-    public void render(GraphicsContext context, LevelData levelData) {
-        double size = levelData.tileSize * scale;
-        context.drawImage(sprite, posX * levelData.tileSize, posY * levelData.tileSize, size, size);
-    }
+    // public boolean isPointInsideTile(double pointX, double pointY, double tileX,
+    // double tileY, double tileSize) {
+    // double tileLeft = tileX * tileSize;
+    // double tileRight = tileLeft + tileSize;
+    // double tileTop = tileY * tileSize;
+    // double tileBottom = tileTop + tileSize;
+
+    // return pointX * tileSize >= tileLeft && pointX * tileSize < tileRight &&
+    // pointY * tileSize >= tileTop
+    // && pointY * tileSize < tileBottom;
+    // }
 }

@@ -1,6 +1,7 @@
 package gameengine.core.gameobjects;
 
 import gameengine.core.LevelData;
+import javafx.geometry.Bounds;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
@@ -20,8 +21,6 @@ public abstract class GameObject {
     }
 
     public abstract void update(double deltaTime, LevelData levelData);
-
-    public abstract void render(GraphicsContext context, LevelData levelData);
 
     public Image getSprite() {
         return sprite;
