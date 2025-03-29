@@ -15,11 +15,13 @@
         "tileTypes": {
             "0": {
                 "sprite": "/gameengine/img/tile_sprite0.png",
-                "solid": false
+                "solid": false,
+                "layer": 0
             },
             "1": {
                 "sprite": "/gameengine/img/tile_sprite1.png",
-                "solid": true
+                "solid": true,
+                "layer": 0
             }
         }
     },
@@ -28,6 +30,7 @@
         "health": 10,
         "speed": 5,
         "scale": 0.75,
-        "sprite": "/gameengine/img/player_sprite.png"
+        "sprite": "/gameengine/img/player_sprite.png",
+        "layer": 1
     }
 }

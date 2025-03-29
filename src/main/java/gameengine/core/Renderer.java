@@ -105,8 +105,7 @@ public class Renderer implements Runnable {
         GraphicsContext context = canvas.getGraphicsContext2D();
         context.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-        for (GameObject gameObject : levelData.gameObjects) {
-            gameObject.render(context, levelData);
-        }
+        levelData.gameObjects.stream().sorted((a, b) -> Integer.compare(a.layer, b.layer))
+                .forEach(gameObject -> gameObject.render(context, levelData));
     }
 }

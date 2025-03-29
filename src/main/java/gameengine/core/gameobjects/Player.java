@@ -9,8 +9,8 @@ public class Player extends GameObject {
     private InputHandler inputHandler;
     public double speed;
 
-    public Player(double posX, double posY, double scale, double speed) {
-        super(posX, posY, scale);
+    public Player(double posX, double posY, int layer, double scale, double speed) {
+        super(posX, posY, layer, scale);
 
         this.speed = speed;
     }

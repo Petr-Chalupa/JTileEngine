@@ -51,7 +51,8 @@ public class LevelData {
             JSONObject tileData = mapTileTypes.getJSONObject(Integer.toString(mapTiles.getInt(i)));
             boolean tileSolid = tileData.getBoolean("solid");
             String tileSprite = tileData.getString("sprite");
-            Tile tile = new Tile(i % cols, i / cols, tileSolid);
+            int tileLayer = tileData.getInt("layer");
+            Tile tile = new Tile(i % cols, i / cols, tileLayer, tileSolid);
             tile.setSprite(tileSprite);
             gameObjects.add(tile);
         }
@@ -62,7 +63,9 @@ public class LevelData {
         double playerScale = player.getDouble("scale");
         double playerSpeed = player.getDouble("speed");
         String playerSprite = player.getString("sprite");
-        this.player = new Player(playerStart.getDouble(0), playerStart.getDouble(1), playerScale, playerSpeed);
+        int playerLayer = player.getInt("layer");
+        this.player = new Player(playerStart.getDouble(0), playerStart.getDouble(1), playerLayer, playerScale,
+                playerSpeed);
         this.player.setSprite(playerSprite);
         gameObjects.add(this.player);
     }

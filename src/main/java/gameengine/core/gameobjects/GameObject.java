@@ -8,11 +8,13 @@ public abstract class GameObject {
     protected Image sprite;
     public double posX;
     public double posY;
+    public int layer;
     public double scale;
 
-    public GameObject(double posX, double posY, double scale) {
+    public GameObject(double posX, double posY, int layer, double scale) {
         this.posX = posX;
         this.posY = posY;
+        this.layer = layer;
         this.scale = scale;
         this.sprite = new Image(getClass().getResourceAsStream("/gameengine/img/default_sprite.png"));
     }
