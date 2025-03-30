@@ -421,7 +421,7 @@
     "player": {
         "start": [1, 1],
         "health": 10,
-        "speed": 1.5,
+        "speed": 5,
         "scale": 0.75,
         "sprite": "/gameengine/img/player_sprite.png",
         "layer": 1

@@ -15,7 +15,7 @@ public abstract class GameObject {
         this.posY = posY;
         this.layer = layer;
         this.scale = scale;
-        this.sprite = new Image(getClass().getResourceAsStream("/gameengine/img/default_sprite.png"));
+        setSprite("/gameengine/img/default_sprite.png");
     }
 
     public abstract void update(double deltaTime, LevelData levelData);

@@ -21,10 +21,15 @@ public class Player extends GameObject {
     @Override
     public void update(double deltaTime, LevelData levelData) {
         if (inputHandler != null) {
-            if (inputHandler.isKeyPressed(KeyCode.W)) moveY(-speed * deltaTime); // Up
-            if (inputHandler.isKeyPressed(KeyCode.A)) moveX(-speed * deltaTime); // Left
-            if (inputHandler.isKeyPressed(KeyCode.S)) moveY(speed * deltaTime); // Down
-            if (inputHandler.isKeyPressed(KeyCode.D)) moveX(speed * deltaTime); // Right
+            double deltaX = 0;
+            double deltaY = 0;
+            if (inputHandler.isKeyPressed(KeyCode.W)) deltaY = -speed * deltaTime; // Up
+            if (inputHandler.isKeyPressed(KeyCode.A)) deltaX = -speed * deltaTime; // Left
+            if (inputHandler.isKeyPressed(KeyCode.S)) deltaY = speed * deltaTime; // Down
+            if (inputHandler.isKeyPressed(KeyCode.D)) deltaX = speed * deltaTime; // Right
+
+            if (posX + deltaX > 0 && posX + deltaX < levelData.cols - 1) moveX(deltaX);
+            if (posY + deltaY > 0 && posY + deltaY < levelData.rows - 1) moveY(deltaY);
         }
 
         // Tile tile = (Tile) levelData.gameObjects.stream()
