@@ -50,11 +50,16 @@ public class LevelData {
         this.tileSize = map.getInt("tileSize");
         for (int i = 0; i < rows * cols; i++) {
             JSONObject tileData = mapTileTypes.getJSONObject(Integer.toString(mapTiles.getInt(i)));
-            boolean tileSolid = tileData.getBoolean("solid");
             String tileSprite = tileData.getString("sprite");
-            int tileLayer = tileData.getInt("layer");
-            Tile tile = new Tile(i % cols, i / cols, tileLayer, tileSolid);
+            Tile tile = new Tile(i % cols, i / cols);
             tile.setSprite(tileSprite);
+            if (tileData.has("movementCollider")) {
+                JSONObject tileColliderData = tileData.getJSONObject("movementCollider");
+                Collider tileCollider = new Collider(tile, tileColliderData.getDouble("x"),
+                        tileColliderData.getDouble("y"), tileColliderData.getDouble("width"),
+                        tileColliderData.getDouble("height"));
+                tile.setMovementCollider(tileCollider);
+            }
             gameObjects.add(tile);
         }
 
@@ -64,10 +69,15 @@ public class LevelData {
         double playerScale = player.getDouble("scale");
         double playerSpeed = player.getDouble("speed");
         String playerSprite = player.getString("sprite");
-        int playerLayer = player.getInt("layer");
-        this.player = new Player(playerStart.getDouble(0), playerStart.getDouble(1), playerLayer, playerScale,
-                playerSpeed);
+        this.player = new Player(playerStart.getDouble(0), playerStart.getDouble(1), playerScale, playerSpeed);
         this.player.setSprite(playerSprite);
+        if (player.has("movementCollider")) {
+            JSONObject playerColliderData = player.getJSONObject("movementCollider");
+            Collider tileCollider = new Collider(this.player, playerColliderData.getDouble("x"),
+                    playerColliderData.getDouble("y"), playerColliderData.getDouble("width"),
+                    playerColliderData.getDouble("height"));
+            this.player.setMovementCollider(tileCollider);
+        }
         gameObjects.add(this.player);
     }
 

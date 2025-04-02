@@ -105,7 +105,7 @@ public class Renderer implements Runnable {
             double gameObjectSize = levelData.tileSize * gameObject.scale;
 
             Bounds gameObjectBounds = new BoundingBox(worldX, worldY, gameObjectSize, gameObjectSize);
-            Bounds intersection = calculateIntersection(gameObjectBounds, viewBounds);
+            Bounds intersection = calculateVisibleIntersection(gameObjectBounds, viewBounds);
             if (intersection == null) continue;
 
             double sourceX = intersection.getMinX() - worldX;
@@ -118,6 +118,19 @@ public class Renderer implements Runnable {
             double screenY = worldY - viewBounds.getMinY();
             context.drawImage(gameObject.getSprite(), sourceX, sourceY, sourceSize, sourceHeight, screenX, screenY,
                     gameObjectSize, gameObjectSize);
+        }
+
+        if (levelData.player.movementCollider != null) {
+            Collider playerCollider = levelData.player.movementCollider;
+            double colliderX = playerCollider.box.getMinX() * (levelData.player.scale * levelData.tileSize)
+                    + levelData.player.posX * levelData.tileSize - viewBounds.getMinX();
+            double colliderY = playerCollider.box.getMinY() * (levelData.player.scale * levelData.tileSize)
+                    + levelData.player.posY * levelData.tileSize - viewBounds.getMinY();
+            double colliderWidth = playerCollider.box.getWidth() * (levelData.player.scale * levelData.tileSize);
+            double colliderHeight = playerCollider.box.getHeight() * (levelData.player.scale * levelData.tileSize);
+
+            context.setStroke(javafx.scene.paint.Color.RED); // Set the stroke color to red
+            context.strokeRect(colliderX, colliderY, colliderWidth, colliderHeight); // Draw the rectangle
         }
     }
 
@@ -137,11 +150,11 @@ public class Renderer implements Runnable {
         return new BoundingBox(viewLeft, viewTop, viewRight - viewLeft, viewBottom - viewTop);
     }
 
-    private Bounds calculateIntersection(Bounds a, Bounds b) {
-        double minX = Math.max(a.getMinX(), b.getMinX());
-        double minY = Math.max(a.getMinY(), b.getMinY());
-        double maxX = Math.min(a.getMaxX(), b.getMaxX());
-        double maxY = Math.min(a.getMaxY(), b.getMaxY());
+    private Bounds calculateVisibleIntersection(Bounds gameObjectBounds, Bounds viewBounds) {
+        double minX = Math.max(gameObjectBounds.getMinX(), viewBounds.getMinX());
+        double minY = Math.max(gameObjectBounds.getMinY(), viewBounds.getMinY());
+        double maxX = Math.min(gameObjectBounds.getMaxX(), viewBounds.getMaxX());
+        double maxY = Math.min(gameObjectBounds.getMaxY(), viewBounds.getMaxY());
         return (minX < maxX && minY < maxY) ? new BoundingBox(minX, minY, maxX - minX, maxY - minY) : null;
     }
 }

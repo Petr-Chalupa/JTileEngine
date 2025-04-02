@@ -408,22 +408,22 @@
         "tileTypes": {
             "0": {
                 "sprite": "/gameengine/img/tile_sprite0.png",
-                "solid": false,
                 "layer": 0
             },
             "1": {
                 "sprite": "/gameengine/img/tile_sprite1.png",
-                "solid": true,
-                "layer": 0
+                "layer": 0,
+                "movementCollider": { "x": 0, "y": 0, "width": 1, "height": 1 }
             }
         }
     },
     "player": {
-        "start": [1, 1],
+        "start": [2, 2],
         "health": 10,
         "speed": 5,
         "scale": 0.75,
-        "sprite": "/gameengine/img/player_sprite.png",
-        "layer": 1
+        "sprite": "/gameengine/img/player_sprite1.png",
+        "layer": 1,
+        "movementCollider": { "x": 0.1, "y": 0.5, "width": 0.8, "height": 0.5 }
     }
 }
