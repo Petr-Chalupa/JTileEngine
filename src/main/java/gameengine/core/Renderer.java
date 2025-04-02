@@ -114,19 +114,6 @@ public class Renderer implements Runnable {
             context.drawImage(gameObject.getSprite(), sourceX, sourceY, sourceSize, sourceHeight, screenX, screenY,
                     gameObjectSize, gameObjectSize);
         }
-
-        if (levelData.player.movementCollider != null) {
-            Collider playerCollider = levelData.player.movementCollider;
-            double colliderX = playerCollider.box.getMinX() * (levelData.player.scale * levelData.tileSize)
-                    + levelData.player.posX * levelData.tileSize - viewBounds.getMinX();
-            double colliderY = playerCollider.box.getMinY() * (levelData.player.scale * levelData.tileSize)
-                    + levelData.player.posY * levelData.tileSize - viewBounds.getMinY();
-            double colliderWidth = playerCollider.box.getWidth() * (levelData.player.scale * levelData.tileSize);
-            double colliderHeight = playerCollider.box.getHeight() * (levelData.player.scale * levelData.tileSize);
-
-            context.setStroke(javafx.scene.paint.Color.RED); // Set the stroke color to red
-            context.strokeRect(colliderX, colliderY, colliderWidth, colliderHeight); // Draw the rectangle
-        }
     }
 
     private Bounds calculateViewBounds() {

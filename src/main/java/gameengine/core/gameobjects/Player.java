@@ -4,14 +4,11 @@ import gameengine.core.InputHandler;
 import gameengine.core.LevelData;
 import javafx.scene.input.KeyCode;
 
-public class Player extends GameObject {
+public class Player extends Entity {
     private InputHandler inputHandler;
-    public double speed;
 
     public Player(double posX, double posY, double scale, double speed) {
-        super(posX, posY, 1, scale);
-
-        this.speed = speed;
+        super(posX, posY, 2, scale, speed);
     }
 
     public void setInputHandler(InputHandler inputHandler) {
@@ -37,25 +34,11 @@ public class Player extends GameObject {
         else
             deltaX = 0;
 
-        double newPosX = posX + deltaX;
-        double newPosY = posY + deltaY;
-
-        boolean isOnSolidTile = levelData.gameObjects.stream()
-                .filter(gameObject -> (gameObject instanceof Tile && gameObject.movementCollider != null))
-                .map(gameObject -> (Tile) gameObject).allMatch(
-                        tile -> movementCollider.calculateIntersection(tile.movementCollider, deltaX, deltaY) == null);
-        boolean isInMapX = newPosX > 0 && newPosX < (levelData.cols - 1) * levelData.tileSize;
-        boolean isInMapY = newPosY > 0 && newPosY < (levelData.rows - 1) * levelData.tileSize;
-
+        boolean isOnSolidTile = isOnSolidTile(levelData, deltaX, deltaY);
+        boolean isInMapX = isInMapX(levelData, deltaX, deltaY);
+        boolean isInMapY = isInMapY(levelData, deltaX, deltaY);
         if (isInMapX && isOnSolidTile) moveX(deltaX);
         if (isInMapY && isOnSolidTile) moveY(deltaY);
     }
 
-    public void moveX(double dist) {
-        posX += dist;
-    }
-
-    public void moveY(double dist) {
-        posY += dist;
-    }
 }

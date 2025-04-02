@@ -7,12 +7,10 @@
         "tileSize": 64,
         "tileTypes": {
             "0": {
-                "sprite": "/gameengine/img/tile_sprite0.png",
-                "layer": 0
+                "sprite": "/gameengine/img/tile_sprite0.png"
             },
             "1": {
                 "sprite": "/gameengine/img/tile_sprite1.png",
-                "layer": 0,
                 "movementCollider": { "x": 0, "y": 0, "width": 1, "height": 1 }
             }
         }
@@ -23,7 +21,10 @@
         "speed": 3,
         "scale": 0.75,
         "sprite": "/gameengine/img/player_sprite.png",
-        "layer": 1,
         "movementCollider": { "x": 0.1, "y": 0.5, "width": 0.8, "height": 0.5 }
-    }
+    },
+    "enemies": [
+        { "start": [5, 5], "health": 10, "speed": 1, "scale": 0.5, "sprite": "", "movementCollider": { "x": 0, "y": 0, "width": 1, "height": 1 } },
+        { "start": [7, 5], "health": 10, "speed": 1, "scale": 0.5, "sprite": "", "movementCollider": { "x": 0, "y": 0, "width": 1, "height": 1 } }
+    ]
 }

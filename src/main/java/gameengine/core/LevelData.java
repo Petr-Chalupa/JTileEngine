@@ -11,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import gameengine.App;
+import gameengine.core.gameobjects.Enemy;
 import gameengine.core.gameobjects.GameObject;
 import gameengine.core.gameobjects.Player;
 import gameengine.core.gameobjects.Tile;
@@ -74,19 +75,37 @@ public class LevelData {
         }
 
         // Load player data
-        JSONObject player = config.getJSONObject("player");
-        JSONArray playerStart = player.getJSONArray("start");
-        double playerScale = player.getDouble("scale");
-        double playerSpeed = player.getDouble("speed") * tileSize;
-        String playerSprite = player.getString("sprite");
+        JSONObject playerData = config.getJSONObject("player");
+        JSONArray playerStart = playerData.getJSONArray("start");
+        double playerScale = playerData.getDouble("scale");
+        double playerSpeed = playerData.getDouble("speed") * tileSize;
+        String playerSprite = playerData.getString("sprite");
 
-        this.player = new Player(playerStart.getDouble(0) * tileSize, playerStart.getDouble(1) * tileSize, playerScale,
+        player = new Player(playerStart.getDouble(0) * tileSize, playerStart.getDouble(1) * tileSize, playerScale,
                 playerSpeed);
-        this.player.setSprite(playerSprite);
-        Collider playerMovementCollider = parseMovementCollider(player, this.player);
-        if (playerMovementCollider != null) this.player.setMovementCollider(playerMovementCollider);
+        player.setSprite(playerSprite);
+        Collider playerMovementCollider = parseMovementCollider(playerData, player);
+        if (playerMovementCollider != null) player.setMovementCollider(playerMovementCollider);
 
-        gameObjects.add(this.player);
+        gameObjects.add(player);
+
+        // Load enemies
+        JSONArray enemies = config.getJSONArray("enemies");
+        for (int i = 0; i < enemies.length(); i++) {
+            JSONObject enemyData = enemies.getJSONObject(i);
+            JSONArray enemyStart = enemyData.getJSONArray("start");
+            double enemyScale = enemyData.getDouble("scale");
+            double enemySpeed = enemyData.getDouble("speed") * tileSize;
+            String enemySprite = enemyData.getString("sprite");
+
+            Enemy enemy = new Enemy(enemyStart.getDouble(0) * tileSize, enemyStart.getDouble(1) * tileSize, enemyScale,
+                    enemySpeed);
+            enemy.setSprite(enemySprite);
+            Collider enemyMovementCollider = parseMovementCollider(enemyData, enemy);
+            if (enemyMovementCollider != null) enemy.setMovementCollider(enemyMovementCollider);
+
+            gameObjects.add(enemy);
+        }
     }
 
     private Collider parseMovementCollider(JSONObject json, GameObject parent) {
