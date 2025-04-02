@@ -1,6 +1,5 @@
 package gameengine.core.gameobjects;
 
-import gameengine.core.Collider;
 import gameengine.core.InputHandler;
 import gameengine.core.LevelData;
 import javafx.scene.input.KeyCode;
@@ -25,12 +24,16 @@ public class Player extends GameObject {
 
         final double deltaX;
         final double deltaY;
-        if (inputHandler.isKeyPressed(KeyCode.W)) deltaY = -speed * deltaTime; // Up
-        else if (inputHandler.isKeyPressed(KeyCode.S)) deltaY = speed * deltaTime; // Down
+        if (inputHandler.isKeyPressed(KeyCode.W))
+            deltaY = -speed * deltaTime; // Up
+        else if (inputHandler.isKeyPressed(KeyCode.S))
+            deltaY = speed * deltaTime; // Down
         else
             deltaY = 0;
-        if (inputHandler.isKeyPressed(KeyCode.A)) deltaX = -speed * deltaTime; // Left
-        else if (inputHandler.isKeyPressed(KeyCode.D)) deltaX = speed * deltaTime; // Right
+        if (inputHandler.isKeyPressed(KeyCode.A))
+            deltaX = -speed * deltaTime; // Left
+        else if (inputHandler.isKeyPressed(KeyCode.D))
+            deltaX = speed * deltaTime; // Right
         else
             deltaX = 0;
 
@@ -39,13 +42,10 @@ public class Player extends GameObject {
 
         boolean isOnSolidTile = levelData.gameObjects.stream()
                 .filter(gameObject -> (gameObject instanceof Tile && gameObject.movementCollider != null))
-                .map(gameObject -> (Tile) gameObject).allMatch(tile -> {
-                    // System.out.println(tile.movementCollider.box);
-                    return movementCollider.calculateIntersection(tile.movementCollider, deltaX, deltaY) == null;
-                });
-        boolean isInMapX = newPosX > 0 && newPosX < levelData.cols - 1;
-        boolean isInMapY = newPosY > 0 && newPosY < levelData.rows - 1;
-        System.out.println(isOnSolidTile);
+                .map(gameObject -> (Tile) gameObject).allMatch(
+                        tile -> movementCollider.calculateIntersection(tile.movementCollider, deltaX, deltaY) == null);
+        boolean isInMapX = newPosX > 0 && newPosX < (levelData.cols - 1) * levelData.tileSize;
+        boolean isInMapY = newPosY > 0 && newPosY < (levelData.rows - 1) * levelData.tileSize;
 
         if (isInMapX && isOnSolidTile) moveX(deltaX);
         if (isInMapY && isOnSolidTile) moveY(deltaY);

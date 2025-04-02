@@ -34,8 +34,6 @@ public class Collider {
         double minY = Math.max(getMinY() + deltaY, c.getMinY());
         double maxX = Math.min(getMaxX() + deltaX, c.getMaxX());
         double maxY = Math.min(getMaxY() + deltaY, c.getMaxY());
-        // System.out.println(getMinX() + deltaX + " " + getMaxX() + deltaX);
-        // System.out.println((minX < maxX && minY < maxY) + " " + box + " " + c.box);
         return (minX < maxX && minY < maxY) ? new BoundingBox(minX, minY, maxX - minX, maxY - minY) : null;
     }
 }

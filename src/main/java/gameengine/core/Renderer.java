@@ -1,7 +1,6 @@
 package gameengine.core;
 
 import java.util.List;
-import java.util.Timer;
 import java.util.stream.Collectors;
 
 import gameengine.core.gameobjects.GameObject;
@@ -15,7 +14,6 @@ import javafx.scene.layout.Pane;
 public class Renderer implements Runnable {
     private static Thread RENDER_THREAD;
     private int FPS;
-    private Timer rescaleTimer;
     private volatile boolean isPaused = false;;
     private Canvas canvas;
     private LevelData levelData;
@@ -68,7 +66,6 @@ public class Renderer implements Runnable {
 
     public void stop() {
         if (RENDER_THREAD == null) return;
-        if (rescaleTimer != null) rescaleTimer.cancel();
         RENDER_THREAD.interrupt();
         RENDER_THREAD = null;
     }
@@ -100,22 +97,20 @@ public class Renderer implements Runnable {
 
         // Render visible game objects
         for (GameObject gameObject : sortedObjects) {
-            double worldX = gameObject.posX * levelData.tileSize;
-            double worldY = gameObject.posY * levelData.tileSize;
             double gameObjectSize = levelData.tileSize * gameObject.scale;
 
-            Bounds gameObjectBounds = new BoundingBox(worldX, worldY, gameObjectSize, gameObjectSize);
+            Bounds gameObjectBounds = new BoundingBox(gameObject.posX, gameObject.posY, gameObjectSize, gameObjectSize);
             Bounds intersection = calculateVisibleIntersection(gameObjectBounds, viewBounds);
             if (intersection == null) continue;
 
-            double sourceX = intersection.getMinX() - worldX;
-            double sourceY = intersection.getMinY() - worldY;
+            double sourceX = intersection.getMinX() - gameObject.posX;
+            double sourceY = intersection.getMinY() - gameObject.posY;
             double sourceSize = (intersection.getWidth() / gameObject.scale)
                     * (gameObject.getSprite().getWidth() / levelData.tileSize);
             double sourceHeight = (intersection.getHeight() / gameObject.scale)
                     * (gameObject.getSprite().getHeight() / levelData.tileSize);
-            double screenX = worldX - viewBounds.getMinX();
-            double screenY = worldY - viewBounds.getMinY();
+            double screenX = gameObject.posX - viewBounds.getMinX();
+            double screenY = gameObject.posY - viewBounds.getMinY();
             context.drawImage(gameObject.getSprite(), sourceX, sourceY, sourceSize, sourceHeight, screenX, screenY,
                     gameObjectSize, gameObjectSize);
         }
@@ -136,8 +131,8 @@ public class Renderer implements Runnable {
 
     private Bounds calculateViewBounds() {
         double playerSize = levelData.tileSize * levelData.player.scale;
-        double viewWorldCenterX = levelData.player.posX * levelData.tileSize + (playerSize / 2.0);
-        double viewWorldCenterY = levelData.player.posY * levelData.tileSize + (playerSize / 2.0);
+        double viewWorldCenterX = levelData.player.posX + (playerSize / 2.0);
+        double viewWorldCenterY = levelData.player.posY + (playerSize / 2.0);
 
         double viewCols = canvas.getWidth() / levelData.tileSize;
         double viewRows = canvas.getHeight() / levelData.tileSize;

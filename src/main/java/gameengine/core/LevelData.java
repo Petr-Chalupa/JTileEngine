@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -27,58 +28,77 @@ public class LevelData {
     public Player player;
 
     public void loadFile(String path) {
-        JSONObject json = null;
+        JSONObject config = null;
         try {
-            String content = Files.readString(Path.of(App.class.getResource(path).toURI()));
-            json = new JSONObject(content);
+            String configFile = Files.readString(Path.of(App.class.getResource(path + "config.json").toURI()));
+            config = new JSONObject(configFile);
         } catch (IOException | URISyntaxException e) {
             System.err.println(e);
+            return;
         }
 
         // Load level data
-        JSONObject level = json.getJSONObject("level");
-        this.name = level.getString("name");
-        this.completed = level.getBoolean("completed");
+        this.name = config.getString("name");
+        this.completed = config.getBoolean("completed");
         this.gameObjects.clear();
 
         // Load map data
-        JSONObject map = json.getJSONObject("map");
-        JSONArray mapTiles = map.getJSONArray("tiles");
-        JSONObject mapTileTypes = map.getJSONObject("tileTypes");
-        this.rows = map.getJSONArray("size").getInt(0);
-        this.cols = map.getJSONArray("size").getInt(1);
+        JSONObject map = config.getJSONObject("map");
+        this.rows = map.getInt("rows");
+        this.cols = map.getInt("cols");
         this.tileSize = map.getInt("tileSize");
-        for (int i = 0; i < rows * cols; i++) {
-            JSONObject tileData = mapTileTypes.getJSONObject(Integer.toString(mapTiles.getInt(i)));
-            String tileSprite = tileData.getString("sprite");
-            Tile tile = new Tile(i % cols, i / cols);
-            tile.setSprite(tileSprite);
-            if (tileData.has("movementCollider")) {
-                JSONObject tileColliderData = tileData.getJSONObject("movementCollider");
-                Collider tileCollider = new Collider(tile, tileColliderData.getDouble("x"),
-                        tileColliderData.getDouble("y"), tileColliderData.getDouble("width"),
-                        tileColliderData.getDouble("height"));
-                tile.setMovementCollider(tileCollider);
+        JSONObject mapTileTypes = map.getJSONObject("tileTypes");
+
+        // Read the map from a text file and create tiles
+        List<String> mapLines = null;
+        try {
+            mapLines = Files.readAllLines(Path.of(App.class.getResource(path + "map.txt").toURI()));
+            for (int row = 0; row < rows; row++) {
+                String[] tileNumbers = mapLines.get(row).split(" ");
+                for (int col = 0; col < cols; col++) {
+                    int tileType = Integer.parseInt(tileNumbers[col]);
+                    JSONObject tileData = mapTileTypes.getJSONObject(Integer.toString(tileType));
+                    String tileSprite = tileData.getString("sprite");
+
+                    Tile tile = new Tile(col * tileSize, row * tileSize);
+                    tile.setSprite(tileSprite);
+                    Collider tileMovementCollider = parseMovementCollider(tileData, tile);
+                    if (tileMovementCollider != null) tile.setMovementCollider(tileMovementCollider);
+
+                    gameObjects.add(tile);
+                }
             }
-            gameObjects.add(tile);
+        } catch (IOException | URISyntaxException e) {
+            System.err.println(e);
+            return;
         }
 
         // Load player data
-        JSONObject player = json.getJSONObject("player");
+        JSONObject player = config.getJSONObject("player");
         JSONArray playerStart = player.getJSONArray("start");
         double playerScale = player.getDouble("scale");
-        double playerSpeed = player.getDouble("speed");
+        double playerSpeed = player.getDouble("speed") * tileSize;
         String playerSprite = player.getString("sprite");
-        this.player = new Player(playerStart.getDouble(0), playerStart.getDouble(1), playerScale, playerSpeed);
+
+        this.player = new Player(playerStart.getDouble(0) * tileSize, playerStart.getDouble(1) * tileSize, playerScale,
+                playerSpeed);
         this.player.setSprite(playerSprite);
-        if (player.has("movementCollider")) {
-            JSONObject playerColliderData = player.getJSONObject("movementCollider");
-            Collider tileCollider = new Collider(this.player, playerColliderData.getDouble("x"),
-                    playerColliderData.getDouble("y"), playerColliderData.getDouble("width"),
-                    playerColliderData.getDouble("height"));
-            this.player.setMovementCollider(tileCollider);
-        }
+        Collider playerMovementCollider = parseMovementCollider(player, this.player);
+        if (playerMovementCollider != null) this.player.setMovementCollider(playerMovementCollider);
+
         gameObjects.add(this.player);
+    }
+
+    private Collider parseMovementCollider(JSONObject json, GameObject parent) {
+        if (!json.has("movementCollider")) return null;
+
+        JSONObject colliderData = json.getJSONObject("movementCollider");
+        double parentSize = tileSize * parent.scale;
+        double x = colliderData.getDouble("x") * parentSize;
+        double y = colliderData.getDouble("y") * parentSize;
+        double width = colliderData.getDouble("width") * parentSize;
+        double height = colliderData.getDouble("height") * parentSize;
+        return new Collider(parent, x, y, width, height);
     }
 
     // public void saveFile() {}
