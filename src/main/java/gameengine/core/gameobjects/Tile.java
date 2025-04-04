@@ -3,8 +3,15 @@ package gameengine.core.gameobjects;
 import gameengine.core.LevelData;
 
 public class Tile extends GameObject {
-    public Tile(double posX, double posY) {
-        super(posX, posY, 0, 1);
+    public boolean isSolid;
+
+    public Tile(double posX, double posY, double size, TileType type) {
+        super(posX, posY, 0, size);
+        this.isSolid = type.isSolid();
+
+        setSprite(type.getSpritePath());
+
+        setMovementCollider(0, 0, size, size);
     }
 
     @Override

@@ -15,6 +15,7 @@ import gameengine.core.gameobjects.Enemy;
 import gameengine.core.gameobjects.GameObject;
 import gameengine.core.gameobjects.Player;
 import gameengine.core.gameobjects.Tile;
+import gameengine.core.gameobjects.TileType;
 
 public class LevelData {
     // level
@@ -48,7 +49,6 @@ public class LevelData {
         this.rows = map.getInt("rows");
         this.cols = map.getInt("cols");
         this.tileSize = map.getInt("tileSize");
-        JSONObject mapTileTypes = map.getJSONObject("tileTypes");
 
         // Read the map from a text file and create tiles
         List<String> mapLines = null;
@@ -58,13 +58,8 @@ public class LevelData {
                 String[] tileNumbers = mapLines.get(row).split(" ");
                 for (int col = 0; col < cols; col++) {
                     int tileType = Integer.parseInt(tileNumbers[col]);
-                    JSONObject tileData = mapTileTypes.getJSONObject(Integer.toString(tileType));
-                    String tileSprite = tileData.getString("sprite");
 
-                    Tile tile = new Tile(col * tileSize, row * tileSize);
-                    tile.setSprite(tileSprite);
-                    Collider tileMovementCollider = parseMovementCollider(tileData, tile);
-                    if (tileMovementCollider != null) tile.setMovementCollider(tileMovementCollider);
+                    Tile tile = new Tile(col * tileSize, row * tileSize, tileSize, TileType.values()[tileType]);
 
                     gameObjects.add(tile);
                 }
@@ -79,13 +74,9 @@ public class LevelData {
         JSONArray playerStart = playerData.getJSONArray("start");
         double playerScale = playerData.getDouble("scale");
         double playerSpeed = playerData.getDouble("speed") * tileSize;
-        String playerSprite = playerData.getString("sprite");
 
-        player = new Player(playerStart.getDouble(0) * tileSize, playerStart.getDouble(1) * tileSize, playerScale,
-                playerSpeed);
-        player.setSprite(playerSprite);
-        Collider playerMovementCollider = parseMovementCollider(playerData, player);
-        if (playerMovementCollider != null) player.setMovementCollider(playerMovementCollider);
+        player = new Player(playerStart.getDouble(0) * tileSize, playerStart.getDouble(1) * tileSize,
+                tileSize * playerScale, playerSpeed);
 
         gameObjects.add(player);
 
@@ -96,28 +87,12 @@ public class LevelData {
             JSONArray enemyStart = enemyData.getJSONArray("start");
             double enemyScale = enemyData.getDouble("scale");
             double enemySpeed = enemyData.getDouble("speed") * tileSize;
-            String enemySprite = enemyData.getString("sprite");
 
-            Enemy enemy = new Enemy(enemyStart.getDouble(0) * tileSize, enemyStart.getDouble(1) * tileSize, enemyScale,
-                    enemySpeed);
-            enemy.setSprite(enemySprite);
-            Collider enemyMovementCollider = parseMovementCollider(enemyData, enemy);
-            if (enemyMovementCollider != null) enemy.setMovementCollider(enemyMovementCollider);
+            Enemy enemy = new Enemy(enemyStart.getDouble(0) * tileSize, enemyStart.getDouble(1) * tileSize,
+                    tileSize * enemyScale, enemySpeed);
 
             gameObjects.add(enemy);
         }
-    }
-
-    private Collider parseMovementCollider(JSONObject json, GameObject parent) {
-        if (!json.has("movementCollider")) return null;
-
-        JSONObject colliderData = json.getJSONObject("movementCollider");
-        double parentSize = tileSize * parent.scale;
-        double x = colliderData.getDouble("x") * parentSize;
-        double y = colliderData.getDouble("y") * parentSize;
-        double width = colliderData.getDouble("width") * parentSize;
-        double height = colliderData.getDouble("height") * parentSize;
-        return new Collider(parent, x, y, width, height);
     }
 
     // public void saveFile() {}

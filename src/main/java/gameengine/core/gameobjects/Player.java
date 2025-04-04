@@ -1,14 +1,23 @@
 package gameengine.core.gameobjects;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import gameengine.core.InputHandler;
 import gameengine.core.LevelData;
 import javafx.scene.input.KeyCode;
 
 public class Player extends Entity {
     private InputHandler inputHandler;
+    private List<Item> inventory = new ArrayList<>();
 
-    public Player(double posX, double posY, double scale, double speed) {
-        super(posX, posY, 2, scale, speed);
+    public Player(double posX, double posY, double size, double speed) {
+        super(posX, posY, 2, size, speed);
+
+        setSprite("/gameengine/img/player_sprite.png");
+
+        setMovementCollider(0.1 * size, 0.6 * size, 0.8 * size, 0.4 * size);
+        System.out.println(movementCollider.getMinX() + " " + movementCollider.getMaxX());
     }
 
     public void setInputHandler(InputHandler inputHandler) {
@@ -19,18 +28,15 @@ public class Player extends Entity {
     public void update(double deltaTime, LevelData levelData) {
         if (inputHandler == null) return;
 
+        // Handle movement
         final double deltaX;
         final double deltaY;
-        if (inputHandler.isKeyPressed(KeyCode.W))
-            deltaY = -speed * deltaTime; // Up
-        else if (inputHandler.isKeyPressed(KeyCode.S))
-            deltaY = speed * deltaTime; // Down
+        if (inputHandler.isKeyPressed(KeyCode.W)) deltaY = -speed * deltaTime; // Up
+        else if (inputHandler.isKeyPressed(KeyCode.S)) deltaY = speed * deltaTime; // Down
         else
             deltaY = 0;
-        if (inputHandler.isKeyPressed(KeyCode.A))
-            deltaX = -speed * deltaTime; // Left
-        else if (inputHandler.isKeyPressed(KeyCode.D))
-            deltaX = speed * deltaTime; // Right
+        if (inputHandler.isKeyPressed(KeyCode.A)) deltaX = -speed * deltaTime; // Left
+        else if (inputHandler.isKeyPressed(KeyCode.D)) deltaX = speed * deltaTime; // Right
         else
             deltaX = 0;
 
@@ -39,6 +45,8 @@ public class Player extends Entity {
         boolean isInMapY = isInMapY(levelData, deltaX, deltaY);
         if (isInMapX && isOnSolidTile) moveX(deltaX);
         if (isInMapY && isOnSolidTile) moveY(deltaY);
+
+        // Handle inventory
     }
 
 }

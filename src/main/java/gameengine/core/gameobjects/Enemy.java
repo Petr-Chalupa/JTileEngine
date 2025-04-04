@@ -4,8 +4,12 @@ import gameengine.core.LevelData;
 
 public class Enemy extends Entity {
 
-    public Enemy(double posX, double posY, double scale, double speed) {
-        super(posX, posY, 1, scale, speed);
+    public Enemy(double posX, double posY, double size, double speed) {
+        super(posX, posY, 1, size, speed);
+
+        setSprite("/gameengine/img/enemy_sprite.png");
+
+        setMovementCollider(0, 0, size, size);
     }
 
     @Override

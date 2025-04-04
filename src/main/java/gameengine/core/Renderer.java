@@ -37,6 +37,7 @@ public class Renderer implements Runnable {
         while (RENDER_THREAD != null && !RENDER_THREAD.isInterrupted()) {
             if (isPaused) {
                 try {
+                    lastTime = System.nanoTime();
                     Thread.sleep(100);
                     continue;
                 } catch (InterruptedException e) {
@@ -97,29 +98,27 @@ public class Renderer implements Runnable {
 
         // Render visible game objects
         for (GameObject gameObject : sortedObjects) {
-            double gameObjectSize = levelData.tileSize * gameObject.scale;
-
-            Bounds gameObjectBounds = new BoundingBox(gameObject.posX, gameObject.posY, gameObjectSize, gameObjectSize);
+            Bounds gameObjectBounds = new BoundingBox(gameObject.posX, gameObject.posY, gameObject.size,
+                    gameObject.size);
             Bounds intersection = calculateVisibleIntersection(gameObjectBounds, viewBounds);
             if (intersection == null) continue;
 
-            double sourceX = intersection.getMinX() - gameObject.posX;
-            double sourceY = intersection.getMinY() - gameObject.posY;
-            double sourceSize = (intersection.getWidth() / gameObject.scale)
-                    * (gameObject.getSprite().getWidth() / levelData.tileSize);
-            double sourceHeight = (intersection.getHeight() / gameObject.scale)
-                    * (gameObject.getSprite().getHeight() / levelData.tileSize);
+            double spriteWidth = gameObject.getSprite().getWidth();
+            double spriteHeight = gameObject.getSprite().getHeight();
+            double sourceX = (intersection.getMinX() - gameObject.posX) * (spriteWidth / gameObject.size);
+            double sourceY = (intersection.getMinY() - gameObject.posY) * (spriteHeight / gameObject.size);
+            double sourceWidth = intersection.getWidth() * (spriteWidth / gameObject.size);
+            double sourceHeight = intersection.getHeight() * (spriteHeight / gameObject.size);
             double screenX = gameObject.posX - viewBounds.getMinX();
             double screenY = gameObject.posY - viewBounds.getMinY();
-            context.drawImage(gameObject.getSprite(), sourceX, sourceY, sourceSize, sourceHeight, screenX, screenY,
-                    gameObjectSize, gameObjectSize);
+            context.drawImage(gameObject.getSprite(), sourceX, sourceY, sourceWidth, sourceHeight, screenX, screenY,
+                    gameObject.size, gameObject.size);
         }
     }
 
     private Bounds calculateViewBounds() {
-        double playerSize = levelData.tileSize * levelData.player.scale;
-        double viewWorldCenterX = levelData.player.posX + (playerSize / 2.0);
-        double viewWorldCenterY = levelData.player.posY + (playerSize / 2.0);
+        double viewWorldCenterX = levelData.player.posX + (levelData.player.size / 2.0);
+        double viewWorldCenterY = levelData.player.posY + (levelData.player.size / 2.0);
 
         double viewCols = canvas.getWidth() / levelData.tileSize;
         double viewRows = canvas.getHeight() / levelData.tileSize;

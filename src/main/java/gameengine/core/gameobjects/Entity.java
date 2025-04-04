@@ -5,8 +5,8 @@ import gameengine.core.LevelData;
 public class Entity extends GameObject {
     protected double speed;
 
-    public Entity(double posX, double posY, int layer, double scale, double speed) {
-        super(posX, posY, layer, scale);
+    public Entity(double posX, double posY, int layer, double size, double speed) {
+        super(posX, posY, layer, size);
         this.speed = speed;
     }
 
@@ -23,10 +23,9 @@ public class Entity extends GameObject {
     }
 
     protected boolean isOnSolidTile(LevelData levelData, double deltaX, double deltaY) {
-        return levelData.gameObjects.stream()
-                .filter(gameObject -> (gameObject instanceof Tile && gameObject.movementCollider != null))
-                .map(gameObject -> (Tile) gameObject).allMatch(
-                        tile -> movementCollider.calculateIntersection(tile.movementCollider, deltaX, deltaY) == null);
+        return levelData.gameObjects.stream().filter(gameObject -> gameObject instanceof Tile)
+                .map(gameObject -> (Tile) gameObject).allMatch(tile -> tile.isSolid
+                        || movementCollider.calculateIntersection(tile.movementCollider, deltaX, deltaY) == null);
     }
 
     protected void moveX(double dist) {
