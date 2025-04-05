@@ -1,6 +1,6 @@
 module engine {
     requires transitive javafx.graphics;
-    requires org.json;
+    requires transitive org.json;
 
     exports engine.core;
     exports engine.gameobjects;
