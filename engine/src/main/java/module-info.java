@@ -4,5 +4,5 @@ module engine {
 
     exports engine.core;
     exports engine.gameobjects;
-    // exports engine.utils;
+    exports engine.utils;
 }

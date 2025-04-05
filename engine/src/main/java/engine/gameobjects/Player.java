@@ -14,10 +14,9 @@ public class Player extends Entity {
     public Player(double posX, double posY, double size, double speed) {
         super(posX, posY, 2, size, speed);
 
-        setSprite("/engine/img/player_sprite.png");
+        setSprite("player_sprite.png");
 
         setMovementCollider(0.1 * size, 0.6 * size, 0.8 * size, 0.4 * size);
-        System.out.println(movementCollider.getMinX() + " " + movementCollider.getMaxX());
     }
 
     public void setInputHandler(InputHandler inputHandler) {

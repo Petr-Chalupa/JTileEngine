@@ -2,6 +2,7 @@ package engine.gameobjects;
 
 import engine.core.Collider;
 import engine.core.LevelData;
+import engine.utils.ResourceManager;
 import javafx.scene.image.Image;
 
 public abstract class GameObject {
@@ -18,18 +19,18 @@ public abstract class GameObject {
         this.posY = posY;
         this.layer = layer;
         this.size = size;
-        setSprite("/engine/img/default_sprite.png");
+        setSprite("default_sprite.png");
     }
 
     public Image getSprite() {
         return sprite;
     }
 
-    public void setSprite(String spritePath) {
+    public void setSprite(String sprite) {
         try {
-            this.sprite = new Image(getClass().getResourceAsStream(spritePath));
-        } catch (NullPointerException e) {
-            System.out.println("Invalid sprite path");
+            this.sprite = ResourceManager.getInstance().getImg(sprite);
+        } catch (Exception e) {
+            System.err.println("Invalid sprite, default is being used:\n\t" + e);
         }
     }
 

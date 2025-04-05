@@ -7,7 +7,7 @@ public class Enemy extends Entity {
     public Enemy(double posX, double posY, double size, double speed) {
         super(posX, posY, 1, size, speed);
 
-        setSprite("/engine/img/enemy_sprite.png");
+        setSprite("enemy_sprite.png");
 
         setMovementCollider(0, 0, size, size);
     }
