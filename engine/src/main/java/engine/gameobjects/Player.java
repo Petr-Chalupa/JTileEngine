@@ -1,18 +1,17 @@
 package engine.gameobjects;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import engine.core.InputHandler;
+import engine.core.Inventory;
 import engine.core.LevelData;
 import javafx.scene.input.KeyCode;
 
 public class Player extends Entity {
     private InputHandler inputHandler;
-    private List<Item> inventory = new ArrayList<>();
+    private Inventory inventory;
 
     public Player(double posX, double posY, double size, double speed) {
         super(posX, posY, 2, size, speed);
+        this.inventory = new Inventory(this, 10);
 
         setSprite("player_sprite.png");
 
