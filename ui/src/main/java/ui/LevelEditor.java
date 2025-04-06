@@ -1,11 +1,11 @@
 package ui;
 
-import java.io.IOException;
-
 import engine.core.LevelData;
 import engine.core.Renderer;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
+
+import java.io.IOException;
 
 public class LevelEditor {
     private final LevelData levelData = new LevelData();

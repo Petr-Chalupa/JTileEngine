@@ -1,17 +1,12 @@
 package engine.core;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import engine.gameobjects.*;
+import engine.utils.ResourceManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import engine.gameobjects.Enemy;
-import engine.gameobjects.GameObject;
-import engine.gameobjects.Player;
-import engine.gameobjects.Tile;
-import engine.gameobjects.TileType;
-import engine.utils.ResourceManager;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LevelData {
     // level

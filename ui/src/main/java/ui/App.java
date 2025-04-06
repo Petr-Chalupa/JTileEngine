@@ -1,5 +1,6 @@
 package ui;
 
+import engine.core.Renderer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -9,8 +10,6 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-
-import engine.core.Renderer;
 
 public class App extends Application {
     private static Scene scene;

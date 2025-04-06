@@ -1,7 +1,5 @@
 package ui;
 
-import java.io.IOException;
-
 import engine.core.InputHandler;
 import engine.core.LevelData;
 import engine.core.Renderer;
@@ -10,6 +8,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+
+import java.io.IOException;
 
 public class GameView {
     private InputHandler inputHandler;

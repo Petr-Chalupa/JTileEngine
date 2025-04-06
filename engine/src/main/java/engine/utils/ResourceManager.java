@@ -1,5 +1,8 @@
 package engine.utils;
 
+import javafx.scene.image.Image;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -12,10 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.json.JSONObject;
-
-import javafx.scene.image.Image;
 
 public class ResourceManager {
     private static ResourceManager instance;

@@ -1,8 +1,5 @@
 package engine.core;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import engine.gameobjects.GameObject;
 import javafx.application.Platform;
 import javafx.geometry.BoundingBox;
@@ -10,6 +7,9 @@ import javafx.geometry.Bounds;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Renderer implements Runnable {
     private static Thread RENDER_THREAD;
