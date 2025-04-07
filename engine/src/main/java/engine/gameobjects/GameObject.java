@@ -50,8 +50,8 @@ public abstract class GameObject {
     }
 
     public void render(GraphicsContext context, LevelData levelData, double sx, double sy, double sw, double sh,
-            double dx, double dy) {
-        context.drawImage(sprite, sx, sy, sw, sh, dx, dy, size, size);
+            double dx, double dy, double dw, double dh) {
+        context.drawImage(sprite, sx, sy, sw, sh, dx, dy, dw, dh);
     }
 
     public abstract void update(double deltaTime, LevelData levelData);

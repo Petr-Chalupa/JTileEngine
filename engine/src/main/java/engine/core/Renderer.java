@@ -109,7 +109,8 @@ public class Renderer implements Runnable {
             double sourceHeight = intersection.getHeight() * (spriteHeight / gameObject.size);
             double destX = gameObject.posX - viewBounds.getMinX();
             double destY = gameObject.posY - viewBounds.getMinY();
-            gameObject.render(context, levelData, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY);
+            gameObject.render(context, levelData, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY,
+                    gameObject.size, gameObject.size);
         }
     }
 

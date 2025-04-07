@@ -19,6 +19,7 @@ public class Inventory {
     private int cols;
     public Item[] items;
     public boolean isVisible;
+    public int selected = -1;
     private int gap = 5;
     private int nameSize = 20;
 
@@ -70,7 +71,7 @@ public class Inventory {
             context.setStroke(Color.GRAY);
             context.strokeRect(slotX, slotY, slotSize, slotSize);
             if (items[i] != null) {
-                // render item
+                items[i].render(context, levelData, 0, 0, slotSize, slotSize, slotX, slotY, slotSize, slotSize);
             }
         }
     }

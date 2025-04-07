@@ -20,8 +20,8 @@ public class Shop extends GameObject {
 
     @Override
     public void render(GraphicsContext context, LevelData levelData, double sx, double sy, double sw, double sh,
-            double dx, double dy) {
-        super.render(context, levelData, sx, sy, sw, sh, dx, dy);
+            double dx, double dy, double dw, double dh) {
+        super.render(context, levelData, sx, sy, sw, sh, dx, dy, dw, dh);
         this.inventory.render(context, levelData, dx, dy);
     }
 }
