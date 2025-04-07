@@ -3,6 +3,9 @@ package engine.gameobjects;
 import engine.core.Collider;
 import engine.core.LevelData;
 import engine.utils.ResourceManager;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 public abstract class GameObject {
@@ -34,6 +37,10 @@ public abstract class GameObject {
         }
     }
 
+    public Bounds getBounds() {
+        return new BoundingBox(posX, posY, size, size);
+    }
+
     public void setMovementCollider(double posX, double posY, double width, double height) {
         this.movementCollider = new Collider(this, posX, posY, width, height);
     }
@@ -42,15 +49,12 @@ public abstract class GameObject {
         this.movementCollider = new Collider(this, posX, posY, width, height);
     }
 
+    public void render(GraphicsContext context, LevelData levelData, double sx, double sy, double sw, double sh,
+            double dx, double dy) {
+        context.drawImage(sprite, sx, sy, sw, sh, dx, dy, size, size);
+    }
+
     public abstract void update(double deltaTime, LevelData levelData);
 
-    // public static Bounds calculateIntersection(Bounds a, Bounds b) {
-    // double minX = Math.max(a.getMinX(), b.getMinX());
-    // double minY = Math.max(a.getMinY(), b.getMinY());
-    // double maxX = Math.min(a.getMaxX(), b.getMaxX());
-    // double maxY = Math.min(a.getMaxY(), b.getMaxY());
-    // return (minX < maxX && minY < maxY) ? new BoundingBox(minX, minY, maxX -
-    // minX, maxY - minY) : null;
-    // }
-
+    // public abstract void interact(GameObject initiator);
 }

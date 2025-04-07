@@ -98,9 +98,7 @@ public class Renderer implements Runnable {
 
         // Render visible game objects
         for (GameObject gameObject : sortedObjects) {
-            Bounds gameObjectBounds = new BoundingBox(gameObject.posX, gameObject.posY, gameObject.size,
-                    gameObject.size);
-            Bounds intersection = calculateVisibleIntersection(gameObjectBounds, viewBounds);
+            Bounds intersection = calculateVisibleIntersection(gameObject.getBounds(), viewBounds);
             if (intersection == null) continue;
 
             double spriteWidth = gameObject.getSprite().getWidth();
@@ -109,10 +107,9 @@ public class Renderer implements Runnable {
             double sourceY = (intersection.getMinY() - gameObject.posY) * (spriteHeight / gameObject.size);
             double sourceWidth = intersection.getWidth() * (spriteWidth / gameObject.size);
             double sourceHeight = intersection.getHeight() * (spriteHeight / gameObject.size);
-            double screenX = gameObject.posX - viewBounds.getMinX();
-            double screenY = gameObject.posY - viewBounds.getMinY();
-            context.drawImage(gameObject.getSprite(), sourceX, sourceY, sourceWidth, sourceHeight, screenX, screenY,
-                    gameObject.size, gameObject.size);
+            double destX = gameObject.posX - viewBounds.getMinX();
+            double destY = gameObject.posY - viewBounds.getMinY();
+            gameObject.render(context, levelData, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY);
         }
     }
 

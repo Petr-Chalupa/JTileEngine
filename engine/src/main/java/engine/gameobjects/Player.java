@@ -3,6 +3,8 @@ package engine.gameobjects;
 import engine.core.InputHandler;
 import engine.core.Inventory;
 import engine.core.LevelData;
+import engine.core.Inventory.InventoryType;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 
 public class Player extends Entity {
@@ -11,7 +13,8 @@ public class Player extends Entity {
 
     public Player(double posX, double posY, double size, double speed) {
         super(posX, posY, 2, size, speed);
-        this.inventory = new Inventory(this, 10);
+        this.inventory = new Inventory(this, InventoryType.FIXED, null, 10, 10);
+        this.inventory.toggle();
 
         setSprite("player_sprite.png");
 
@@ -47,8 +50,13 @@ public class Player extends Entity {
         boolean isInMapY = isInMapY(levelData, deltaX, deltaY);
         if (isInMapX && isOnSolidTile) moveX(deltaX);
         if (isInMapY && isOnSolidTile) moveY(deltaY);
+    }
 
-        // Handle inventory
+    @Override
+    public void render(GraphicsContext context, LevelData levelData, double sx, double sy, double sw, double sh,
+            double dx, double dy) {
+        super.render(context, levelData, sx, sy, sw, sh, dx, dy);
+        this.inventory.render(context, levelData, dx, dy);
     }
 
 }
