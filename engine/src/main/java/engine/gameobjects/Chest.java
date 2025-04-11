@@ -1,7 +1,6 @@
 package engine.gameobjects;
 
 import engine.core.Inventory;
-import engine.core.LevelData;
 import javafx.scene.canvas.GraphicsContext;
 import engine.core.Inventory.InventoryType;
 
@@ -14,14 +13,14 @@ public class Chest extends GameObject {
     }
 
     @Override
-    public void update(double deltaTime, LevelData levelData) {
+    public void update(double deltaTime) {
         throw new UnsupportedOperationException("Unimplemented method 'update'");
     }
 
     @Override
-    public void render(GraphicsContext context, LevelData levelData, double sx, double sy, double sw, double sh,
-            double dx, double dy, double dw, double dh) {
-        super.render(context, levelData, sx, sy, sw, sh, dx, dy, dw, dh);
-        this.inventory.render(context, levelData, dx, dy);
+    public void render(GraphicsContext context, double sx, double sy, double sw, double sh, double dx, double dy,
+            double dw, double dh) {
+        super.render(context, sx, sy, sw, sh, dx, dy, dw, dh);
+        this.inventory.render(context, dx, dy);
     }
 }

@@ -1,7 +1,6 @@
 package engine.gameobjects;
 
 import engine.core.Collider;
-import engine.core.LevelData;
 import engine.utils.ResourceManager;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
@@ -49,12 +48,12 @@ public abstract class GameObject {
         this.movementCollider = new Collider(this, posX, posY, width, height);
     }
 
-    public void render(GraphicsContext context, LevelData levelData, double sx, double sy, double sw, double sh,
-            double dx, double dy, double dw, double dh) {
+    public void render(GraphicsContext context, double sx, double sy, double sw, double sh, double dx, double dy,
+            double dw, double dh) {
         context.drawImage(sprite, sx, sy, sw, sh, dx, dy, dw, dh);
     }
 
-    public abstract void update(double deltaTime, LevelData levelData);
+    public abstract void update(double deltaTime);
 
     // public abstract void interact(GameObject initiator);
 }

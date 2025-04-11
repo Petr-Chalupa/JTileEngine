@@ -1,14 +1,19 @@
-package engine.core;
-
-import engine.gameobjects.*;
-import engine.utils.ResourceManager;
-import org.json.JSONArray;
-import org.json.JSONObject;
+package engine.utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LevelData {
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import engine.gameobjects.Enemy;
+import engine.gameobjects.GameObject;
+import engine.gameobjects.Player;
+import engine.gameobjects.Tile;
+import engine.gameobjects.TileType;
+
+public class LevelLoader {
+    private static LevelLoader instance;
     // level
     public String name;
     public boolean completed;
@@ -19,6 +24,14 @@ public class LevelData {
     public int tileSize;
     // player
     public Player player;
+
+    private LevelLoader() {
+    }
+
+    public static LevelLoader getInstance() {
+        if (instance == null) instance = new LevelLoader();
+        return instance;
+    }
 
     public void loadFile(String path) {
         JSONObject config = ResourceManager.getInstance().getLevelConfig(path);
@@ -66,4 +79,6 @@ public class LevelData {
             gameObjects.add(enemy);
         }
     }
+
+    // public void saveFile(){}
 }

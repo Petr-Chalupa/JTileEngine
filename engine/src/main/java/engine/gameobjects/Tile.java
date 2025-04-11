@@ -1,7 +1,5 @@
 package engine.gameobjects;
 
-import engine.core.LevelData;
-
 public class Tile extends GameObject {
     public boolean isSolid;
 
@@ -15,6 +13,6 @@ public class Tile extends GameObject {
     }
 
     @Override
-    public void update(double deltaTime, LevelData levelData) {
+    public void update(double deltaTime) {
     }
 }

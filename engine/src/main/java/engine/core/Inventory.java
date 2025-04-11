@@ -2,6 +2,7 @@ package engine.core;
 
 import engine.gameobjects.GameObject;
 import engine.gameobjects.Item;
+import engine.utils.LevelLoader;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -36,11 +37,11 @@ public class Inventory {
         isVisible = !isVisible;
     }
 
-    public void render(GraphicsContext context, LevelData levelData, double dx, double dy) {
+    public void render(GraphicsContext context, double dx, double dy) {
         if (!isVisible) return;
 
         int rows = (int) Math.ceilDiv(size, cols);
-        double slotSize = levelData.tileSize;
+        double slotSize = LevelLoader.getInstance().tileSize;
         double width = cols * (slotSize + gap) + gap;
         double height = rows * (slotSize + gap) + gap + (name != null ? nameSize : 0);
 
@@ -71,7 +72,7 @@ public class Inventory {
             context.setStroke(Color.GRAY);
             context.strokeRect(slotX, slotY, slotSize, slotSize);
             if (items[i] != null) {
-                items[i].render(context, levelData, 0, 0, slotSize, slotSize, slotX, slotY, slotSize, slotSize);
+                items[i].render(context, 0, 0, slotSize, slotSize, slotX, slotY, slotSize, slotSize);
             }
         }
     }

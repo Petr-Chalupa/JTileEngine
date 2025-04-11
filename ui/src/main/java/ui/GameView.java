@@ -1,8 +1,8 @@
 package ui;
 
 import engine.core.InputHandler;
-import engine.core.LevelData;
 import engine.core.Renderer;
+import engine.utils.LevelLoader;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
@@ -13,7 +13,6 @@ import java.io.IOException;
 
 public class GameView {
     private InputHandler inputHandler;
-    private final LevelData levelData = new LevelData();
 
     @FXML
     private Pane canvasParent;
@@ -41,16 +40,17 @@ public class GameView {
     }
 
     public void loadLvl(String path) {
-        levelData.loadFile(path);
+        LevelLoader levelLoader = LevelLoader.getInstance();
+        levelLoader.loadFile(path);
 
-        pauseMenuLevelName.setText(levelData.name);
+        pauseMenuLevelName.setText(levelLoader.name);
 
-        Renderer renderer = new Renderer(canvasParent, 60, levelData);
+        Renderer renderer = new Renderer(canvasParent, 60);
         App.setRenderer(renderer);
         renderer.start();
 
         inputHandler = new InputHandler(canvasParent.getScene());
-        levelData.player.setInputHandler(inputHandler);
+        levelLoader.player.setInputHandler(inputHandler);
 
         inputHandler.setPressedCallback((event) -> {
             if (event.getCode() == KeyCode.ESCAPE) {

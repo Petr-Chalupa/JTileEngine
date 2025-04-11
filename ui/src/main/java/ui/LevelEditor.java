@@ -1,14 +1,13 @@
 package ui;
 
-import engine.core.LevelData;
 import engine.core.Renderer;
+import engine.utils.LevelLoader;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 
 public class LevelEditor {
-    private final LevelData levelData = new LevelData();
 
     @FXML
     private Pane canvasParent;
@@ -20,9 +19,10 @@ public class LevelEditor {
     }
 
     public void loadLevel(String path) {
-        levelData.loadFile(path);
+        LevelLoader levelLoader = LevelLoader.getInstance();
+        levelLoader.loadFile(path);
 
-        Renderer renderer = new Renderer(canvasParent, 10, levelData);
+        Renderer renderer = new Renderer(canvasParent, 10);
         App.setRenderer(renderer);
         renderer.start();
     }

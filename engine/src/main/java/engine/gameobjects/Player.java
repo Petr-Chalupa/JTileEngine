@@ -2,7 +2,6 @@ package engine.gameobjects;
 
 import engine.core.InputHandler;
 import engine.core.Inventory;
-import engine.core.LevelData;
 import engine.core.Inventory.InventoryType;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
@@ -13,7 +12,7 @@ public class Player extends Entity {
 
     public Player(double posX, double posY, double size, double speed) {
         super(posX, posY, 2, size, speed);
-        this.inventory = new Inventory(this, InventoryType.FIXED, null, 10, 10);
+        this.inventory = new Inventory(this, InventoryType.FIXED, null, 5, 5);
         this.inventory.toggle();
 
         setSprite("player_sprite.png");
@@ -26,37 +25,33 @@ public class Player extends Entity {
     }
 
     @Override
-    public void update(double deltaTime, LevelData levelData) {
+    public void update(double deltaTime) {
         if (inputHandler == null) return;
 
         // Handle movement
         final double deltaX;
         final double deltaY;
-        if (inputHandler.isKeyPressed(KeyCode.W))
-            deltaY = -speed * deltaTime; // Up
-        else if (inputHandler.isKeyPressed(KeyCode.S))
-            deltaY = speed * deltaTime; // Down
+        if (inputHandler.isKeyPressed(KeyCode.W)) deltaY = -speed * deltaTime; // Up
+        else if (inputHandler.isKeyPressed(KeyCode.S)) deltaY = speed * deltaTime; // Down
         else
             deltaY = 0;
-        if (inputHandler.isKeyPressed(KeyCode.A))
-            deltaX = -speed * deltaTime; // Left
-        else if (inputHandler.isKeyPressed(KeyCode.D))
-            deltaX = speed * deltaTime; // Right
+        if (inputHandler.isKeyPressed(KeyCode.A)) deltaX = -speed * deltaTime; // Left
+        else if (inputHandler.isKeyPressed(KeyCode.D)) deltaX = speed * deltaTime; // Right
         else
             deltaX = 0;
 
-        boolean isOnSolidTile = isOnSolidTile(levelData, deltaX, deltaY);
-        boolean isInMapX = isInMapX(levelData, deltaX, deltaY);
-        boolean isInMapY = isInMapY(levelData, deltaX, deltaY);
+        boolean isOnSolidTile = isOnSolidTile(deltaX, deltaY);
+        boolean isInMapX = isInMapX(deltaX, deltaY);
+        boolean isInMapY = isInMapY(deltaX, deltaY);
         if (isInMapX && isOnSolidTile) moveX(deltaX);
         if (isInMapY && isOnSolidTile) moveY(deltaY);
     }
 
     @Override
-    public void render(GraphicsContext context, LevelData levelData, double sx, double sy, double sw, double sh,
-            double dx, double dy, double dw, double dh) {
-        super.render(context, levelData, sx, sy, sw, sh, dx, dy, dw, dh);
-        this.inventory.render(context, levelData, dx, dy);
+    public void render(GraphicsContext context, double sx, double sy, double sw, double sh, double dx, double dy,
+            double dw, double dh) {
+        super.render(context, sx, sy, sw, sh, dx, dy, dw, dh);
+        this.inventory.render(context, dx, dy);
     }
 
 }

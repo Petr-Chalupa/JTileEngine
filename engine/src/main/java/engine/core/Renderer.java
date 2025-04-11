@@ -1,6 +1,7 @@
 package engine.core;
 
 import engine.gameobjects.GameObject;
+import engine.utils.LevelLoader;
 import javafx.application.Platform;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
@@ -16,11 +17,11 @@ public class Renderer implements Runnable {
     private int FPS;
     private volatile boolean isPaused = false;;
     private Canvas canvas;
-    private LevelData levelData;
+    private LevelLoader levelLoader;
 
-    public Renderer(Pane parent, int FPS, LevelData levelData) {
+    public Renderer(Pane parent, int FPS) {
         this.canvas = new Canvas();
-        this.levelData = levelData;
+        this.levelLoader = LevelLoader.getInstance();
         this.FPS = FPS;
 
         parent.getChildren().add(canvas);
@@ -80,8 +81,8 @@ public class Renderer implements Runnable {
     }
 
     private void update(double deltaTime) {
-        for (GameObject gameObject : levelData.gameObjects) {
-            gameObject.update(deltaTime, levelData);
+        for (GameObject gameObject : levelLoader.gameObjects) {
+            gameObject.update(deltaTime);
         }
     }
 
@@ -93,7 +94,7 @@ public class Renderer implements Runnable {
         Bounds viewBounds = calculateViewBounds();
 
         // Sort game objects based on layer
-        List<GameObject> sortedObjects = levelData.gameObjects.stream()
+        List<GameObject> sortedObjects = levelLoader.gameObjects.stream()
                 .sorted((a, b) -> Integer.compare(a.layer, b.layer)).collect(Collectors.toList());
 
         // Render visible game objects
@@ -109,22 +110,22 @@ public class Renderer implements Runnable {
             double sourceHeight = intersection.getHeight() * (spriteHeight / gameObject.size);
             double destX = gameObject.posX - viewBounds.getMinX();
             double destY = gameObject.posY - viewBounds.getMinY();
-            gameObject.render(context, levelData, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY,
-                    gameObject.size, gameObject.size);
+            gameObject.render(context, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, gameObject.size,
+                    gameObject.size);
         }
     }
 
     private Bounds calculateViewBounds() {
-        double viewWorldCenterX = levelData.player.posX + (levelData.player.size / 2.0);
-        double viewWorldCenterY = levelData.player.posY + (levelData.player.size / 2.0);
+        double viewWorldCenterX = levelLoader.player.posX + (levelLoader.player.size / 2.0);
+        double viewWorldCenterY = levelLoader.player.posY + (levelLoader.player.size / 2.0);
 
-        double viewCols = canvas.getWidth() / levelData.tileSize;
-        double viewRows = canvas.getHeight() / levelData.tileSize;
+        double viewCols = canvas.getWidth() / levelLoader.tileSize;
+        double viewRows = canvas.getHeight() / levelLoader.tileSize;
 
-        double viewLeft = viewWorldCenterX - (viewCols * levelData.tileSize) / 2.0;
-        double viewRight = viewWorldCenterX + (viewCols * levelData.tileSize) / 2.0;
-        double viewTop = viewWorldCenterY - (viewRows * levelData.tileSize) / 2.0;
-        double viewBottom = viewWorldCenterY + (viewRows * levelData.tileSize) / 2.0;
+        double viewLeft = viewWorldCenterX - (viewCols * levelLoader.tileSize) / 2.0;
+        double viewRight = viewWorldCenterX + (viewCols * levelLoader.tileSize) / 2.0;
+        double viewTop = viewWorldCenterY - (viewRows * levelLoader.tileSize) / 2.0;
+        double viewBottom = viewWorldCenterY + (viewRows * levelLoader.tileSize) / 2.0;
 
         return new BoundingBox(viewLeft, viewTop, viewRight - viewLeft, viewBottom - viewTop);
     }

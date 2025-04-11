@@ -1,29 +1,31 @@
 package engine.gameobjects;
 
-import engine.core.LevelData;
+import engine.utils.LevelLoader;
 
 public class Entity extends GameObject {
     protected double speed;
+    private LevelLoader levelLoader;
 
     public Entity(double posX, double posY, int layer, double size, double speed) {
         super(posX, posY, layer, size);
         this.speed = speed;
+        this.levelLoader = LevelLoader.getInstance();
     }
 
     @Override
-    public void update(double deltaTime, LevelData levelData) {
+    public void update(double deltaTime) {
     }
 
-    protected boolean isInMapX(LevelData levelData, double deltaX, double deltaY) {
-        return posX + deltaX > 0 && posX + deltaX < (levelData.cols - 1) * levelData.tileSize;
+    protected boolean isInMapX(double deltaX, double deltaY) {
+        return posX + deltaX > 0 && posX + deltaX < (levelLoader.cols - 1) * levelLoader.tileSize;
     }
 
-    protected boolean isInMapY(LevelData levelData, double deltaX, double deltaY) {
-        return posY + deltaY > 0 && posY + deltaX < (levelData.rows - 1) * levelData.tileSize;
+    protected boolean isInMapY(double deltaX, double deltaY) {
+        return posY + deltaY > 0 && posY + deltaX < (levelLoader.rows - 1) * levelLoader.tileSize;
     }
 
-    protected boolean isOnSolidTile(LevelData levelData, double deltaX, double deltaY) {
-        return levelData.gameObjects.stream().filter(gameObject -> gameObject instanceof Tile)
+    protected boolean isOnSolidTile(double deltaX, double deltaY) {
+        return levelLoader.gameObjects.stream().filter(gameObject -> gameObject instanceof Tile)
                 .map(gameObject -> (Tile) gameObject).allMatch(tile -> tile.isSolid
                         || movementCollider.calculateIntersection(tile.movementCollider, deltaX, deltaY) == null);
     }
