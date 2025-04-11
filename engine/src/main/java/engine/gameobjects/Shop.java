@@ -14,7 +14,6 @@ public class Shop extends GameObject {
 
     @Override
     public void update(double deltaTime) {
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
     }
 
     @Override

@@ -1,15 +1,24 @@
 package engine.gameobjects;
 
 public class Item extends GameObject {
-    // interface for objects that can be in inventory and be used by player or
-    // placed on ground
+    private ItemType type;
 
-    public Item(double posX, double posY, int layer, double size) {
+    public Item(double posX, double posY, int layer, double size, ItemType type) {
         super(posX, posY, 1, size);
+        this.type = type;
+
+        setSprite(type.getSpritePath());
+    }
+
+    public ItemType getType() {
+        return type;
     }
 
     @Override
     public void update(double deltaTime) {
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+    }
+
+    public void use(GameObject user) {
+        type.use(user);
     }
 }

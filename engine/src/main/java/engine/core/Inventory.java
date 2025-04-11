@@ -1,11 +1,15 @@
 package engine.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import engine.gameobjects.GameObject;
 import engine.gameobjects.Item;
 import engine.utils.LevelLoader;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
 public class Inventory {
@@ -18,7 +22,7 @@ public class Inventory {
     public String name;
     public int size;
     private int cols;
-    public Item[] items;
+    private List<List<Item>> items;
     public boolean isVisible;
     public int selected = -1;
     private int gap = 5;
@@ -30,11 +34,30 @@ public class Inventory {
         this.name = name;
         this.size = size;
         this.cols = cols;
-        this.items = new Item[size];
+
+        this.items = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            this.items.add(new ArrayList<>());
+        }
     }
 
     public void toggle() {
         isVisible = !isVisible;
+    }
+
+    public void addItem(Item item) {
+        List<Item> emptySlot = items.stream().filter(slot -> slot.isEmpty()).findFirst().orElse(null);
+        List<Item> sameItemSlot = items.stream().filter(slot -> {
+            if (slot.isEmpty()) return false;
+            if (slot.getFirst().getType() != item.getType()) return false;
+            if (slot.size() == item.getType().getStackSize()) return false;
+            return true;
+        }).findFirst().orElse(null);
+
+        List<Item> slot = sameItemSlot != null ? sameItemSlot : emptySlot;
+        if (slot != null) slot.add(item);
+        else
+            throw new RuntimeException("Inventory is full, can't add item"); // todo
     }
 
     public void render(GraphicsContext context, double dx, double dy) {
@@ -65,14 +88,21 @@ public class Inventory {
             dy += nameSize;
         }
 
-        // Draw slots with items
+        // Render slots with items
         for (int i = 0; i < size; i++) {
             double slotX = dx + gap + (i % cols) * (slotSize + gap);
             double slotY = dy + gap + (i / cols) * (slotSize + gap);
             context.setStroke(Color.GRAY);
             context.strokeRect(slotX, slotY, slotSize, slotSize);
-            if (items[i] != null) {
-                items[i].render(context, 0, 0, slotSize, slotSize, slotX, slotY, slotSize, slotSize);
+            if (!items.get(i).isEmpty()) {
+                items.get(i).getFirst().render(context, 0, 0, slotSize, slotSize, slotX, slotY, slotSize, slotSize);
+                if (items.get(i).size() > 1) {
+                    context.setFill(Color.WHITE);
+                    context.setTextAlign(TextAlignment.RIGHT);
+                    context.setFont(new Font(20));
+                    context.fillText("" + items.get(i).size(), slotX + slotSize - gap, slotY + slotSize - gap);
+                    context.setTextAlign(TextAlignment.LEFT); // Reset
+                }
             }
         }
     }
