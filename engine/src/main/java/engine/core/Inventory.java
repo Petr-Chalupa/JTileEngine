@@ -1,8 +1,5 @@
 package engine.core;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import engine.gameobjects.GameObject;
 import engine.gameobjects.Item;
 import engine.utils.LevelLoader;
@@ -11,6 +8,9 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Inventory {
     public enum InventoryType {

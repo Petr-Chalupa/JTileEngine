@@ -1,8 +1,8 @@
 package engine.gameobjects;
 
 import engine.core.Inventory;
-import javafx.scene.canvas.GraphicsContext;
 import engine.core.Inventory.InventoryType;
+import javafx.scene.canvas.GraphicsContext;
 
 public class Shop extends GameObject {
     private Inventory inventory;
