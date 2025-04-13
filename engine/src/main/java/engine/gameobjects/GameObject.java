@@ -9,12 +9,12 @@ import javafx.scene.image.Image;
 
 public abstract class GameObject {
     protected Image sprite;
-    public double posX;
-    public double posY;
-    public int layer;
-    public double size;
-    public Collider movementCollider;
-    public Collider interactCollider;
+    protected double posX;
+    protected double posY;
+    protected int layer;
+    protected double size;
+    protected Collider movementCollider;
+    protected Collider interactCollider;
 
     public GameObject(double posX, double posY, int layer, double size) {
         this.posX = posX;
@@ -26,6 +26,22 @@ public abstract class GameObject {
 
     public Image getSprite() {
         return sprite;
+    }
+
+    public double getPosX() {
+        return posX;
+    }
+
+    public double getPosY() {
+        return posY;
+    }
+
+    public int getLayer() {
+        return layer;
+    }
+
+    public double getSize() {
+        return size;
     }
 
     public void setSprite(String sprite) {

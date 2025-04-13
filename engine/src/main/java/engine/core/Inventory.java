@@ -17,14 +17,14 @@ public class Inventory {
         FLOATING, FIXED
     };
 
-    public GameObject parent;
-    public InventoryType type;
-    public String name;
-    public int size;
+    private GameObject parent;
+    private InventoryType type;
+    private String name;
+    private int size;
     private int cols;
     private List<List<Item>> items;
-    public boolean isVisible;
-    public int selected = 0;
+    private boolean isVisible;
+    private int selected = 0;
     private int gap = 5;
     private int nameSize = 20;
 

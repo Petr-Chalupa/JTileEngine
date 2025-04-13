@@ -5,8 +5,8 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 
 public class Collider {
-    public GameObject parent;
-    public Bounds box;
+    private GameObject parent;
+    private Bounds box;
 
     public Collider(GameObject parent, double posX, double posY, double width, double height) {
         this.parent = parent;
@@ -14,19 +14,19 @@ public class Collider {
     }
 
     public double getMinX() {
-        return box.getMinX() + parent.posX;
+        return box.getMinX() + parent.getPosX();
     }
 
     public double getMinY() {
-        return box.getMinY() + parent.posY;
+        return box.getMinY() + parent.getPosY();
     }
 
     public double getMaxX() {
-        return box.getMaxX() + parent.posX;
+        return box.getMaxX() + parent.getPosX();
     }
 
     public double getMaxY() {
-        return box.getMaxY() + parent.posY;
+        return box.getMaxY() + parent.getPosY();
     }
 
     public Bounds calculateIntersection(Collider c, double deltaX, double deltaY) {

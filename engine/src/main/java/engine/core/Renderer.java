@@ -100,23 +100,25 @@ public class Renderer implements Runnable {
 
         // Sort game objects based on layer
         List<GameObject> sortedObjects = levelLoader.getGameObjects().stream()
-                .sorted((a, b) -> Integer.compare(a.layer, b.layer)).collect(Collectors.toList());
+                .sorted((a, b) -> Integer.compare(a.getLayer(), b.getLayer())).collect(Collectors.toList());
 
         // Render visible game objects
         for (GameObject gameObject : sortedObjects) {
             Bounds intersection = calculateVisibleIntersection(gameObject.getBounds(), viewBounds);
             if (intersection == null) continue;
 
+            double goPosX = gameObject.getPosX();
+            double goPosY = gameObject.getPosY();
+            double goSize = gameObject.getSize();
             double spriteWidth = gameObject.getSprite().getWidth();
             double spriteHeight = gameObject.getSprite().getHeight();
-            double sourceX = (intersection.getMinX() - gameObject.posX) * (spriteWidth / gameObject.size);
-            double sourceY = (intersection.getMinY() - gameObject.posY) * (spriteHeight / gameObject.size);
-            double sourceWidth = intersection.getWidth() * (spriteWidth / gameObject.size);
-            double sourceHeight = intersection.getHeight() * (spriteHeight / gameObject.size);
-            double destX = gameObject.posX - viewBounds.getMinX();
-            double destY = gameObject.posY - viewBounds.getMinY();
-            gameObject.render(context, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, gameObject.size,
-                    gameObject.size);
+            double sourceX = (intersection.getMinX() - goPosX) * (spriteWidth / goSize);
+            double sourceY = (intersection.getMinY() - goPosY) * (spriteHeight / goSize);
+            double sourceWidth = intersection.getWidth() * (spriteWidth / goSize);
+            double sourceHeight = intersection.getHeight() * (spriteHeight / goSize);
+            double destX = goPosX - viewBounds.getMinX();
+            double destY = goPosY - viewBounds.getMinY();
+            gameObject.render(context, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, goSize, goSize);
         }
     }
 
@@ -124,8 +126,8 @@ public class Renderer implements Runnable {
         Player player = levelLoader.getPlayer();
         double tileSize = levelLoader.getTileSize();
 
-        double viewWorldCenterX = player.posX + (player.size / 2.0);
-        double viewWorldCenterY = player.posY + (player.size / 2.0);
+        double viewWorldCenterX = player.getPosX() + (player.getSize() / 2.0);
+        double viewWorldCenterY = player.getPosY() + (player.getSize() / 2.0);
 
         double viewCols = canvas.getWidth() / tileSize;
         double viewRows = canvas.getHeight() / tileSize;
