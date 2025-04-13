@@ -13,7 +13,7 @@
 === Technologie
 Celý projekt je strukturován do dvou částí - UI a Engine. Díky tomu je snažší rozdělit samotné jádro herního enginu a aplikaci, která herní engine využívá.
 
-UI část je tvořená standartní strukturou JavaFX aplikací, tedy hlavní třída App se stará o spuštění aplikace a také o správné ukončení aplikace - vytvoření a zavření okna, zastavení vláken apod. Jednotlivé části aplikace jsou tvořeny .fxml soubory a jejich příslušnými kontrolery.
+UI část je tvořená standartní strukturou JavaFX aplikací, tedy hlavní třída App se stará o spuštění aplikace a také o správné ukončení aplikace - vytvoření a zavření okna, zastavení vláken apod. Jednotlivé části aplikace jsou tvořeny `.fxml` soubory a jejich příslušnými kontrolery.
 
 Engine část má strukturu dělenou na tři části: `core`, `utils`, `gameobjects`. Core obsahuje hlavní jádro enginu, jako je vykreslování, zpracování vstupu uživatele nebo zpracování kolizí. Utils jsou pomocné třídy pro načítání levelů a také assetů (např. obrázky). Gameobjects obsahuje jednotlivé objekty vykreslované ve hře, které mezi sebou mají hierarchické vztahy.
 

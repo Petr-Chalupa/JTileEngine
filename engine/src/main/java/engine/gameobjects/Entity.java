@@ -26,7 +26,7 @@ public class Entity extends GameObject {
 
     protected boolean isOnSolidTile(double deltaX, double deltaY) {
         return levelLoader.gameObjects.stream().filter(gameObject -> gameObject instanceof Tile)
-                .map(gameObject -> (Tile) gameObject).allMatch(tile -> tile.isSolid
+                .map(gameObject -> (Tile) gameObject).allMatch(tile -> tile.getType().isSolid()
                         || movementCollider.calculateIntersection(tile.movementCollider, deltaX, deltaY) == null);
     }
 

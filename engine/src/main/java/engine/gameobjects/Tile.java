@@ -1,15 +1,19 @@
 package engine.gameobjects;
 
 public class Tile extends GameObject {
-    public boolean isSolid;
+    private TileType type;
 
     public Tile(double posX, double posY, double size, TileType type) {
         super(posX, posY, 0, size);
-        this.isSolid = type.isSolid();
+        this.type = type;
 
         setSprite(type.getSpritePath());
 
         setMovementCollider(0, 0, size, size);
+    }
+
+    public TileType getType() {
+        return type;
     }
 
     @Override
