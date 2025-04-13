@@ -1,6 +1,6 @@
 package ui;
 
-import engine.core.Renderer;
+import engine.Engine;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -13,12 +13,13 @@ import java.io.IOException;
 
 public class App extends Application {
     private static Scene scene;
-    private static Renderer renderer;
+    private static Engine engine;
 
     @Override
     public void start(Stage stage) throws IOException {
         scene = new Scene(new Group(), 1024, 768);
         setRoot("main_menu");
+        App.engine = Engine.getInstance();
 
         stage.setTitle("Game engine");
         stage.getIcons().add(new Image(App.class.getResource("img/logo.png").toExternalForm()));
@@ -28,7 +29,7 @@ public class App extends Application {
 
     @Override
     public void stop() {
-        if (renderer != null) renderer.stop();
+        engine.shutdown();
         Platform.exit();
         System.exit(0);
     }
@@ -39,13 +40,8 @@ public class App extends Application {
         return fxmlLoader.getController();
     }
 
-    public static Renderer getRenderer() {
-        return renderer;
-    }
-
-    public static void setRenderer(Renderer _renderer) {
-        if (renderer != null) renderer.stop();
-        renderer = _renderer;
+    public static Engine getEngine() {
+        return engine;
     }
 
     public static void main(String[] args) {

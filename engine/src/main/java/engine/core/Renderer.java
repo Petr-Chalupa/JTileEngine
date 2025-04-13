@@ -14,19 +14,23 @@ import java.util.stream.Collectors;
 
 public class Renderer implements Runnable {
     private static Thread RENDER_THREAD;
-    private int FPS;
-    private volatile boolean isPaused = false;;
+    private volatile boolean isPaused = false;
     private Canvas canvas;
+    private double FPS;
     private LevelLoader levelLoader;
 
-    public Renderer(Pane parent, int FPS) {
+    public Renderer(Pane target, double FPS) {
         this.canvas = new Canvas();
         this.levelLoader = LevelLoader.getInstance();
         this.FPS = FPS;
 
-        parent.getChildren().add(canvas);
-        canvas.widthProperty().bind(parent.widthProperty());
-        canvas.heightProperty().bind(parent.heightProperty());
+        target.getChildren().add(canvas);
+        canvas.widthProperty().bind(target.widthProperty());
+        canvas.heightProperty().bind(target.heightProperty());
+    }
+
+    public void setFPS(double FPS) {
+        this.FPS = FPS;
     }
 
     @Override

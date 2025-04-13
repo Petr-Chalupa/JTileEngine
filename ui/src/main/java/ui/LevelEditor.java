@@ -1,6 +1,6 @@
 package ui;
 
-import engine.core.Renderer;
+import engine.Engine;
 import engine.utils.LevelLoader;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
@@ -14,16 +14,16 @@ public class LevelEditor {
 
     @FXML
     private void clickMainMenu() throws IOException {
-        App.getRenderer().stop();
+        App.getEngine().shutdown();
         App.setRoot("main_menu");
     }
 
     public void loadLevel(String path) {
+        Engine engine = App.getEngine();
+        engine.setFPS(10);
+        engine.init(canvasParent);
+
         LevelLoader levelLoader = LevelLoader.getInstance();
         levelLoader.loadFile(path);
-
-        Renderer renderer = new Renderer(canvasParent, 10);
-        App.setRenderer(renderer);
-        renderer.start();
     }
 }

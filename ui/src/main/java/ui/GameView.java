@@ -1,7 +1,6 @@
 package ui;
 
-import engine.core.InputHandler;
-import engine.core.Renderer;
+import engine.Engine;
 import engine.utils.LevelLoader;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyCode;
@@ -12,7 +11,6 @@ import javafx.scene.text.Text;
 import java.io.IOException;
 
 public class GameView {
-    private InputHandler inputHandler;
 
     @FXML
     private Pane canvasParent;
@@ -23,40 +21,36 @@ public class GameView {
 
     @FXML
     private void buttonPauseGame() {
-        App.getRenderer().setPaused(true);
+        App.getEngine().setPaused(true);
         pauseMenu.setVisible(true);
     }
 
     @FXML
     private void buttonResumeGame() {
-        App.getRenderer().setPaused(false);
+        App.getEngine().setPaused(false);
         pauseMenu.setVisible(false);
     }
 
     @FXML
     private void buttonMainMenu() throws IOException {
-        App.getRenderer().stop();
+        App.getEngine().shutdown();
         App.setRoot("main_menu");
     }
 
     public void loadLvl(String path) {
+        Engine engine = App.getEngine();
+        engine.init(canvasParent);
+
         LevelLoader levelLoader = LevelLoader.getInstance();
         levelLoader.loadFile(path);
 
         pauseMenuLevelName.setText(levelLoader.name);
 
-        Renderer renderer = new Renderer(canvasParent, 60);
-        App.setRenderer(renderer);
-        renderer.start();
-
-        inputHandler = new InputHandler(canvasParent.getScene());
-        levelLoader.player.setInputHandler(inputHandler);
-
-        inputHandler.addPressedCallback((event) -> {
+        levelLoader.inputHandler.addPressedCallback((event) -> {
             if (event.getCode() == KeyCode.ESCAPE) {
-                renderer.setPaused(!renderer.isPaused());
-                pauseMenu.setVisible(renderer.isPaused());
-                inputHandler.clearKeys();
+                engine.setPaused(!engine.isPaused());
+                pauseMenu.setVisible(engine.isPaused());
+                levelLoader.inputHandler.clearKeys();
             }
         });
     }

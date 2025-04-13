@@ -1,5 +1,7 @@
 package engine.utils;
 
+import engine.Engine;
+import engine.core.InputHandler;
 import engine.gameobjects.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,6 +21,7 @@ public class LevelLoader {
     public int tileSize;
     // player
     public Player player;
+    public InputHandler inputHandler;
 
     private LevelLoader() {
     }
@@ -61,6 +64,10 @@ public class LevelLoader {
         player = new Player(playerStart.getDouble(0) * tileSize, playerStart.getDouble(1) * tileSize,
                 tileSize * playerScale, playerSpeed);
         gameObjects.add(player);
+
+        // Create input handler
+        this.inputHandler = new InputHandler(Engine.getInstance().getRenderTarget().getScene());
+        player.setInputHandler(inputHandler);
 
         // Load enemies
         JSONArray enemies = config.getJSONArray("enemies");
