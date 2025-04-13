@@ -1,7 +1,6 @@
 package engine.utils;
 
 import engine.Engine;
-import engine.core.InputHandler;
 import engine.gameobjects.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -12,16 +11,15 @@ import java.util.List;
 public class LevelLoader {
     private static LevelLoader instance;
     // level
-    public String name;
-    public boolean completed;
-    public ArrayList<GameObject> gameObjects = new ArrayList<>();
+    private String name;
+    private boolean completed;
+    private ArrayList<GameObject> gameObjects = new ArrayList<>();
     // map
-    public int rows;
-    public int cols;
-    public int tileSize;
+    private int rows;
+    private int cols;
+    private int tileSize;
     // player
-    public Player player;
-    public InputHandler inputHandler;
+    private Player player;
 
     private LevelLoader() {
     }
@@ -29,6 +27,34 @@ public class LevelLoader {
     public static LevelLoader getInstance() {
         if (instance == null) instance = new LevelLoader();
         return instance;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public ArrayList<GameObject> getGameObjects() {
+        return gameObjects;
+    }
+
+    public int getRows() {
+        return rows;
+    }
+
+    public int getCols() {
+        return cols;
+    }
+
+    public int getTileSize() {
+        return tileSize;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 
     public void loadFile(String path) {
@@ -63,11 +89,8 @@ public class LevelLoader {
         double playerSpeed = playerData.getDouble("speed") * tileSize;
         player = new Player(playerStart.getDouble(0) * tileSize, playerStart.getDouble(1) * tileSize,
                 tileSize * playerScale, playerSpeed);
+        player.setInputHandler(Engine.getInstance().getInputHandler());
         gameObjects.add(player);
-
-        // Create input handler
-        this.inputHandler = new InputHandler(Engine.getInstance().getRenderTarget().getScene());
-        player.setInputHandler(inputHandler);
 
         // Load enemies
         JSONArray enemies = config.getJSONArray("enemies");

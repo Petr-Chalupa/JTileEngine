@@ -68,7 +68,7 @@ public class Inventory {
         if (!isVisible) return;
 
         int rows = (int) Math.ceilDiv(size, cols);
-        double slotSize = LevelLoader.getInstance().tileSize;
+        double slotSize = LevelLoader.getInstance().getTileSize();
         double width = cols * (slotSize + gap) + gap;
         double height = rows * (slotSize + gap) + gap + (name != null ? nameSize : 0);
 

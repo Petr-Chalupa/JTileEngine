@@ -1,6 +1,7 @@
 package engine.core;
 
 import engine.gameobjects.GameObject;
+import engine.gameobjects.Player;
 import engine.utils.LevelLoader;
 import javafx.application.Platform;
 import javafx.geometry.BoundingBox;
@@ -85,7 +86,7 @@ public class Renderer implements Runnable {
     }
 
     private void update(double deltaTime) {
-        for (GameObject gameObject : levelLoader.gameObjects) {
+        for (GameObject gameObject : levelLoader.getGameObjects()) {
             gameObject.update(deltaTime);
         }
     }
@@ -98,7 +99,7 @@ public class Renderer implements Runnable {
         Bounds viewBounds = calculateViewBounds();
 
         // Sort game objects based on layer
-        List<GameObject> sortedObjects = levelLoader.gameObjects.stream()
+        List<GameObject> sortedObjects = levelLoader.getGameObjects().stream()
                 .sorted((a, b) -> Integer.compare(a.layer, b.layer)).collect(Collectors.toList());
 
         // Render visible game objects
@@ -120,16 +121,19 @@ public class Renderer implements Runnable {
     }
 
     private Bounds calculateViewBounds() {
-        double viewWorldCenterX = levelLoader.player.posX + (levelLoader.player.size / 2.0);
-        double viewWorldCenterY = levelLoader.player.posY + (levelLoader.player.size / 2.0);
+        Player player = levelLoader.getPlayer();
+        double tileSize = levelLoader.getTileSize();
 
-        double viewCols = canvas.getWidth() / levelLoader.tileSize;
-        double viewRows = canvas.getHeight() / levelLoader.tileSize;
+        double viewWorldCenterX = player.posX + (player.size / 2.0);
+        double viewWorldCenterY = player.posY + (player.size / 2.0);
 
-        double viewLeft = viewWorldCenterX - (viewCols * levelLoader.tileSize) / 2.0;
-        double viewRight = viewWorldCenterX + (viewCols * levelLoader.tileSize) / 2.0;
-        double viewTop = viewWorldCenterY - (viewRows * levelLoader.tileSize) / 2.0;
-        double viewBottom = viewWorldCenterY + (viewRows * levelLoader.tileSize) / 2.0;
+        double viewCols = canvas.getWidth() / tileSize;
+        double viewRows = canvas.getHeight() / tileSize;
+
+        double viewLeft = viewWorldCenterX - (viewCols * tileSize) / 2.0;
+        double viewRight = viewWorldCenterX + (viewCols * tileSize) / 2.0;
+        double viewTop = viewWorldCenterY - (viewRows * tileSize) / 2.0;
+        double viewBottom = viewWorldCenterY + (viewRows * tileSize) / 2.0;
 
         return new BoundingBox(viewLeft, viewTop, viewRight - viewLeft, viewBottom - viewTop);
     }

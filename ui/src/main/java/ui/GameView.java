@@ -1,7 +1,6 @@
 package ui;
 
 import engine.Engine;
-import engine.utils.LevelLoader;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
@@ -40,17 +39,15 @@ public class GameView {
     public void loadLvl(String path) {
         Engine engine = App.getEngine();
         engine.init(canvasParent);
+        engine.loadLevel(path);
 
-        LevelLoader levelLoader = LevelLoader.getInstance();
-        levelLoader.loadFile(path);
+        pauseMenuLevelName.setText(engine.getLevelLoader().getName());
 
-        pauseMenuLevelName.setText(levelLoader.name);
-
-        levelLoader.inputHandler.addPressedCallback((event) -> {
+        engine.getInputHandler().addPressedCallback((event) -> {
             if (event.getCode() == KeyCode.ESCAPE) {
                 engine.setPaused(!engine.isPaused());
                 pauseMenu.setVisible(engine.isPaused());
-                levelLoader.inputHandler.clearKeys();
+                engine.getInputHandler().clearKeys();
             }
         });
     }

@@ -17,15 +17,15 @@ public class Entity extends GameObject {
     }
 
     protected boolean isInMapX(double deltaX, double deltaY) {
-        return posX + deltaX > 0 && posX + deltaX < (levelLoader.cols - 1) * levelLoader.tileSize;
+        return posX + deltaX > 0 && posX + deltaX < (levelLoader.getCols() - 1) * levelLoader.getTileSize();
     }
 
     protected boolean isInMapY(double deltaX, double deltaY) {
-        return posY + deltaY > 0 && posY + deltaX < (levelLoader.rows - 1) * levelLoader.tileSize;
+        return posY + deltaY > 0 && posY + deltaX < (levelLoader.getRows() - 1) * levelLoader.getTileSize();
     }
 
     protected boolean isOnSolidTile(double deltaX, double deltaY) {
-        return levelLoader.gameObjects.stream().filter(gameObject -> gameObject instanceof Tile)
+        return levelLoader.getGameObjects().stream().filter(gameObject -> gameObject instanceof Tile)
                 .map(gameObject -> (Tile) gameObject).allMatch(tile -> tile.getType().isSolid()
                         || movementCollider.calculateIntersection(tile.movementCollider, deltaX, deltaY) == null);
     }
