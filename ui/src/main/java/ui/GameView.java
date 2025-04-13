@@ -38,7 +38,7 @@ public class GameView {
 
     public void loadLvl(String path) {
         Engine engine = App.getEngine();
-        engine.init(canvasParent);
+        engine.init(canvasParent, 60);
         engine.loadLevel(path);
 
         pauseMenuLevelName.setText(engine.getLevelLoader().getName());
@@ -47,7 +47,7 @@ public class GameView {
             if (event.getCode() == KeyCode.ESCAPE) {
                 engine.setPaused(!engine.isPaused());
                 pauseMenu.setVisible(engine.isPaused());
-                engine.getInputHandler().clearKeys();
+                engine.getInputHandler().clear();
             }
         });
     }

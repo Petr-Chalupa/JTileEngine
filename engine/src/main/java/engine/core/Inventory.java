@@ -41,6 +41,14 @@ public class Inventory {
         }
     }
 
+    public int getSize() {
+        return size;
+    }
+
+    public int getSelected() {
+        return selected;
+    }
+
     public void toggle() {
         isVisible = !isVisible;
     }

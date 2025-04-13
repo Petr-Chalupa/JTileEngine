@@ -20,8 +20,7 @@ public class LevelEditor {
 
     public void loadLevel(String path) {
         Engine engine = App.getEngine();
-        engine.setFPS(10);
-        engine.init(canvasParent);
+        engine.init(canvasParent, 10);
 
         LevelLoader levelLoader = LevelLoader.getInstance();
         levelLoader.loadFile(path);

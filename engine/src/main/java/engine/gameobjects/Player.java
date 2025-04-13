@@ -26,6 +26,11 @@ public class Player extends Entity {
         this.inputHandler.addPressedCallback((event) -> {
             if (event.getCode().isDigitKey()) inventory.select(event.getCode().ordinal() - 1);
         });
+        this.inputHandler.addMouseScrollCallback((event) -> {
+            int dir = (int) Math.signum(event.getDeltaY());
+            int selected = Math.max(0, Math.min(inventory.getSelected() + dir, inventory.getSize() - 1));
+            inventory.select(selected);
+        });
     }
 
     @Override

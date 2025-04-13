@@ -24,7 +24,6 @@ public class Engine {
     private InputHandler inputHandler;
 
     private Engine() {
-        this.FPS = 60.0;
         this.levelLoader = LevelLoader.getInstance();
         this.resourceManager = ResourceManager.getInstance();
         setupLogger();
@@ -61,12 +60,12 @@ public class Engine {
 
     public void setFPS(double fps) {
         this.FPS = fps;
-        if (renderer != null) renderer.setFPS(fps);
+        if (initialized) renderer.setFPS(fps);
         LOGGER.info("FPS set to: " + fps);
     }
 
     public void setPaused(boolean paused) {
-        if (renderer != null) {
+        if (initialized) {
             renderer.setPaused(paused);
             LOGGER.info(paused ? "Engine paused" : "Engine resumed");
         }
@@ -88,17 +87,12 @@ public class Engine {
         }
     }
 
-    public void init(Pane target) {
+    public void init(Pane target, double FPS) {
         LOGGER.info("Initializing Engine");
-
-        this.renderTarget = target;
-        LOGGER.info("Render target set");
-
+        renderTarget = target;
         inputHandler = new InputHandler(renderTarget.getScene());
-
         renderer = new Renderer(renderTarget, FPS);
         renderer.start();
-
         initialized = true;
     }
 
@@ -114,12 +108,9 @@ public class Engine {
             LOGGER.severe("Engine must be initialized!");
             throw new IllegalStateException("Engine not initialized");
         }
-        try {
-            LOGGER.info("Loading level: " + path);
-            levelLoader.loadFile(path);
-        } catch (Exception e) {
-            LOGGER.severe("Failed to load level: " + e.getMessage());
-            throw new RuntimeException("Failed to load level", e);
-        }
+        LOGGER.info("Loading level: " + path);
+        setPaused(true);
+        levelLoader.loadFile(path);
+        setPaused(false);
     }
 }
