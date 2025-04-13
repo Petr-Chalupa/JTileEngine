@@ -22,6 +22,10 @@ public class Player extends Entity {
 
     public void setInputHandler(InputHandler inputHandler) {
         this.inputHandler = inputHandler;
+
+        this.inputHandler.addPressedCallback((event) -> {
+            if (event.getCode().isDigitKey()) inventory.select(event.getCode().ordinal() - 1);
+        });
     }
 
     @Override

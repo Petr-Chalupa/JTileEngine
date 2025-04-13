@@ -24,7 +24,7 @@ public class Inventory {
     private int cols;
     private List<List<Item>> items;
     public boolean isVisible;
-    public int selected = -1;
+    public int selected = 0;
     private int gap = 5;
     private int nameSize = 20;
 
@@ -43,6 +43,10 @@ public class Inventory {
 
     public void toggle() {
         isVisible = !isVisible;
+    }
+
+    public void select(int index) {
+        this.selected = index % size;
     }
 
     public void addItem(Item item) {
@@ -88,11 +92,17 @@ public class Inventory {
             dy += nameSize;
         }
 
-        // Render slots with items
+        // Render slots with items, mark selected slot
         for (int i = 0; i < size; i++) {
             double slotX = dx + gap + (i % cols) * (slotSize + gap);
             double slotY = dy + gap + (i / cols) * (slotSize + gap);
-            context.setStroke(Color.GRAY);
+            if (i == selected) {
+                context.setStroke(Color.WHITE);
+                context.setLineWidth(2);
+            } else {
+                context.setStroke(Color.GRAY);
+                context.setLineWidth(1);
+            }
             context.strokeRect(slotX, slotY, slotSize, slotSize);
             if (!items.get(i).isEmpty()) {
                 items.get(i).getFirst().render(context, 0, 0, slotSize, slotSize, slotX, slotY, slotSize, slotSize);

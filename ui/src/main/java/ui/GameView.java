@@ -52,7 +52,7 @@ public class GameView {
         inputHandler = new InputHandler(canvasParent.getScene());
         levelLoader.player.setInputHandler(inputHandler);
 
-        inputHandler.setPressedCallback((event) -> {
+        inputHandler.addPressedCallback((event) -> {
             if (event.getCode() == KeyCode.ESCAPE) {
                 renderer.setPaused(!renderer.isPaused());
                 pauseMenu.setVisible(renderer.isPaused());
