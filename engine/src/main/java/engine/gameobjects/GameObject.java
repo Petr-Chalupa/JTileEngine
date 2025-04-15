@@ -9,6 +9,7 @@ import javafx.scene.image.Image;
 
 public abstract class GameObject {
     protected Image sprite;
+    protected boolean isRendered;
     protected double posX;
     protected double posY;
     protected int layer;
@@ -26,6 +27,10 @@ public abstract class GameObject {
 
     public Image getSprite() {
         return sprite;
+    }
+
+    public boolean isRendered() {
+        return isRendered;
     }
 
     public double getPosX() {
@@ -50,6 +55,10 @@ public abstract class GameObject {
         } catch (Exception e) {
             System.err.println("Invalid sprite, default is being used:\n\t" + e);
         }
+    }
+
+    public void setRendered(boolean rendered) {
+        this.isRendered = rendered;
     }
 
     public Bounds getBounds() {

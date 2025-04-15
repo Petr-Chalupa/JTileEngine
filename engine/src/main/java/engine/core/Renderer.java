@@ -99,13 +99,18 @@ public class Renderer implements Runnable {
         Bounds viewBounds = calculateViewBounds();
 
         // Sort game objects based on layer
-        List<GameObject> sortedObjects = levelLoader.getGameObjects().stream()
-                .sorted((a, b) -> Integer.compare(a.getLayer(), b.getLayer())).collect(Collectors.toList());
+        List<GameObject> sortedObjects = levelLoader.getGameObjects()
+                .stream()
+                .sorted((a, b) -> Integer.compare(a.getLayer(), b.getLayer()))
+                .collect(Collectors.toList());
 
         // Render visible game objects
         for (GameObject gameObject : sortedObjects) {
-            Bounds intersection = calculateVisibleIntersection(gameObject.getBounds(), viewBounds);
-            if (intersection == null) continue;
+            Bounds intersection = getVisibleIntersection(gameObject.getBounds(), viewBounds);
+            if (intersection == null) {
+                gameObject.setRendered(false);
+                continue;
+            }
 
             double goPosX = gameObject.getPosX();
             double goPosY = gameObject.getPosY();
@@ -119,6 +124,7 @@ public class Renderer implements Runnable {
             double destX = goPosX - viewBounds.getMinX();
             double destY = goPosY - viewBounds.getMinY();
             gameObject.render(context, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, goSize, goSize);
+            gameObject.setRendered(true);
         }
     }
 
@@ -140,7 +146,7 @@ public class Renderer implements Runnable {
         return new BoundingBox(viewLeft, viewTop, viewRight - viewLeft, viewBottom - viewTop);
     }
 
-    private Bounds calculateVisibleIntersection(Bounds gameObjectBounds, Bounds viewBounds) {
+    private Bounds getVisibleIntersection(Bounds gameObjectBounds, Bounds viewBounds) {
         double minX = Math.max(gameObjectBounds.getMinX(), viewBounds.getMinX());
         double minY = Math.max(gameObjectBounds.getMinY(), viewBounds.getMinY());
         double maxX = Math.min(gameObjectBounds.getMaxX(), viewBounds.getMaxX());

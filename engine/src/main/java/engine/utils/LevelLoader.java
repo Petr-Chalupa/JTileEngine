@@ -84,11 +84,11 @@ public class LevelLoader {
 
         // Load player data
         JSONObject playerData = config.getJSONObject("player");
-        JSONArray playerStart = playerData.getJSONArray("start");
-        double playerScale = playerData.getDouble("scale");
+        JSONArray playerPos = playerData.getJSONArray("pos");
+        double playerSize = playerData.getDouble("size");
         double playerSpeed = playerData.getDouble("speed") * tileSize;
-        player = new Player(playerStart.getDouble(0) * tileSize, playerStart.getDouble(1) * tileSize,
-                tileSize * playerScale, playerSpeed);
+        player = new Player(playerPos.getDouble(0) * tileSize, playerPos.getDouble(1) * tileSize, playerSize * tileSize,
+                playerSpeed);
         player.setInputHandler(Engine.getInstance().getInputHandler());
         gameObjects.add(player);
 
@@ -96,12 +96,23 @@ public class LevelLoader {
         JSONArray enemies = config.getJSONArray("enemies");
         for (int i = 0; i < enemies.length(); i++) {
             JSONObject enemyData = enemies.getJSONObject(i);
-            JSONArray enemyStart = enemyData.getJSONArray("start");
-            double enemyScale = enemyData.getDouble("scale");
+            JSONArray enemyPos = enemyData.getJSONArray("pos");
+            double enemySize = enemyData.getDouble("size");
             double enemySpeed = enemyData.getDouble("speed") * tileSize;
-            Enemy enemy = new Enemy(enemyStart.getDouble(0) * tileSize, enemyStart.getDouble(1) * tileSize,
-                    tileSize * enemyScale, enemySpeed);
+            Enemy enemy = new Enemy(enemyPos.getDouble(0) * tileSize, enemyPos.getDouble(1) * tileSize,
+                    enemySize * tileSize, enemySpeed);
             gameObjects.add(enemy);
+        }
+
+        // Load chests
+        JSONArray chests = config.getJSONArray("chests");
+        for (int i = 0; i < chests.length(); i++) {
+            JSONObject chestData = chests.getJSONObject(i);
+            JSONArray chestPos = chestData.getJSONArray("pos");
+            double chestSize = chestData.getDouble("size");
+            Chest chest = new Chest(chestPos.getDouble(0) * tileSize, chestPos.getDouble(1) * tileSize,
+                    chestSize * tileSize);
+            gameObjects.add(chest);
         }
     }
 

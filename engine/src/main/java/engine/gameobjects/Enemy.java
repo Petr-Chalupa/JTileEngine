@@ -6,7 +6,6 @@ public class Enemy extends Entity {
         super(posX, posY, 1, size, speed);
 
         setSprite("enemy_sprite.png");
-
         setMovementCollider(0, 0, size, size);
     }
 
@@ -18,11 +17,11 @@ public class Enemy extends Entity {
         double deltaX = randomSignX * speed * deltaTime;
         double deltaY = randomSignY * speed * deltaTime;
 
-        boolean isOnSolidTile = isOnSolidTile(deltaX, deltaY);
+        boolean canMove = canMove(deltaX, deltaY);
         boolean isInMapX = isInMapX(deltaX, deltaY);
         boolean isInMapY = isInMapY(deltaX, deltaY);
-        if (isInMapX && isOnSolidTile && Math.random() > 0.5) moveX(deltaX);
-        if (isInMapY && isOnSolidTile && Math.random() > 0.5) moveY(deltaY);
+        if (isInMapX && canMove && Math.random() > 0.5) moveX(deltaX);
+        if (isInMapY && canMove && Math.random() > 0.5) moveY(deltaY);
     }
 
 }

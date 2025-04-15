@@ -7,9 +7,12 @@ import javafx.scene.canvas.GraphicsContext;
 public class Chest extends GameObject {
     private Inventory inventory;
 
-    public Chest(double posX, double posY, int layer, double size) {
-        super(posX, posY, layer, size);
+    public Chest(double posX, double posY, double size) {
+        super(posX, posY, 1, size);
         this.inventory = new Inventory(this, InventoryType.FLOATING, "Chest", 15, 5);
+
+        setSprite("chest_sprite.jpg");
+        setMovementCollider(0, 0, size, size);
     }
 
     @Override

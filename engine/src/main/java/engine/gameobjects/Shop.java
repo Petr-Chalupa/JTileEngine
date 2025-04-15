@@ -7,8 +7,8 @@ import javafx.scene.canvas.GraphicsContext;
 public class Shop extends GameObject {
     private Inventory inventory;
 
-    public Shop(double posX, double posY, int layer, double size) {
-        super(posX, posY, layer, size);
+    public Shop(double posX, double posY, double size) {
+        super(posX, posY, 1, size);
         this.inventory = new Inventory(this, InventoryType.FLOATING, "Shop", 10, 5);
     }
 

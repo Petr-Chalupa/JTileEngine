@@ -16,7 +16,6 @@ public class Player extends Entity {
         this.inventory.toggle();
 
         setSprite("player_sprite.png");
-
         setMovementCollider(0.1 * size, 0.6 * size, 0.8 * size, 0.4 * size);
     }
 
@@ -42,18 +41,16 @@ public class Player extends Entity {
         final double deltaY;
         if (inputHandler.isKeyPressed(KeyCode.W)) deltaY = -speed * deltaTime; // Up
         else if (inputHandler.isKeyPressed(KeyCode.S)) deltaY = speed * deltaTime; // Down
-        else
-            deltaY = 0;
+        else deltaY = 0;
         if (inputHandler.isKeyPressed(KeyCode.A)) deltaX = -speed * deltaTime; // Left
         else if (inputHandler.isKeyPressed(KeyCode.D)) deltaX = speed * deltaTime; // Right
-        else
-            deltaX = 0;
+        else deltaX = 0;
 
-        boolean isOnSolidTile = isOnSolidTile(deltaX, deltaY);
+        boolean canMove = canMove(deltaX, deltaY);
         boolean isInMapX = isInMapX(deltaX, deltaY);
         boolean isInMapY = isInMapY(deltaX, deltaY);
-        if (isInMapX && isOnSolidTile) moveX(deltaX);
-        if (isInMapY && isOnSolidTile) moveY(deltaY);
+        if (isInMapX && canMove) moveX(deltaX);
+        if (isInMapY && canMove) moveY(deltaY);
     }
 
     @Override

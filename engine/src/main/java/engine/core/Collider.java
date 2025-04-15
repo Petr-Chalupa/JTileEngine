@@ -29,7 +29,7 @@ public class Collider {
         return box.getMaxY() + parent.getPosY();
     }
 
-    public Bounds calculateIntersection(Collider c, double deltaX, double deltaY) {
+    public Bounds getIntersection(Collider c, double deltaX, double deltaY) {
         double minX = Math.max(getMinX() + deltaX, c.getMinX());
         double minY = Math.max(getMinY() + deltaY, c.getMinY());
         double maxX = Math.min(getMaxX() + deltaX, c.getMaxX());

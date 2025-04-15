@@ -1,6 +1,7 @@
 package engine.gameobjects;
 
 import engine.utils.LevelLoader;
+import javafx.geometry.Bounds;
 
 public class Entity extends GameObject {
     protected double speed;
@@ -24,10 +25,17 @@ public class Entity extends GameObject {
         return posY + deltaY > 0 && posY + deltaX < (levelLoader.getRows() - 1) * levelLoader.getTileSize();
     }
 
-    protected boolean isOnSolidTile(double deltaX, double deltaY) {
-        return levelLoader.getGameObjects().stream().filter(gameObject -> gameObject instanceof Tile)
-                .map(gameObject -> (Tile) gameObject).allMatch(tile -> tile.getType().isSolid()
-                        || movementCollider.calculateIntersection(tile.movementCollider, deltaX, deltaY) == null);
+    protected boolean canMove(double deltaX, double deltaY) {
+        return levelLoader.getGameObjects()
+                .stream()
+                .filter(gameObject -> !gameObject.equals(this) && gameObject.isRendered())
+                .allMatch(gameObject -> {
+                    Bounds intersection = movementCollider.getIntersection(gameObject.movementCollider, deltaX, deltaY);
+                    if (intersection == null) return true;
+                    else if (gameObject instanceof Tile && ((Tile) gameObject).getType().isSolid()) {
+                        return true;
+                    } else return false;
+                });
     }
 
     protected void moveX(double dist) {

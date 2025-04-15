@@ -8,7 +8,6 @@ public class Tile extends GameObject {
         this.type = type;
 
         setSprite(type.getSpritePath());
-
         setMovementCollider(0, 0, size, size);
     }
 

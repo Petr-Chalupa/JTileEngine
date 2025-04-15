@@ -68,8 +68,7 @@ public class Inventory {
 
         List<Item> slot = sameItemSlot != null ? sameItemSlot : emptySlot;
         if (slot != null) slot.add(item);
-        else
-            throw new RuntimeException("Inventory is full, can't add item"); // todo
+        else throw new RuntimeException("Inventory is full, can't add item"); // todo
     }
 
     public void render(GraphicsContext context, double dx, double dy) {
