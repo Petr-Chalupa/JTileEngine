@@ -70,7 +70,7 @@ public abstract class GameObject {
     }
 
     public void setInteractCollider(double posX, double posY, double width, double height) {
-        this.movementCollider = new Collider(this, posX, posY, width, height);
+        this.interactCollider = new Collider(this, posX, posY, width, height);
     }
 
     public void render(GraphicsContext context, double sx, double sy, double sw, double sh, double dx, double dy,

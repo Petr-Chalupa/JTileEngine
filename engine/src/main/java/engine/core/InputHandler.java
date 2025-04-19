@@ -80,4 +80,22 @@ public class InputHandler {
         this.mouseScrollCallbacks.add(callback);
     }
 
+    public int getDigit(KeyCode code) {
+        int digit;
+        switch (code) {
+            case KeyCode.DIGIT0 -> digit = 0;
+            case KeyCode.DIGIT1 -> digit = 1;
+            case KeyCode.DIGIT2 -> digit = 2;
+            case KeyCode.DIGIT3 -> digit = 3;
+            case KeyCode.DIGIT4 -> digit = 4;
+            case KeyCode.DIGIT5 -> digit = 5;
+            case KeyCode.DIGIT6 -> digit = 6;
+            case KeyCode.DIGIT7 -> digit = 7;
+            case KeyCode.DIGIT8 -> digit = 8;
+            case KeyCode.DIGIT9 -> digit = 9;
+            default -> digit = -1; // Not a valid digit key
+        }
+        return digit;
+    }
+
 }

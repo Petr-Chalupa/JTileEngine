@@ -54,7 +54,7 @@ public class Inventory {
     }
 
     public void select(int index) {
-        this.selected = index % size;
+        this.selected = Math.max(0, Math.min(size - 1, index));
     }
 
     public void addItem(Item item) {

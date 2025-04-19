@@ -23,12 +23,12 @@ public class Player extends Entity {
         this.inputHandler = inputHandler;
 
         this.inputHandler.addPressedCallback((event) -> {
-            if (event.getCode().isDigitKey()) inventory.select(event.getCode().ordinal() - 1);
+            KeyCode code = event.getCode();
+            if (code.isDigitKey()) inventory.select(inputHandler.getDigit(code) - 1); // First slot mapped to 1
         });
         this.inputHandler.addMouseScrollCallback((event) -> {
             int dir = (int) Math.signum(event.getDeltaY());
-            int selected = Math.max(0, Math.min(inventory.getSelected() + dir, inventory.getSize() - 1));
-            inventory.select(selected);
+            inventory.select(inventory.getSelected() + dir);
         });
     }
 

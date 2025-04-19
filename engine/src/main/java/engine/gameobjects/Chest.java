@@ -13,6 +13,7 @@ public class Chest extends GameObject {
 
         setSprite("chest_sprite.jpg");
         setMovementCollider(0, 0, size, size);
+        // setInteractCollider(-10, -10, size + 20, size + 20); //todo
     }
 
     @Override
