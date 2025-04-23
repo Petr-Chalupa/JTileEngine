@@ -1,34 +1,30 @@
 package engine.gameobjects;
 
-@FunctionalInterface
-interface ItemInteraction {
-    boolean interact(GameObject user);
-}
+import java.util.function.Consumer;
 
 public enum ItemType {
-    SWORD("sword.png", 1, (user) -> {
+    SWORD("sword.png", 1, false, (user) -> {
         System.out.println("sword used");
-        return false;
     }),
     //
-    KEY("key.png", 1, (user) -> {
+    KEY("key.png", 1, false, (user) -> {
         System.out.println("key used");
-        return false;
     }),
     //
-    FOOD("food.jpg", 10, (user) -> {
-        System.out.println("food used");
-        return false;
+    FOOD("food.jpg", 10, true, (user) -> {
+        user.heal(1);
     });
 
     private final String spritePath;
     private final int stackSize;
-    private final ItemInteraction interaction;
+    private final boolean isUsableOnce;
+    private final Consumer<Entity> use;
 
-    ItemType(String spritePath, int stackSize, ItemInteraction interaction) {
+    ItemType(String spritePath, int stackSize, boolean isUsableOnce, Consumer<Entity> use) {
         this.spritePath = spritePath;
         this.stackSize = stackSize;
-        this.interaction = interaction;
+        this.isUsableOnce = isUsableOnce;
+        this.use = use;
     }
 
     public String getSpritePath() {
@@ -39,7 +35,8 @@ public enum ItemType {
         return stackSize;
     }
 
-    public boolean use(GameObject user) {
-        return interaction.interact(user);
+    public boolean use(Entity user) {
+        use.accept(user);
+        return isUsableOnce;
     }
 }

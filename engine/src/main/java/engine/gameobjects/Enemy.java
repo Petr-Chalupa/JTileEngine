@@ -2,8 +2,8 @@ package engine.gameobjects;
 
 public class Enemy extends Entity {
 
-    public Enemy(double posX, double posY, double size, double speed) {
-        super(posX, posY, 1, size, speed);
+    public Enemy(double posX, double posY, double size, double speed, int health) {
+        super(posX, posY, 1, size, speed, health);
 
         setSprite("enemy_sprite.png");
         setMovementCollider(0, 0, size, size);

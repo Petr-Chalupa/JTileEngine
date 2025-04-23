@@ -9,7 +9,7 @@ public class Shop extends GameObject {
 
     public Shop(double posX, double posY, double size) {
         super(posX, posY, 1, size);
-        this.inventory = new Inventory(this, InventoryType.FLOATING, "Shop", 10, 5);
+        this.inventory = new Inventory(InventoryType.CENTER, "Shop", 10, 5);
     }
 
     @Override

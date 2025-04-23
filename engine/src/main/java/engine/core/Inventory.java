@@ -1,6 +1,5 @@
 package engine.core;
 
-import engine.gameobjects.GameObject;
 import engine.gameobjects.Item;
 import engine.utils.LevelLoader;
 import javafx.geometry.VPos;
@@ -14,10 +13,9 @@ import java.util.List;
 
 public class Inventory {
     public enum InventoryType {
-        FLOATING, FIXED
+        CENTER, BOTTOM
     };
 
-    private GameObject parent;
     private InventoryType type;
     private String name;
     private int size;
@@ -28,8 +26,7 @@ public class Inventory {
     private int gap = 5;
     private int nameSize = 20;
 
-    public Inventory(GameObject parent, InventoryType type, String name, int size, int cols) {
-        this.parent = parent;
+    public Inventory(InventoryType type, String name, int size, int cols) {
         this.type = type;
         this.name = name;
         this.size = size;
@@ -45,8 +42,20 @@ public class Inventory {
         return size;
     }
 
+    public Item getSelectedItem() {
+        return items.get(selected).getFirst();
+    }
+
     public int getSelected() {
         return selected;
+    }
+
+    public boolean isVisible() {
+        return isVisible;
+    }
+
+    public void removeSelectedItem() {
+        items.get(selected).removeFirst();
     }
 
     public void toggle() {
@@ -79,7 +88,10 @@ public class Inventory {
         double width = cols * (slotSize + gap) + gap;
         double height = rows * (slotSize + gap) + gap + (name != null ? nameSize : 0);
 
-        if (type == InventoryType.FIXED) {
+        if (type == InventoryType.CENTER) {
+            dx = (context.getCanvas().getWidth() - width) / 2;
+            dy = (context.getCanvas().getHeight() - height) / 2;
+        } else if (type == InventoryType.BOTTOM) {
             dx = (context.getCanvas().getWidth() - width) / 2;
             dy = context.getCanvas().getHeight() - height - gap;
         }

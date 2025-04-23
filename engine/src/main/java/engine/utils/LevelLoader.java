@@ -1,6 +1,5 @@
 package engine.utils;
 
-import engine.Engine;
 import engine.gameobjects.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -87,9 +86,9 @@ public class LevelLoader {
         JSONArray playerPos = playerData.getJSONArray("pos");
         double playerSize = playerData.getDouble("size");
         double playerSpeed = playerData.getDouble("speed") * tileSize;
+        int playerHealth = playerData.getInt("health");
         player = new Player(playerPos.getDouble(0) * tileSize, playerPos.getDouble(1) * tileSize, playerSize * tileSize,
-                playerSpeed);
-        player.setInputHandler(Engine.getInstance().getInputHandler());
+                playerSpeed, playerHealth);
         gameObjects.add(player);
 
         // Load enemies
@@ -99,8 +98,9 @@ public class LevelLoader {
             JSONArray enemyPos = enemyData.getJSONArray("pos");
             double enemySize = enemyData.getDouble("size");
             double enemySpeed = enemyData.getDouble("speed") * tileSize;
+            int enemyHealth = enemyData.getInt("health");
             Enemy enemy = new Enemy(enemyPos.getDouble(0) * tileSize, enemyPos.getDouble(1) * tileSize,
-                    enemySize * tileSize, enemySpeed);
+                    enemySize * tileSize, enemySpeed, enemyHealth);
             gameObjects.add(enemy);
         }
 

@@ -18,7 +18,7 @@ public class Item extends GameObject {
     public void update(double deltaTime) {
     }
 
-    public void use(GameObject user) {
+    public void use(Entity user) {
         type.use(user);
     }
 }

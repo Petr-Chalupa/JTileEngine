@@ -1,20 +1,32 @@
 package engine.gameobjects;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import engine.utils.LevelLoader;
 import javafx.geometry.Bounds;
 
 public class Entity extends GameObject {
     protected double speed;
+    protected boolean isMovementLocked = false;
+    protected final int maxHealth;
+    protected int health;
     private LevelLoader levelLoader;
 
-    public Entity(double posX, double posY, int layer, double size, double speed) {
+    public Entity(double posX, double posY, int layer, double size, double speed, int health) {
         super(posX, posY, layer, size);
         this.speed = speed;
+        this.maxHealth = health;
+        this.health = health;
         this.levelLoader = LevelLoader.getInstance();
     }
 
     @Override
     public void update(double deltaTime) {
+    }
+
+    public void heal(int health) {
+        this.health = Math.min(maxHealth, this.health + health);
     }
 
     protected boolean isInMapX(double deltaX, double deltaY) {
@@ -36,6 +48,14 @@ public class Entity extends GameObject {
                         return true;
                     } else return false;
                 });
+    }
+
+    protected List<GameObject> getObjectsInRange() {
+        return levelLoader.getGameObjects().stream().filter(gameObject -> {
+            if (gameObject.equals(this) || !gameObject.isRendered()) return false;
+            Bounds intersection = interactCollider.getIntersection(gameObject.movementCollider, 0, 0);
+            return intersection != null;
+        }).collect(Collectors.toList());
     }
 
     protected void moveX(double dist) {
