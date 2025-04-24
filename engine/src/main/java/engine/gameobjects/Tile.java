@@ -1,7 +1,7 @@
 package engine.gameobjects;
 
 public class Tile extends GameObject {
-    private TileType type;
+    private final TileType type;
 
     public Tile(double posX, double posY, double size, TileType type) {
         super(posX, posY, 0, size);

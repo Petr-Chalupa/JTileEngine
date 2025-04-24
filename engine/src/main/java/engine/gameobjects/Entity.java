@@ -11,7 +11,7 @@ public class Entity extends GameObject {
     protected boolean isMovementLocked = false;
     protected final int maxHealth;
     protected int health;
-    private LevelLoader levelLoader;
+    private final LevelLoader levelLoader;
 
     public Entity(double posX, double posY, int layer, double size, double speed, int health) {
         super(posX, posY, layer, size);
@@ -44,9 +44,7 @@ public class Entity extends GameObject {
                 .allMatch(gameObject -> {
                     Bounds intersection = movementCollider.getIntersection(gameObject.movementCollider, deltaX, deltaY);
                     if (intersection == null) return true;
-                    else if (gameObject instanceof Tile && ((Tile) gameObject).getType().isSolid()) {
-                        return true;
-                    } else return false;
+                    else return gameObject instanceof Tile && ((Tile) gameObject).getType().isSolid();
                 });
     }
 

@@ -1,7 +1,7 @@
 package engine.gameobjects;
 
 public class Item extends GameObject {
-    private ItemType type;
+    private final ItemType type;
 
     public Item(double posX, double posY, int layer, double size, ItemType type) {
         super(posX, posY, 1, size);

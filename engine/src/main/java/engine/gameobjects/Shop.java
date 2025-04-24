@@ -5,7 +5,7 @@ import engine.core.Inventory.InventoryType;
 import javafx.scene.canvas.GraphicsContext;
 
 public class Shop extends GameObject {
-    private Inventory inventory;
+    private final Inventory inventory;
 
     public Shop(double posX, double posY, double size) {
         super(posX, posY, 1, size);

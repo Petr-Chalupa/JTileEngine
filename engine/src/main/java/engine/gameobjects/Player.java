@@ -9,7 +9,7 @@ import javafx.scene.input.KeyCode;
 
 public class Player extends Entity {
     private InputHandler inputHandler;
-    private Inventory inventory;
+    private final Inventory inventory;
 
     public Player(double posX, double posY, double size, double speed, int health) {
         super(posX, posY, 2, size, speed, health);

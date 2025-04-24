@@ -1,15 +1,15 @@
 package engine;
 
-import java.util.logging.Logger;
-import java.util.logging.Level;
-import java.util.logging.FileHandler;
-import java.util.logging.SimpleFormatter;
-
 import engine.core.InputHandler;
 import engine.core.Renderer;
 import engine.utils.LevelLoader;
 import engine.utils.ResourceManager;
 import javafx.scene.layout.Pane;
+
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 public class Engine {
     private static Engine instance;

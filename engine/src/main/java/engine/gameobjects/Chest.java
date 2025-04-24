@@ -8,7 +8,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 public class Chest extends GameObject {
-    private Inventory inventory;
+    private final Inventory inventory;
 
     public Chest(double posX, double posY, double size) {
         super(posX, posY, 1, size);
@@ -17,7 +17,7 @@ public class Chest extends GameObject {
         setSprite("chest_sprite.jpg");
         setMovementCollider(0, 0, size, size);
 
-        Engine.getInstance().getInputHandler().addMousePressedCallback((event) -> handleMousePress(event));
+        Engine.getInstance().getInputHandler().addMousePressedCallback(this::handleMousePress);
     }
 
     public boolean isOpen() {
