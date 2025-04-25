@@ -12,15 +12,15 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 public class Engine {
-    private static Engine instance;
     private static final Logger LOGGER = Logger.getLogger(Engine.class.getName());
+    private static Engine instance;
+    private final LevelLoader levelLoader;
+    private final ResourceManager resourceManager;
     private FileHandler logFileHandler;
     private boolean initialized = false;
     private Renderer renderer;
     private Pane renderTarget;
     private double FPS;
-    private LevelLoader levelLoader;
-    private ResourceManager resourceManager;
     private InputHandler inputHandler;
 
     private Engine() {
@@ -42,8 +42,21 @@ public class Engine {
         return FPS;
     }
 
+    public void setFPS(double fps) {
+        this.FPS = fps;
+        if (initialized) renderer.setFPS(fps);
+        LOGGER.info("FPS set to: " + fps);
+    }
+
     public boolean isPaused() {
         return renderer == null || renderer.isPaused();
+    }
+
+    public void setPaused(boolean paused) {
+        if (initialized) {
+            renderer.setPaused(paused);
+            LOGGER.info(paused ? "Engine paused" : "Engine resumed");
+        }
     }
 
     public LevelLoader getLevelLoader() {
@@ -56,19 +69,6 @@ public class Engine {
 
     public InputHandler getInputHandler() {
         return inputHandler;
-    }
-
-    public void setFPS(double fps) {
-        this.FPS = fps;
-        if (initialized) renderer.setFPS(fps);
-        LOGGER.info("FPS set to: " + fps);
-    }
-
-    public void setPaused(boolean paused) {
-        if (initialized) {
-            renderer.setPaused(paused);
-            LOGGER.info(paused ? "Engine paused" : "Engine resumed");
-        }
     }
 
     public void setLogLevel(Level level) {

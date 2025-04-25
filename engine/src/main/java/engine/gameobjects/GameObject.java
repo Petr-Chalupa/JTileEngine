@@ -29,8 +29,20 @@ public abstract class GameObject {
         return sprite;
     }
 
+    public void setSprite(String sprite) {
+        try {
+            this.sprite = ResourceManager.getInstance().getImg(sprite);
+        } catch (Exception e) {
+            System.err.println("Invalid sprite, default is being used:\n\t" + e);
+        }
+    }
+
     public boolean isRendered() {
         return isRendered;
+    }
+
+    public void setRendered(boolean rendered) {
+        this.isRendered = rendered;
     }
 
     public double getPosX() {
@@ -49,18 +61,6 @@ public abstract class GameObject {
         return size;
     }
 
-    public void setSprite(String sprite) {
-        try {
-            this.sprite = ResourceManager.getInstance().getImg(sprite);
-        } catch (Exception e) {
-            System.err.println("Invalid sprite, default is being used:\n\t" + e);
-        }
-    }
-
-    public void setRendered(boolean rendered) {
-        this.isRendered = rendered;
-    }
-
     public Bounds getBounds() {
         return new BoundingBox(posX, posY, size, size);
     }
@@ -74,7 +74,7 @@ public abstract class GameObject {
     }
 
     public void render(GraphicsContext context, double sx, double sy, double sw, double sh, double dx, double dy,
-            double dw, double dh) {
+                       double dw, double dh) {
         context.drawImage(sprite, sx, sy, sw, sh, dx, dy, dw, dh);
     }
 

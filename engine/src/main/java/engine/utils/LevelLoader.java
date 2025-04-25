@@ -12,7 +12,7 @@ public class LevelLoader {
     // level
     private String name;
     private boolean completed;
-    private ArrayList<GameObject> gameObjects = new ArrayList<>();
+    private final ArrayList<GameObject> gameObjects = new ArrayList<>();
     // map
     private int rows;
     private int cols;

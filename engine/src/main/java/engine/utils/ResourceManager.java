@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class ResourceManager {
     private static ResourceManager instance;
@@ -52,7 +51,7 @@ public class ResourceManager {
 
     public List<String> getLevelMap(String levelName) {
         String mapString = getLevelData(levelName, "map.txt");
-        return Arrays.stream(mapString.split("\\R")).filter(line -> !line.isEmpty()).collect(Collectors.toList());
+        return Arrays.stream(mapString.split("\\R")).filter(line -> !line.isEmpty()).toList();
     }
 
     private String getLevelData(String levelName, String fileName) {

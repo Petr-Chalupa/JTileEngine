@@ -11,14 +11,13 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Renderer implements Runnable {
     private static Thread RENDER_THREAD;
+    private final Canvas canvas;
+    private final LevelLoader levelLoader;
     private volatile boolean isPaused = false;
-    private Canvas canvas;
     private double FPS;
-    private LevelLoader levelLoader;
 
     public Renderer(Pane target, double FPS) {
         this.canvas = new Canvas();
@@ -102,7 +101,7 @@ public class Renderer implements Runnable {
         List<GameObject> sortedObjects = levelLoader.getGameObjects()
                 .stream()
                 .sorted((a, b) -> Integer.compare(a.getLayer(), b.getLayer()))
-                .collect(Collectors.toList());
+                .toList();
 
         // Render visible game objects
         for (GameObject gameObject : sortedObjects) {

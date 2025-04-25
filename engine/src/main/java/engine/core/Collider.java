@@ -5,8 +5,8 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 
 public class Collider {
-    private GameObject parent;
-    private Bounds box;
+    private final GameObject parent;
+    private final Bounds box;
 
     public Collider(GameObject parent, double posX, double posY, double width, double height) {
         this.parent = parent;

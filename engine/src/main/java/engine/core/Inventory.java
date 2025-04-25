@@ -14,17 +14,17 @@ import java.util.List;
 public class Inventory {
     public enum InventoryType {
         CENTER, BOTTOM
-    };
+    }
 
-    private InventoryType type;
-    private String name;
-    private int size;
-    private int cols;
-    private List<List<Item>> items;
+    private final InventoryType type;
+    private final String name;
+    private final int size;
+    private final int cols;
+    private final List<List<Item>> items;
     private boolean isVisible;
     private int selected = 0;
-    private int gap = 5;
-    private int nameSize = 20;
+    private final int gap = 5;
+    private final int nameSize = 20;
 
     public Inventory(InventoryType type, String name, int size, int cols) {
         this.type = type;
@@ -71,8 +71,7 @@ public class Inventory {
         List<Item> sameItemSlot = items.stream().filter(slot -> {
             if (slot.isEmpty()) return false;
             if (slot.getFirst().getType() != item.getType()) return false;
-            if (slot.size() == item.getType().getStackSize()) return false;
-            return true;
+            return slot.size() != item.getType().getStackSize();
         }).findFirst().orElse(null);
 
         List<Item> slot = sameItemSlot != null ? sameItemSlot : emptySlot;
@@ -83,7 +82,7 @@ public class Inventory {
     public void render(GraphicsContext context, double dx, double dy) {
         if (!isVisible) return;
 
-        int rows = (int) Math.ceilDiv(size, cols);
+        int rows = Math.ceilDiv(size, cols);
         double slotSize = LevelLoader.getInstance().getTileSize();
         double width = cols * (slotSize + gap) + gap;
         double height = rows * (slotSize + gap) + gap + (name != null ? nameSize : 0);

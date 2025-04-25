@@ -8,8 +8,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 
 public class Player extends Entity {
-    private InputHandler inputHandler;
     private final Inventory inventory;
+    private InputHandler inputHandler;
 
     public Player(double posX, double posY, double size, double speed, int health) {
         super(posX, posY, 2, size, speed, health);
@@ -27,21 +27,9 @@ public class Player extends Entity {
 
         this.inputHandler.addPressedCallback((event) -> {
             KeyCode code = event.getCode();
-            if (code.isDigitKey()) {
-                inventory.select(inputHandler.getDigit(code) - 1); // First slot mapped to 1
-            } else if (code == KeyCode.E) {
-                Item item = inventory.getSelectedItem();
-                boolean isUsableOnce = item.getType().use(this);
-                if (isUsableOnce) inventory.removeSelectedItem();
-            } else if (code == KeyCode.I) {
-                for (GameObject gameObject : getObjectsInRange()) {
-                    if (gameObject instanceof Chest) {
-                        ((Chest) gameObject).toggle(this);
-                        isMovementLocked = ((Chest) gameObject).isOpen();
-                        break;
-                    }
-                }
-            }
+            if (code.isDigitKey()) inventory.select(inputHandler.getDigit(code) - 1); // First slot mapped to 1
+            else if (code == KeyCode.E) handleItemUse();
+            else if (code == KeyCode.I) handleObjectInteract();
         });
 
         this.inputHandler.addMouseScrollCallback((event) -> {
@@ -73,9 +61,29 @@ public class Player extends Entity {
 
     @Override
     public void render(GraphicsContext context, double sx, double sy, double sw, double sh, double dx, double dy,
-            double dw, double dh) {
+                       double dw, double dh) {
         super.render(context, sx, sy, sw, sh, dx, dy, dw, dh);
         this.inventory.render(context, dx, dy);
+    }
+
+    private void handleItemUse() {
+        Item selectedItem = inventory.getSelectedItem();
+        if (selectedItem != null) {
+            boolean isUsableOnce = selectedItem.getType().use(this);
+            if (isUsableOnce) {
+                inventory.removeSelectedItem();
+            }
+        }
+    }
+
+    private void handleObjectInteract() {
+        for (GameObject gameObject : getObjectsInRange()) {
+            if (gameObject instanceof Chest chest) {
+                chest.toggle(this);
+                isMovementLocked = chest.isOpen();
+                break;
+            }
+        }
     }
 
 }

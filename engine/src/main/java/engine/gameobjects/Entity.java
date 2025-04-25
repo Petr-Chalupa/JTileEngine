@@ -1,17 +1,16 @@
 package engine.gameobjects;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import engine.utils.LevelLoader;
 import javafx.geometry.Bounds;
 
+import java.util.List;
+
 public class Entity extends GameObject {
+    protected final int maxHealth;
+    private final LevelLoader levelLoader;
     protected double speed;
     protected boolean isMovementLocked = false;
-    protected final int maxHealth;
     protected int health;
-    private final LevelLoader levelLoader;
 
     public Entity(double posX, double posY, int layer, double size, double speed, int health) {
         super(posX, posY, layer, size);
@@ -53,7 +52,7 @@ public class Entity extends GameObject {
             if (gameObject.equals(this) || !gameObject.isRendered()) return false;
             Bounds intersection = interactCollider.getIntersection(gameObject.movementCollider, 0, 0);
             return intersection != null;
-        }).collect(Collectors.toList());
+        }).toList();
     }
 
     protected void moveX(double dist) {

@@ -30,7 +30,7 @@ public class Chest extends GameObject {
 
     @Override
     public void render(GraphicsContext context, double sx, double sy, double sw, double sh, double dx, double dy,
-            double dw, double dh) {
+                       double dw, double dh) {
         super.render(context, sx, sy, sw, sh, dx, dy, dw, dh);
         this.inventory.render(context, dx, dy);
     }
