@@ -58,12 +58,20 @@ public class Inventory {
         items.get(selected).removeFirst();
     }
 
-    public void toggle() {
-        isVisible = !isVisible;
+    public void open() {
+        isVisible = true;
+    }
+
+    public void close() {
+        isVisible = false;
     }
 
     public void select(int index) {
         this.selected = Math.max(0, Math.min(size - 1, index));
+    }
+
+    public void selectMove(int delta) {
+        this.selected = Math.max(0, Math.min(size - 1, selected + delta));
     }
 
     public void addItem(Item item) {

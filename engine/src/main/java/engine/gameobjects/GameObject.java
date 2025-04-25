@@ -53,6 +53,12 @@ public abstract class GameObject {
         return posY;
     }
 
+    public double getDistance(GameObject gameObject) {
+        double dx = posX - gameObject.posX;
+        double dy = posY - gameObject.posY;
+        return dx * dx + dy * dy;
+    }
+    
     public int getLayer() {
         return layer;
     }

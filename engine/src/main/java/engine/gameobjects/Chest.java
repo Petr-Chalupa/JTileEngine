@@ -1,14 +1,17 @@
 package engine.gameobjects;
 
-import engine.Engine;
 import engine.core.Inventory;
 import engine.core.Inventory.InventoryType;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 
-public class Chest extends GameObject {
+public class Chest extends GameObject implements Interactable {
+    public enum State {
+        OPEN,
+        CLOSED,
+    }
+
     private final Inventory inventory;
+    private State state = State.CLOSED;
 
     public Chest(double posX, double posY, double size) {
         super(posX, posY, 1, size);
@@ -16,12 +19,14 @@ public class Chest extends GameObject {
 
         setSprite("chest_sprite.jpg");
         setMovementCollider(0, 0, size, size);
-
-        Engine.getInstance().getInputHandler().addMousePressedCallback(this::handleMousePress);
     }
 
     public boolean isOpen() {
-        return this.inventory.isVisible();
+        return this.state == State.OPEN;
+    }
+
+    public Inventory getInventory() {
+        return this.inventory;
     }
 
     @Override
@@ -36,13 +41,13 @@ public class Chest extends GameObject {
     }
 
     public void toggle(Entity user) {
-        this.inventory.toggle();
-    }
-
-    private void handleMousePress(MouseEvent event) {
-        if (!isOpen() || event.getButton() != MouseButton.PRIMARY) return;
-
-        // select the clicked slot
+        if (isOpen()) {
+            this.inventory.close();
+            state = State.CLOSED;
+        } else {
+            this.inventory.open();
+            state = State.OPEN;
+        }
     }
 
 }

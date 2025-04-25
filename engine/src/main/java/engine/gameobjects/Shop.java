@@ -5,7 +5,13 @@ import engine.core.Inventory.InventoryType;
 import javafx.scene.canvas.GraphicsContext;
 
 public class Shop extends GameObject {
+    public enum State {
+        OPEN,
+        CLOSED,
+    }
+
     private final Inventory inventory;
+    private State state = State.CLOSED;
 
     public Shop(double posX, double posY, double size) {
         super(posX, posY, 1, size);

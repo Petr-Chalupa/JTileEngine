@@ -4,17 +4,27 @@ import engine.Engine;
 import engine.core.InputHandler;
 import engine.core.Inventory;
 import engine.core.Inventory.InventoryType;
+import engine.utils.LevelLoader;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 
+import java.util.Comparator;
+
 public class Player extends Entity {
+    public enum State {
+        NORMAL,
+        INTERACTING,
+    }
+
     private final Inventory inventory;
     private InputHandler inputHandler;
+    private State state = State.NORMAL;
+    private GameObject currentInteractable;
 
     public Player(double posX, double posY, double size, double speed, int health) {
         super(posX, posY, 2, size, speed, health);
         this.inventory = new Inventory(InventoryType.BOTTOM, null, 5, 5);
-        this.inventory.toggle();
+        this.inventory.open();
 
         setSprite("player_sprite.png");
         setInputHandler();
@@ -27,21 +37,32 @@ public class Player extends Entity {
 
         this.inputHandler.addPressedCallback((event) -> {
             KeyCode code = event.getCode();
-            if (code.isDigitKey()) inventory.select(inputHandler.getDigit(code) - 1); // First slot mapped to 1
-            else if (code == KeyCode.E) handleItemUse();
-            else if (code == KeyCode.I) handleObjectInteract();
+
+            if (code.isDigitKey()) {
+                inventory.select(inputHandler.getDigit(code) - 1); // First slot mapped to 1
+                return;
+            } else if (code == KeyCode.I) handleObjectInteract();
+
+            if (state == State.NORMAL) {
+                if (code == KeyCode.E) handleItemUse();
+            } else if (state == State.INTERACTING) {
+                if (code == KeyCode.LEFT || code == KeyCode.RIGHT) {
+                    int dir = code == KeyCode.LEFT ? -1 : 1;
+                    if (currentInteractable instanceof Chest chest) chest.getInventory().selectMove(dir);
+                }
+            }
         });
 
         this.inputHandler.addMouseScrollCallback((event) -> {
             int dir = (int) Math.signum(event.getDeltaY());
-            inventory.select(inventory.getSelected() + dir);
+            inventory.selectMove(dir);
         });
     }
 
     @Override
     public void update(double deltaTime) {
         // Handle movement
-        if (!isMovementLocked) {
+        if (state == State.NORMAL) {
             final double deltaX;
             final double deltaY;
             if (inputHandler.isKeyPressed(KeyCode.W)) deltaY = -speed * deltaTime; // Up
@@ -77,13 +98,26 @@ public class Player extends Entity {
     }
 
     private void handleObjectInteract() {
-        for (GameObject gameObject : getObjectsInRange()) {
-            if (gameObject instanceof Chest chest) {
-                chest.toggle(this);
-                isMovementLocked = chest.isOpen();
-                break;
-            }
+        currentInteractable = getClosestInteractableObject();
+        if (currentInteractable == null) return;
+
+        if (currentInteractable instanceof Chest chest) {
+            chest.toggle(this);
+            state = chest.isOpen() ? State.INTERACTING : State.NORMAL;
         }
+    }
+
+    private GameObject getClosestInteractableObject() {
+        LevelLoader levelLoader = Engine.getInstance().getLevelLoader();
+        return levelLoader.getGameObjects()
+                .stream()
+                .filter(gameObject ->
+                        gameObject != this &&
+                                gameObject.isRendered() &&
+                                gameObject instanceof Interactable &&
+                                interactCollider.getIntersection(gameObject.movementCollider, 0, 0) != null)
+                .min(Comparator.comparingDouble(this::getDistance))
+                .orElse(null);
     }
 
 }

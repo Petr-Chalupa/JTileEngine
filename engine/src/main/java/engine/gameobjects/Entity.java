@@ -3,13 +3,10 @@ package engine.gameobjects;
 import engine.utils.LevelLoader;
 import javafx.geometry.Bounds;
 
-import java.util.List;
-
 public class Entity extends GameObject {
     protected final int maxHealth;
     private final LevelLoader levelLoader;
     protected double speed;
-    protected boolean isMovementLocked = false;
     protected int health;
 
     public Entity(double posX, double posY, int layer, double size, double speed, int health) {
@@ -45,14 +42,6 @@ public class Entity extends GameObject {
                     if (intersection == null) return true;
                     else return gameObject instanceof Tile && ((Tile) gameObject).getType().isSolid();
                 });
-    }
-
-    protected List<GameObject> getObjectsInRange() {
-        return levelLoader.getGameObjects().stream().filter(gameObject -> {
-            if (gameObject.equals(this) || !gameObject.isRendered()) return false;
-            Bounds intersection = interactCollider.getIntersection(gameObject.movementCollider, 0, 0);
-            return intersection != null;
-        }).toList();
     }
 
     protected void moveX(double dist) {
