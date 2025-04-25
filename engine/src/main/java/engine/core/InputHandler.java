@@ -3,95 +3,86 @@ package engine.core;
 import javafx.scene.Scene;
 import javafx.scene.input.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class InputHandler {
-    private final Set<KeyCode> pressedKeys = new HashSet<>();
-    private final Set<MouseButton> pressedButtons = new HashSet<>();
-    private final List<Consumer<KeyEvent>> pressedCallbacks = new ArrayList<>();
-    private final List<Consumer<KeyEvent>> releasedCallbacks = new ArrayList<>();
-    private final List<Consumer<MouseEvent>> mousePressedCallbacks = new ArrayList<>();
-    private final List<Consumer<MouseEvent>> mouseReleasedCallbacks = new ArrayList<>();
-    private final List<Consumer<ScrollEvent>> mouseScrollCallbacks = new ArrayList<>();
+	private final Set<KeyCode> pressedKeys = new HashSet<>();
+	private final Set<MouseButton> pressedButtons = new HashSet<>();
+	private final Map<KeyCode, List<Consumer<KeyEvent>>> keyPressedCallbacks = new HashMap<>();
+	private final Map<KeyCode, List<Consumer<KeyEvent>>> keyReleasedCallbacks = new HashMap<>();
+	private final Map<MouseButton, List<Consumer<MouseEvent>>> mousePressedCallbacks = new HashMap<>();
+	private final Map<MouseButton, List<Consumer<MouseEvent>>> mouseReleasedCallbacks = new HashMap<>();
+	private final List<Consumer<ScrollEvent>> mouseScrollCallbacks = new ArrayList<>();
 
-    public InputHandler(Scene scene) {
-        // Keyboard
-        scene.setOnKeyPressed(event -> {
-            pressedKeys.add(event.getCode());
-            if (!pressedCallbacks.isEmpty()) pressedCallbacks.forEach(cb -> cb.accept(event));
-        });
-        scene.setOnKeyReleased(event -> {
-            pressedKeys.remove(event.getCode());
-            if (!releasedCallbacks.isEmpty()) releasedCallbacks.forEach(cb -> cb.accept(event));
-        });
+	public InputHandler(Scene scene) {
+		scene.setOnKeyPressed(event -> {
+			KeyCode code = event.getCode();
+			pressedKeys.add(code);
+			if (!keyPressedCallbacks.containsKey(code)) return;
+			for (Consumer<KeyEvent> callback : keyPressedCallbacks.get(code)) {
+				callback.accept(event);
+			}
+		});
+		scene.setOnKeyReleased(event -> {
+			KeyCode code = event.getCode();
+			pressedKeys.remove(code);
+			if (!keyReleasedCallbacks.containsKey(code)) return;
+			for (Consumer<KeyEvent> callback : keyReleasedCallbacks.get(code)) {
+				callback.accept(event);
+			}
+		});
+		scene.setOnMousePressed(event -> {
+			pressedButtons.add(event.getButton());
+			if (!mousePressedCallbacks.containsKey(event.getButton())) return;
+			for (Consumer<MouseEvent> callback : mousePressedCallbacks.get(event.getButton())) {
+				callback.accept(event);
+			}
+		});
+		scene.setOnMouseReleased(event -> {
+			pressedButtons.remove(event.getButton());
+			if (!mouseReleasedCallbacks.containsKey(event.getButton())) return;
+			for (Consumer<MouseEvent> callback : mouseReleasedCallbacks.get(event.getButton())) {
+				callback.accept(event);
+			}
+		});
+		scene.setOnScroll(event -> {
+			for (Consumer<ScrollEvent> callback : mouseScrollCallbacks) {
+				callback.accept(event);
+			}
+		});
+	}
 
-        // Mouse
-        scene.setOnMousePressed(event -> {
-            pressedButtons.add(event.getButton());
-            if (!mousePressedCallbacks.isEmpty()) mousePressedCallbacks.forEach(cb -> cb.accept(event));
-        });
-        scene.setOnMouseReleased(event -> {
-            pressedButtons.remove(event.getButton());
-            if (!mouseReleasedCallbacks.isEmpty()) mouseReleasedCallbacks.forEach(cb -> cb.accept(event));
-        });
-        scene.setOnScroll(event -> {
-            if (!mouseScrollCallbacks.isEmpty()) mouseScrollCallbacks.forEach(cb -> cb.accept(event));
-        });
-    }
+	public void bindKeyPressed(KeyCode code, Consumer<KeyEvent> callback) {
+		keyPressedCallbacks.computeIfAbsent(code, k -> new ArrayList<>()).add(callback);
+	}
 
-    public boolean isKeyPressed(KeyCode key) {
-        return pressedKeys.contains(key);
-    }
+	public void bindKeyReleased(KeyCode code, Consumer<KeyEvent> callback) {
+		keyReleasedCallbacks.computeIfAbsent(code, k -> new ArrayList<>()).add(callback);
+	}
 
-    public boolean isMouseButtonPressed(MouseButton button) {
-        return pressedButtons.contains(button);
-    }
+	public void bindMousePressed(MouseButton button, Consumer<MouseEvent> callback) {
+		mousePressedCallbacks.computeIfAbsent(button, k -> new ArrayList<>()).add(callback);
+	}
 
-    public void clear() {
-        pressedKeys.clear();
-        pressedButtons.clear();
-    }
+	public void bindMouseReleased(MouseButton button, Consumer<MouseEvent> callback) {
+		mouseReleasedCallbacks.computeIfAbsent(button, k -> new ArrayList<>()).add(callback);
+	}
 
-    public void addPressedCallback(Consumer<KeyEvent> pressedCallback) {
-        this.pressedCallbacks.add(pressedCallback);
-    }
+	public void addMouseScrollCallback(Consumer<ScrollEvent> callback) {
+		mouseScrollCallbacks.add(callback);
+	}
 
-    public void addReleasedCallback(Consumer<KeyEvent> releasedCallback) {
-        this.releasedCallbacks.add(releasedCallback);
-    }
+	public boolean isKeyPressed(KeyCode key) {
+		return pressedKeys.contains(key);
+	}
 
-    public void addMousePressedCallback(Consumer<MouseEvent> callback) {
-        this.mousePressedCallbacks.add(callback);
-    }
+	public boolean isMouseButtonPressed(MouseButton button) {
+		return pressedButtons.contains(button);
+	}
 
-    public void addMouseReleasedCallback(Consumer<MouseEvent> callback) {
-        this.mouseReleasedCallbacks.add(callback);
-    }
-
-    public void addMouseScrollCallback(Consumer<ScrollEvent> callback) {
-        this.mouseScrollCallbacks.add(callback);
-    }
-
-    public int getDigit(KeyCode code) {
-        int digit;
-        switch (code) {
-            case KeyCode.DIGIT0 -> digit = 0;
-            case KeyCode.DIGIT1 -> digit = 1;
-            case KeyCode.DIGIT2 -> digit = 2;
-            case KeyCode.DIGIT3 -> digit = 3;
-            case KeyCode.DIGIT4 -> digit = 4;
-            case KeyCode.DIGIT5 -> digit = 5;
-            case KeyCode.DIGIT6 -> digit = 6;
-            case KeyCode.DIGIT7 -> digit = 7;
-            case KeyCode.DIGIT8 -> digit = 8;
-            case KeyCode.DIGIT9 -> digit = 9;
-            default -> digit = -1; // Not a valid digit key
-        }
-        return digit;
-    }
-
+	public void clear() {
+		pressedKeys.clear();
+		pressedButtons.clear();
+	}
 }

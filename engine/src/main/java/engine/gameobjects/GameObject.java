@@ -58,7 +58,7 @@ public abstract class GameObject {
         double dy = posY - gameObject.posY;
         return dx * dx + dy * dy;
     }
-    
+
     public int getLayer() {
         return layer;
     }

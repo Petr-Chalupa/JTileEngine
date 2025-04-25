@@ -7,12 +7,28 @@ public enum ItemType {
         System.out.println("sword used");
     }),
     //
-    KEY("key.png", 1, false, (user) -> {
-        System.out.println("key used");
+    ARMOR("armor.jpg", 1, false, (user) -> {
+        System.out.println("armor used");
     }),
     //
-    FOOD("food.jpg", 10, true, (user) -> {
+    MONEY("money.jpg", 10, true, (user) -> {
+        System.out.println("money used");
+    }),
+    //
+    MEAT("meat.jpg", 10, true, (user) -> {
         user.heal(1);
+    }),
+    //
+    GRANULE("granule.jpg", 10, true, (user) -> {
+        user.heal(1);
+    }),
+    //
+    TREAT("treat.jpg", 10, true, (user) -> {
+        user.heal(1);
+    }),
+    //
+    HUMAN("human.jpg", 1, false, (user) -> {
+        System.out.println("human used");
     });
 
     private final String spritePath;

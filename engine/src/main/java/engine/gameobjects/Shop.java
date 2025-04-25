@@ -9,9 +9,9 @@ public class Shop extends GameObject {
         OPEN,
         CLOSED,
     }
-
+    
     private final Inventory inventory;
-    private State state = State.CLOSED;
+    private final State state = State.CLOSED;
 
     public Shop(double posX, double posY, double size) {
         super(posX, posY, 1, size);
@@ -28,4 +28,5 @@ public class Shop extends GameObject {
         super.render(context, sx, sy, sw, sh, dx, dy, dw, dh);
         this.inventory.render(context, dx, dy);
     }
+
 }
