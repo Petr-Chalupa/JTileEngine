@@ -120,7 +120,7 @@ public class Inventory {
 		}
 	}
 
-	public void render(GraphicsContext context, double dx, double dy) {
+	public void render(GraphicsContext context) {
 		if (!isVisible) return;
 
 		int rows = Math.ceilDiv(size, cols);
@@ -128,6 +128,8 @@ public class Inventory {
 		double width = cols * (slotSize + gap) + gap;
 		double height = rows * (slotSize + gap) + gap + (name != null ? nameSize : 0);
 
+		double dx = 0;
+		double dy = 0;
 		if (type == InventoryType.CENTER) {
 			dx = (context.getCanvas().getWidth() - width) / 2;
 			dy = (context.getCanvas().getHeight() - height) / 2;

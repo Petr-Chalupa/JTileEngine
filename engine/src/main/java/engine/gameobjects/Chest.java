@@ -32,20 +32,13 @@ public class Chest extends GameObject implements Interactable {
 
 	public void generateLoot() {
 		int slots = inventory.getSize();
+		ItemType[] itemTypes = ItemType.values();
 		for (int i = 0; i < slots; i++) {
-			//            System.out.println("gen for slot " + i);
+			if (Math.random() < 0.3) {
+				ItemType itemType = itemTypes[(int) (Math.random() * itemTypes.length)];
+				inventory.addItem(new Item(posX, posY, 1, 1, itemType), i);
+			}
 		}
-	}
-
-	@Override
-	public void update(double deltaTime) {
-	}
-
-	@Override
-	public void render(GraphicsContext context, double sx, double sy, double sw, double sh, double dx, double dy,
-					   double dw, double dh) {
-		super.render(context, sx, sy, sw, sh, dx, dy, dw, dh);
-		this.inventory.render(context, dx, dy);
 	}
 
 	public void toggle(Entity user) {
@@ -56,6 +49,11 @@ public class Chest extends GameObject implements Interactable {
 			this.inventory.open();
 			state = State.OPEN;
 		}
+	}
+
+	@Override
+	public void renderUI(GraphicsContext context) {
+		inventory.render(context);
 	}
 
 }

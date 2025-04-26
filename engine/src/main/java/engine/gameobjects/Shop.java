@@ -5,28 +5,22 @@ import engine.core.Inventory.InventoryType;
 import javafx.scene.canvas.GraphicsContext;
 
 public class Shop extends GameObject {
-    public enum State {
-        OPEN,
-        CLOSED,
-    }
-    
-    private final Inventory inventory;
-    private final State state = State.CLOSED;
+	public enum State {
+		OPEN,
+		CLOSED,
+	}
 
-    public Shop(double posX, double posY, double size) {
-        super(posX, posY, 1, size);
-        this.inventory = new Inventory(InventoryType.CENTER, "Shop", 10, 5);
-    }
+	private final Inventory inventory;
+	private final State state = State.CLOSED;
 
-    @Override
-    public void update(double deltaTime) {
-    }
+	public Shop(double posX, double posY, double size) {
+		super(posX, posY, 1, size);
+		this.inventory = new Inventory(InventoryType.CENTER, "Shop", 10, 5);
+	}
 
-    @Override
-    public void render(GraphicsContext context, double sx, double sy, double sw, double sh, double dx, double dy,
-                       double dw, double dh) {
-        super.render(context, sx, sy, sw, sh, dx, dy, dw, dh);
-        this.inventory.render(context, dx, dy);
-    }
+	@Override
+	public void renderUI(GraphicsContext context) {
+		inventory.render(context);
+	}
 
 }

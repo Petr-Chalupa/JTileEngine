@@ -17,10 +17,6 @@ public class Entity extends GameObject {
 		this.levelLoader = LevelLoader.getInstance();
 	}
 
-	@Override
-	public void update(double deltaTime) {
-	}
-
 	public void heal(int health) {
 		this.health = Math.min(maxHealth, this.health + health);
 	}
