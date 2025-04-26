@@ -1,6 +1,8 @@
 package engine.gameobjects;
 
 import engine.Engine;
+import engine.core.Healthbar;
+import engine.core.Healthbar.HealthbarType;
 import engine.core.InputHandler;
 import engine.core.Inventory;
 import engine.core.Inventory.InventoryType;
@@ -17,6 +19,7 @@ public class Player extends Entity {
 		INTERACTING,
 	}
 
+	private final Healthbar healthbar;
 	private final Inventory inventory;
 	private Inventory currentFocusedInventory;
 	private InputHandler inputHandler;
@@ -25,12 +28,10 @@ public class Player extends Entity {
 
 	public Player(double posX, double posY, double size, double speed, int health) {
 		super(posX, posY, 2, size, speed, health);
+		this.healthbar = new Healthbar(this, HealthbarType.LEFT_BOTTOM);
 		this.inventory = new Inventory(InventoryType.BOTTOM, null, 5, 5);
 		this.inventory.open();
 		this.currentFocusedInventory = inventory;
-		inventory.addItem(new Item(posX, posY, 1, 1, ItemType.GRANULE));
-		inventory.addItem(new Item(posX, posY, 1, 1, ItemType.GRANULE));
-		inventory.addItem(new Item(posX, posY, 1, 1, ItemType.GRANULE));
 
 		setSprite("player_sprite.png");
 		setInputHandler();
@@ -93,6 +94,7 @@ public class Player extends Entity {
 
 	@Override
 	public void renderUI(GraphicsContext context) {
+		healthbar.render(context);
 		inventory.render(context);
 	}
 

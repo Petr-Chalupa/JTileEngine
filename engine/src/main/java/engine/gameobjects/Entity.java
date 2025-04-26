@@ -17,6 +17,14 @@ public class Entity extends GameObject {
 		this.levelLoader = LevelLoader.getInstance();
 	}
 
+	public int getMaxHealth() {
+		return maxHealth;
+	}
+
+	public int getHealth() {
+		return health;
+	}
+
 	public void heal(int health) {
 		this.health = Math.min(maxHealth, this.health + health);
 	}
