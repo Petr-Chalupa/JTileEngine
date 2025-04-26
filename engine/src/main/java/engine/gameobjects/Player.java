@@ -18,6 +18,7 @@ public class Player extends Entity {
 	}
 
 	private final Inventory inventory;
+	private Inventory currentFocusedInventory;
 	private InputHandler inputHandler;
 	private State state = State.NORMAL;
 	private GameObject currentInteractable;
@@ -26,6 +27,10 @@ public class Player extends Entity {
 		super(posX, posY, 2, size, speed, health);
 		this.inventory = new Inventory(InventoryType.BOTTOM, null, 5, 5);
 		this.inventory.open();
+		this.currentFocusedInventory = inventory;
+		inventory.addItem(new Item(posX, posY, 1, 1, ItemType.GRANULE));
+		inventory.addItem(new Item(posX, posY, 1, 1, ItemType.GRANULE));
+		inventory.addItem(new Item(posX, posY, 1, 1, ItemType.GRANULE));
 
 		setSprite("player_sprite.png");
 		setInputHandler();
@@ -36,33 +41,33 @@ public class Player extends Entity {
 	public void setInputHandler() {
 		this.inputHandler = Engine.getInstance().getInputHandler();
 
-		inputHandler.bindKeyPressed(KeyCode.E, event -> handleObjectInteract());
-		inputHandler.bindKeyPressed(KeyCode.LEFT, event -> {
-			if (state == State.INTERACTING && currentInteractable instanceof Chest chest) {
-				chest.getInventory().selectMove(-1);
-			}
-		});
-		inputHandler.bindKeyPressed(KeyCode.RIGHT, event -> {
-			if (state == State.INTERACTING && currentInteractable instanceof Chest chest) {
-				chest.getInventory().selectMove(1);
-			}
-		});
-		//		inputHandler.bindKeyPressed(KeyCode.SPACE, event -> {
-		//			if (state == State.INTERACTING) {
-		//				transferSelectedItem();
-		//			}
-		//		});
 		for (int i = 1; i <= 9; i++) {
 			KeyCode digitKey = KeyCode.getKeyCode(String.valueOf(i));
 			final int slotIndex = i - 1;
 			inputHandler.bindKeyPressed(digitKey, event -> inventory.select(slotIndex));
 		}
+		inputHandler.bindKeyPressed(KeyCode.E, event -> {
+			handleObjectInteract();
+			if (state == State.NORMAL) currentFocusedInventory = inventory;
+		});
+		inputHandler.bindKeyPressed(KeyCode.TAB, event -> {
+			if (state == State.INTERACTING && currentInteractable instanceof Chest chest) {
+				if (currentFocusedInventory == inventory) currentFocusedInventory = chest.getInventory();
+				else currentFocusedInventory = inventory;
+			}
+		});
+		inputHandler.bindKeyPressed(KeyCode.SPACE, event -> {
+			if (state == State.INTERACTING && currentInteractable instanceof Chest chest) {
+				if (currentFocusedInventory == inventory) inventory.transferSelectedItem(chest.getInventory());
+				else chest.getInventory().transferSelectedItem(inventory);
+			}
+		});
 		inputHandler.bindMousePressed(MouseButton.PRIMARY, event -> {
 			if (state == State.NORMAL) handleItemUse();
 		});
 		inputHandler.addMouseScrollCallback(event -> {
 			int dir = (int) Math.signum(event.getDeltaY());
-			inventory.selectMove(dir);
+			currentFocusedInventory.selectMove(dir);
 		});
 	}
 
@@ -93,26 +98,6 @@ public class Player extends Entity {
 		this.inventory.render(context, dx, dy);
 	}
 
-	private void handleItemUse() {
-		Item selectedItem = inventory.getSelectedItem();
-		if (selectedItem != null) {
-			boolean isUsableOnce = selectedItem.getType().use(this);
-			if (isUsableOnce) {
-				inventory.removeSelectedItem();
-			}
-		}
-	}
-
-	private void handleObjectInteract() {
-		currentInteractable = getClosestInteractableObject();
-		if (currentInteractable == null) return;
-
-		if (currentInteractable instanceof Chest chest) {
-			chest.toggle(this);
-			state = chest.isOpen() ? State.INTERACTING : State.NORMAL;
-		}
-	}
-
 	private GameObject getClosestInteractableObject() {
 		LevelLoader levelLoader = Engine.getInstance().getLevelLoader();
 		return levelLoader.getGameObjects()
@@ -124,6 +109,24 @@ public class Player extends Entity {
 								interactCollider.getIntersection(gameObject.movementCollider, 0, 0) != null)
 				.min(Comparator.comparingDouble(this::getDistance))
 				.orElse(null);
+	}
+
+	private void handleObjectInteract() {
+		currentInteractable = getClosestInteractableObject();
+		if (currentInteractable == null) return;
+		
+		state = state == State.NORMAL ? State.INTERACTING : State.NORMAL;
+		if (currentInteractable instanceof Chest chest) chest.toggle(this);
+	}
+
+	private void handleItemUse() {
+		Item selectedItem = inventory.getSelectedItem();
+		if (selectedItem != null) {
+			boolean isUsableOnce = selectedItem.getType().use(this);
+			if (isUsableOnce) {
+				inventory.removeSelectedItem();
+			}
+		}
 	}
 
 }
