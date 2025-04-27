@@ -24,8 +24,6 @@ public class Inventory {
 	private final List<List<Item>> items;
 	private boolean isVisible;
 	private int selected = 0;
-	private final int gap = 5;
-	private final int nameSize = 20;
 
 	public Inventory(InventoryType type, String name, int size, int cols) {
 		this.type = type;
@@ -124,6 +122,8 @@ public class Inventory {
 		if (!isVisible) return;
 
 		int rows = Math.ceilDiv(size, cols);
+		double gap = 5;
+		double nameSize = 20;
 		double slotSize = LevelLoader.getInstance().getTileSize();
 		double width = cols * (slotSize + gap) + gap;
 		double height = rows * (slotSize + gap) + gap + (name != null ? nameSize : 0);
@@ -144,12 +144,12 @@ public class Inventory {
 
 		// Render name (centered)
 		if (name != null) {
+			context.save();
 			context.setFill(Color.WHITE);
 			context.setTextAlign(TextAlignment.CENTER);
 			context.setTextBaseline(VPos.CENTER);
 			context.fillText(name, dx + width / 2, dy + nameSize / 2);
-			context.setTextAlign(TextAlignment.LEFT); // Reset
-			context.setTextBaseline(VPos.BASELINE); // Reset
+			context.restore(); // Reset
 			dy += nameSize;
 		}
 
@@ -168,11 +168,12 @@ public class Inventory {
 			if (!items.get(i).isEmpty()) {
 				items.get(i).getFirst().render(context, 0, 0, slotSize, slotSize, slotX, slotY, slotSize, slotSize);
 				if (items.get(i).size() > 1) {
+					context.save();
 					context.setFill(Color.WHITE);
 					context.setTextAlign(TextAlignment.RIGHT);
 					context.setFont(new Font(20));
 					context.fillText("" + items.get(i).size(), slotX + slotSize - gap, slotY + slotSize - gap);
-					context.setTextAlign(TextAlignment.LEFT); // Reset
+					context.restore(); // Reset
 				}
 			}
 		}

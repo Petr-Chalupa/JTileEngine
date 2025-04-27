@@ -1,10 +1,8 @@
 package engine.core;
 
 import engine.gameobjects.GameObject;
-import engine.gameobjects.Player;
 import engine.utils.LevelLoader;
 import javafx.application.Platform;
-import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -15,14 +13,16 @@ import java.util.List;
 
 public class Renderer implements Runnable {
 	private static Thread RENDER_THREAD;
-	private final Canvas canvas;
 	private final LevelLoader levelLoader;
+	private final Canvas canvas;
+	private final Camera camera;
 	private volatile boolean isPaused = false;
 	private double FPS;
 
 	public Renderer(Pane target, double FPS) {
-		this.canvas = new Canvas();
 		this.levelLoader = LevelLoader.getInstance();
+		this.canvas = new Canvas();
+		this.camera = Camera.getInstance();
 		this.FPS = FPS;
 
 		target.getChildren().add(canvas);
@@ -92,11 +92,13 @@ public class Renderer implements Runnable {
 	}
 
 	public void render() {
+		// Clear the canvas
 		GraphicsContext context = canvas.getGraphicsContext2D();
 		context.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-		// Calculate camera view bounds
-		Bounds viewBounds = calculateViewBounds();
+		// Update camera
+		if (camera.getTarget() == null) camera.setTarget(levelLoader.getPlayer());
+		camera.update(canvas);
 
 		// Sort game objects based on layer
 		List<GameObject> sortedObjects = levelLoader.getGameObjects()
@@ -106,7 +108,7 @@ public class Renderer implements Runnable {
 
 		// Render visible game objects
 		for (GameObject gameObject : sortedObjects) {
-			Bounds intersection = getVisibleIntersection(gameObject.getBounds(), viewBounds);
+			Bounds intersection = camera.getVisibleIntersection(gameObject.getBounds());
 			if (intersection == null) {
 				gameObject.setRendered(false);
 				continue;
@@ -121,8 +123,8 @@ public class Renderer implements Runnable {
 			double sourceY = (intersection.getMinY() - goPosY) * (spriteHeight / goSize);
 			double sourceWidth = intersection.getWidth() * (spriteWidth / goSize);
 			double sourceHeight = intersection.getHeight() * (spriteHeight / goSize);
-			double destX = goPosX - viewBounds.getMinX();
-			double destY = goPosY - viewBounds.getMinY();
+			double destX = goPosX - camera.getViewBounds().getMinX();
+			double destY = goPosY - camera.getViewBounds().getMinY();
 			gameObject.render(context, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, goSize, goSize);
 			gameObject.setRendered(true);
 		}
@@ -131,29 +133,4 @@ public class Renderer implements Runnable {
 		sortedObjects.stream().filter(GameObject::isRendered).forEach(gameObject -> gameObject.renderUI(context));
 	}
 
-	private Bounds calculateViewBounds() {
-		Player player = levelLoader.getPlayer();
-		double tileSize = levelLoader.getTileSize();
-
-		double viewWorldCenterX = player.getPosX() + (player.getSize() / 2.0);
-		double viewWorldCenterY = player.getPosY() + (player.getSize() / 2.0);
-
-		double viewCols = canvas.getWidth() / tileSize;
-		double viewRows = canvas.getHeight() / tileSize;
-
-		double viewLeft = viewWorldCenterX - (viewCols * tileSize) / 2.0;
-		double viewRight = viewWorldCenterX + (viewCols * tileSize) / 2.0;
-		double viewTop = viewWorldCenterY - (viewRows * tileSize) / 2.0;
-		double viewBottom = viewWorldCenterY + (viewRows * tileSize) / 2.0;
-
-		return new BoundingBox(viewLeft, viewTop, viewRight - viewLeft, viewBottom - viewTop);
-	}
-
-	private Bounds getVisibleIntersection(Bounds gameObjectBounds, Bounds viewBounds) {
-		double minX = Math.max(gameObjectBounds.getMinX(), viewBounds.getMinX());
-		double minY = Math.max(gameObjectBounds.getMinY(), viewBounds.getMinY());
-		double maxX = Math.min(gameObjectBounds.getMaxX(), viewBounds.getMaxX());
-		double maxY = Math.min(gameObjectBounds.getMaxY(), viewBounds.getMaxY());
-		return (minX < maxX && minY < maxY) ? new BoundingBox(minX, minY, maxX - minX, maxY - minY) : null;
-	}
 }

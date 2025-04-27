@@ -1,9 +1,14 @@
 package engine.gameobjects;
 
+import engine.core.Healthbar;
+import engine.core.Healthbar.HealthbarType;
+
 public class Enemy extends Entity {
+	private final Healthbar healthbar;
 
 	public Enemy(double posX, double posY, double size, double speed, int health) {
 		super(posX, posY, 1, size, speed, health);
+		this.healthbar = new Healthbar(this, HealthbarType.FLOAT);
 
 		setSprite("enemy_sprite.png");
 		setMovementCollider(0, 0, size, size);
@@ -20,6 +25,11 @@ public class Enemy extends Entity {
 		boolean canMove = canMove(deltaX, deltaY);
 		if (canMove && Math.random() > 0.5) moveX(deltaX);
 		if (canMove && Math.random() > 0.5) moveY(deltaY);
+	}
+
+	@Override
+	public void renderUI(javafx.scene.canvas.GraphicsContext context) {
+		healthbar.render(context);
 	}
 
 }

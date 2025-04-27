@@ -1,7 +1,6 @@
 package engine.core;
 
 import engine.gameobjects.Entity;
-import engine.utils.LevelLoader;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -34,11 +33,9 @@ public class Healthbar {
 		} else if (type == HealthbarType.FLOAT) {
 			width = parent.getSprite().getWidth() * 0.75;
 			height = 8;
-			double tileSize = LevelLoader.getInstance().getTileSize();
-			double cameraOffsetX = context.getCanvas().getWidth() / 2 - (parent.getPosX() * tileSize);
-			double cameraOffsetY = context.getCanvas().getHeight() / 2 - (parent.getPosY() * tileSize);
-			dx = parent.getPosX() * tileSize + cameraOffsetX - width / 2;
-			dy = parent.getPosY() * tileSize + cameraOffsetY - parent.getSprite().getHeight() / 2 - 5;
+			Camera camera = Camera.getInstance();
+			dx = camera.worldToScreenX(parent.getPosX()) - parent.getSprite().getWidth() / 2;
+			dy = camera.worldToScreenY(parent.getPosY()) - parent.getSprite().getHeight() / 2 - 5;
 		}
 
 		double healthPercentage = (double) parent.getHealth() / parent.getMaxHealth();
@@ -55,13 +52,14 @@ public class Healthbar {
 
 		if (type == HealthbarType.LEFT_BOTTOM) {
 			// Render health as text
+			context.save();
 			context.setFill(Color.WHITE);
 			context.setTextAlign(TextAlignment.CENTER);
 			context.setTextBaseline(VPos.CENTER);
 			context.setFont(new Font(height - 2));
 			context.fillText((int) (healthPercentage * 100) + "%", dx + width / 2, dy + height / 2);
-			context.setTextAlign(TextAlignment.LEFT); // Reset
-			context.setTextBaseline(VPos.BASELINE); // Reset
+			context.restore(); // Reset
 		}
 	}
+
 }
