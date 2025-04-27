@@ -14,8 +14,8 @@ public abstract class GameObject {
 	protected double posY;
 	protected int layer;
 	protected double size;
-	protected Collider movementCollider;
-	protected Collider interactCollider;
+	protected Collider collider;
+	protected double maxInteractDist;
 
 	public GameObject(double posX, double posY, int layer, double size) {
 		this.posX = posX;
@@ -53,12 +53,6 @@ public abstract class GameObject {
 		return posY;
 	}
 
-	public double getDistance(GameObject gameObject) {
-		double dx = posX - gameObject.posX;
-		double dy = posY - gameObject.posY;
-		return dx * dx + dy * dy;
-	}
-
 	public int getLayer() {
 		return layer;
 	}
@@ -71,12 +65,12 @@ public abstract class GameObject {
 		return new BoundingBox(posX, posY, size, size);
 	}
 
-	public void setMovementCollider(double posX, double posY, double width, double height) {
-		this.movementCollider = new Collider(this, posX, posY, width, height);
+	public Collider getCollider() {
+		return collider;
 	}
 
-	public void setInteractCollider(double posX, double posY, double width, double height) {
-		this.interactCollider = new Collider(this, posX, posY, width, height);
+	public void setCollider(double posX, double posY, double width, double height) {
+		this.collider = new Collider(this, posX, posY, width, height);
 	}
 
 	public void render(GraphicsContext context, double sx, double sy, double sw, double sh, double dx, double dy,

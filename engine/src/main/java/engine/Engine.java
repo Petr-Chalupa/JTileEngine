@@ -67,7 +67,19 @@ public class Engine {
 		return resourceManager;
 	}
 
+	public Renderer getRenderer() {
+		if (!initialized) {
+			LOGGER.severe("Engine must be initialized!");
+			throw new IllegalStateException("Engine not initialized");
+		}
+		return renderer;
+	}
+
 	public InputHandler getInputHandler() {
+		if (!initialized) {
+			LOGGER.severe("Engine must be initialized!");
+			throw new IllegalStateException("Engine not initialized");
+		}
 		return inputHandler;
 	}
 

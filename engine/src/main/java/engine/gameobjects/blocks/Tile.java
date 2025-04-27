@@ -1,4 +1,6 @@
-package engine.gameobjects;
+package engine.gameobjects.blocks;
+
+import engine.gameobjects.GameObject;
 
 public class Tile extends GameObject {
 	private final TileType type;
@@ -8,7 +10,7 @@ public class Tile extends GameObject {
 		this.type = type;
 
 		setSprite(type.getSpritePath());
-		setMovementCollider(0, 0, size, size);
+		setCollider(0, 0, size, size);
 	}
 
 	public TileType getType() {

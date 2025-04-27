@@ -29,12 +29,26 @@ public class Collider {
 		return box.getMaxY() + parent.getPosY();
 	}
 
+	public double getCenterX() {
+		return getMinX() + (getMaxX() - getMinX()) / 2;
+	}
+
+	public double getCenterY() {
+		return getMinY() + (getMaxY() - getMinY()) / 2;
+	}
+
 	public Bounds getIntersection(Collider c, double deltaX, double deltaY) {
 		double minX = Math.max(getMinX() + deltaX, c.getMinX());
 		double minY = Math.max(getMinY() + deltaY, c.getMinY());
 		double maxX = Math.min(getMaxX() + deltaX, c.getMaxX());
 		double maxY = Math.min(getMaxY() + deltaY, c.getMaxY());
 		return (minX < maxX && minY < maxY) ? new BoundingBox(minX, minY, maxX - minX, maxY - minY) : null;
+	}
+
+	public double getDistanceTo(Collider c) {
+		double dx = this.getCenterX() - c.getCenterX();
+		double dy = this.getCenterY() - c.getCenterY();
+		return Math.sqrt(dx * dx + dy * dy);
 	}
 
 }

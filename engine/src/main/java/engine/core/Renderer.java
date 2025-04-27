@@ -8,6 +8,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -28,6 +29,14 @@ public class Renderer implements Runnable {
 		target.getChildren().add(canvas);
 		canvas.widthProperty().bind(target.widthProperty());
 		canvas.heightProperty().bind(target.heightProperty());
+	}
+
+	public Canvas getCanvas() {
+		return canvas;
+	}
+
+	public GraphicsContext getGraphicsContext() {
+		return canvas.getGraphicsContext2D();
 	}
 
 	public void setFPS(double FPS) {
@@ -86,12 +95,13 @@ public class Renderer implements Runnable {
 	}
 
 	private void update(double deltaTime) {
-		for (GameObject gameObject : levelLoader.getGameObjects()) {
+		List<GameObject> gameObjectsCopy = new ArrayList<>(levelLoader.getGameObjects());
+		for (GameObject gameObject : gameObjectsCopy) {
 			gameObject.update(deltaTime);
 		}
 	}
 
-	public void render() {
+	private void render() {
 		// Clear the canvas
 		GraphicsContext context = canvas.getGraphicsContext2D();
 		context.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
@@ -100,7 +110,7 @@ public class Renderer implements Runnable {
 		if (camera.getTarget() == null) camera.setTarget(levelLoader.getPlayer());
 		camera.update(canvas);
 
-		// Sort game objects based on layer
+		// Sort game objects based on the layer
 		List<GameObject> sortedObjects = levelLoader.getGameObjects()
 				.stream()
 				.sorted(Comparator.comparingInt(GameObject::getLayer))

@@ -1,17 +1,18 @@
-package engine.gameobjects;
+package engine.gameobjects.entities;
 
 import engine.core.Healthbar;
 import engine.core.Healthbar.HealthbarType;
+import engine.utils.LevelLoader;
 
 public class Enemy extends Entity {
 	private final Healthbar healthbar;
 
-	public Enemy(double posX, double posY, double size, double speed, int health) {
+	public Enemy(double posX, double posY, double size, double speed, double health) {
 		super(posX, posY, 1, size, speed, health);
 		this.healthbar = new Healthbar(this, HealthbarType.FLOAT);
 
 		setSprite("enemy_sprite.png");
-		setMovementCollider(0, 0, size, size);
+		setCollider(0, 0, size, size);
 	}
 
 	@Override
@@ -32,4 +33,10 @@ public class Enemy extends Entity {
 		healthbar.render(context);
 	}
 
+	@Override
+	public void damage(double damage) {
+		super.damage(damage);
+		if (this.health == 0) LevelLoader.getInstance().getGameObjects().remove(this);
+		// drop loot
+	}
 }

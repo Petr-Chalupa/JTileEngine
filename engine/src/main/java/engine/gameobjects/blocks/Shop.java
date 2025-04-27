@@ -1,7 +1,8 @@
-package engine.gameobjects;
+package engine.gameobjects.blocks;
 
 import engine.core.Inventory;
 import engine.core.Inventory.InventoryType;
+import engine.gameobjects.GameObject;
 import javafx.scene.canvas.GraphicsContext;
 
 public class Shop extends GameObject {

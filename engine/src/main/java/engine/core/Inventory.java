@@ -1,7 +1,7 @@
 package engine.core;
 
-import engine.gameobjects.Item;
-import engine.gameobjects.ItemType;
+import engine.gameobjects.items.Item;
+import engine.gameobjects.items.ItemType;
 import engine.utils.LevelLoader;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
@@ -122,8 +122,8 @@ public class Inventory {
 		if (!isVisible) return;
 
 		int rows = Math.ceilDiv(size, cols);
-		double gap = 5;
 		double nameSize = 20;
+		double gap = 5;
 		double slotSize = LevelLoader.getInstance().getTileSize();
 		double width = cols * (slotSize + gap) + gap;
 		double height = rows * (slotSize + gap) + gap + (name != null ? nameSize : 0);
@@ -153,7 +153,7 @@ public class Inventory {
 			dy += nameSize;
 		}
 
-		// Render slots with items, mark selected slot
+		// Render slots with items, mark the selected slot
 		for (int i = 0; i < size; i++) {
 			double slotX = dx + gap + (i % cols) * (slotSize + gap);
 			double slotY = dy + gap + (i / cols) * (slotSize + gap);
@@ -165,17 +165,38 @@ public class Inventory {
 				context.setLineWidth(1);
 			}
 			context.strokeRect(slotX, slotY, slotSize, slotSize);
-			if (!items.get(i).isEmpty()) {
-				items.get(i).getFirst().render(context, 0, 0, slotSize, slotSize, slotX, slotY, slotSize, slotSize);
-				if (items.get(i).size() > 1) {
-					context.save();
-					context.setFill(Color.WHITE);
-					context.setTextAlign(TextAlignment.RIGHT);
-					context.setFont(new Font(20));
-					context.fillText("" + items.get(i).size(), slotX + slotSize - gap, slotY + slotSize - gap);
-					context.restore(); // Reset
-				}
-			}
+			if (!items.get(i).isEmpty()) renderItem(context, items.get(i), slotSize, slotX, slotY);
+		}
+	}
+
+	private void renderItem(GraphicsContext context, List<Item> slot, double slotSize, double slotX, double slotY) {
+		// Render item
+		slot.getFirst().render(context, 0, 0, slotSize, slotSize, slotX, slotY, slotSize, slotSize);
+
+		// Render item usages if multiple
+		int maxUsages = slot.getFirst().getType().getMaxUses();
+		if (maxUsages > 1) {
+			double barHeight = slotSize - 4;
+			double barWidth = 4;
+			double percentage = slot.getFirst().getUses() / (double) maxUsages;
+			// Render background
+			context.setFill(Color.DARKGRAY);
+			context.fillRect(slotX + 2, slotY + 2, barWidth, barHeight);
+			// Render uses
+			if (percentage > 0.7) context.setFill(Color.GREEN);
+			else if (percentage > 0.3) context.setFill(Color.YELLOW);
+			else context.setFill(Color.RED);
+			context.fillRect(slotX + 2, slotY + 2 + (barHeight - barHeight * percentage), barWidth, barHeight * percentage);
+		}
+
+		// Render item count if multiple
+		if (slot.size() > 1) {
+			context.save();
+			context.setFill(Color.WHITE);
+			context.setTextAlign(TextAlignment.RIGHT);
+			context.setFont(new Font(20));
+			context.fillText("" + slot.size(), slotX + slotSize - 5, slotY + slotSize - 5);
+			context.restore(); // Reset
 		}
 	}
 

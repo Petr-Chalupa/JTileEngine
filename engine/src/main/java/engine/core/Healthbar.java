@@ -1,6 +1,6 @@
 package engine.core;
 
-import engine.gameobjects.Entity;
+import engine.gameobjects.entities.Entity;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -28,7 +28,7 @@ public class Healthbar {
 		if (type == HealthbarType.LEFT_BOTTOM) {
 			width = 200;
 			height = 20;
-			dx = 30;
+			dx = 50 - height;
 			dy = (int) context.getCanvas().getHeight() - 50;
 		} else if (type == HealthbarType.FLOAT) {
 			width = parent.getSize() * 1.5;
@@ -38,7 +38,7 @@ public class Healthbar {
 			dy = camera.worldToScreenY(parent.getPosY()) - height - 5;
 		}
 
-		double healthPercentage = (double) parent.getHealth() / parent.getMaxHealth();
+		double healthPercentage = parent.getHealth() / parent.getMaxHealth();
 
 		// Render background
 		context.setFill(Color.DARKGRAY);

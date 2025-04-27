@@ -1,7 +1,11 @@
-package engine.gameobjects;
+package engine.gameobjects.blocks;
 
 import engine.core.Inventory;
 import engine.core.Inventory.InventoryType;
+import engine.gameobjects.GameObject;
+import engine.gameobjects.entities.Entity;
+import engine.gameobjects.items.Item;
+import engine.gameobjects.items.ItemType;
 import javafx.scene.canvas.GraphicsContext;
 
 public class Chest extends GameObject implements Interactable {
@@ -18,7 +22,7 @@ public class Chest extends GameObject implements Interactable {
 		this.inventory = new Inventory(InventoryType.CENTER, "Chest", 15, 5);
 
 		setSprite("chest_sprite.jpg");
-		setMovementCollider(0, 0, size, size);
+		setCollider(0, 0, size, size);
 		generateLoot();
 	}
 
@@ -41,7 +45,8 @@ public class Chest extends GameObject implements Interactable {
 		}
 	}
 
-	public void toggle(Entity user) {
+	@Override
+	public void interact(Entity user) {
 		if (isOpen()) {
 			this.inventory.close();
 			state = State.CLOSED;

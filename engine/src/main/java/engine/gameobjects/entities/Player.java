@@ -1,4 +1,4 @@
-package engine.gameobjects;
+package engine.gameobjects.entities;
 
 import engine.Engine;
 import engine.core.Healthbar;
@@ -6,6 +6,10 @@ import engine.core.Healthbar.HealthbarType;
 import engine.core.InputHandler;
 import engine.core.Inventory;
 import engine.core.Inventory.InventoryType;
+import engine.gameobjects.blocks.Chest;
+import engine.gameobjects.blocks.Interactable;
+import engine.gameobjects.items.Item;
+import engine.gameobjects.items.ItemType;
 import engine.utils.LevelLoader;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
@@ -24,19 +28,22 @@ public class Player extends Entity {
 	private Inventory currentFocusedInventory;
 	private InputHandler inputHandler;
 	private State state = State.NORMAL;
-	private GameObject currentInteractable;
+	private Interactable currentInteractable;
 
-	public Player(double posX, double posY, double size, double speed, int health) {
+	public Player(double posX, double posY, double size, double speed, double health) {
 		super(posX, posY, 2, size, speed, health);
+		this.maxInteractDist = 50;
 		this.healthbar = new Healthbar(this, HealthbarType.LEFT_BOTTOM);
 		this.inventory = new Inventory(InventoryType.BOTTOM, null, 5, 5);
 		this.inventory.open();
 		this.currentFocusedInventory = inventory;
+		inventory.addItem(new Item(posX, posY, 1, 1, ItemType.SWORD_STRONG));
+		inventory.addItem(new Item(posX, posY, 1, 1, ItemType.GRANULE));
+		inventory.addItem(new Item(posX, posY, 1, 1, ItemType.GRANULE));
 
 		setSprite("player_sprite.png");
 		setInputHandler();
-		setMovementCollider(0.1 * size, 0.6 * size, 0.8 * size, 0.4 * size);
-		setInteractCollider(-10, -10, size + 20, size + 20);
+		setCollider(0.1 * size, 0.6 * size, 0.8 * size, 0.4 * size);
 	}
 
 	public void setInputHandler() {
@@ -98,16 +105,23 @@ public class Player extends Entity {
 		inventory.render(context);
 	}
 
-	private GameObject getClosestInteractableObject() {
+	@Override
+	public void damage(double damage) {
+		super.damage(damage);
+		System.out.println("player dead");
+	}
+
+	private Interactable getClosestInteractableObject() {
 		LevelLoader levelLoader = Engine.getInstance().getLevelLoader();
-		return levelLoader.getGameObjects()
+		return (Interactable) levelLoader.getGameObjects()
 				.stream()
 				.filter(gameObject ->
 						!gameObject.equals(this) &&
 								gameObject.isRendered() &&
 								gameObject instanceof Interactable &&
-								interactCollider.getIntersection(gameObject.movementCollider, 0, 0) != null)
-				.min(Comparator.comparingDouble(this::getDistance))
+								gameObject.getCollider() != null &&
+								this.collider.getDistanceTo(gameObject.getCollider()) <= maxInteractDist)
+				.min(Comparator.comparingDouble(gameObject -> this.collider.getDistanceTo(gameObject.getCollider())))
 				.orElse(null);
 	}
 
@@ -116,17 +130,16 @@ public class Player extends Entity {
 		if (currentInteractable == null) return;
 
 		state = state == State.NORMAL ? State.INTERACTING : State.NORMAL;
-		if (currentInteractable instanceof Chest chest) chest.toggle(this);
+		currentInteractable.interact(this);
 	}
 
 	private void handleItemUse() {
 		Item selectedItem = inventory.getSelectedItem();
 		if (selectedItem != null) {
-			boolean isUsableOnce = selectedItem.getType().use(this);
-			if (isUsableOnce) {
-				inventory.removeSelectedItem();
-			}
+			boolean hasAnotherUse = selectedItem.use(this);
+			if (!hasAnotherUse) inventory.removeSelectedItem();
 		}
 	}
+
 
 }
