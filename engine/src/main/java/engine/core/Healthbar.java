@@ -31,11 +31,11 @@ public class Healthbar {
 			dx = 30;
 			dy = (int) context.getCanvas().getHeight() - 50;
 		} else if (type == HealthbarType.FLOAT) {
-			width = parent.getSprite().getWidth() * 0.75;
+			width = parent.getSize() * 1.5;
 			height = 8;
 			Camera camera = Camera.getInstance();
-			dx = camera.worldToScreenX(parent.getPosX()) - parent.getSprite().getWidth() / 2;
-			dy = camera.worldToScreenY(parent.getPosY()) - parent.getSprite().getHeight() / 2 - 5;
+			dx = camera.worldToScreenX(parent.getPosX()) - ((width - parent.getSize()) / 2);
+			dy = camera.worldToScreenY(parent.getPosY()) - height - 5;
 		}
 
 		double healthPercentage = (double) parent.getHealth() / parent.getMaxHealth();

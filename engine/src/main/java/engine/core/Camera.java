@@ -51,8 +51,8 @@ public class Camera {
 	public void update(Canvas canvas) {
 		if (target == null) return;
 
-		offsetX = canvas.getWidth() / 2 - target.getPosX();
-		offsetY = canvas.getHeight() / 2 - target.getPosY();
+		offsetX = canvas.getWidth() / 2 - target.getPosX() - (target.getSize() / 2.0);
+		offsetY = canvas.getHeight() / 2 - target.getPosY() - (target.getSize() / 2.0);
 		viewBounds = calculateViewBounds(canvas);
 	}
 
