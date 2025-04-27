@@ -183,8 +183,8 @@ public class Inventory {
 			context.setFill(Color.DARKGRAY);
 			context.fillRect(slotX + 2, slotY + 2, barWidth, barHeight);
 			// Render uses
-			if (percentage > 0.7) context.setFill(Color.GREEN);
-			else if (percentage > 0.3) context.setFill(Color.YELLOW);
+			if (percentage > 0.6) context.setFill(Color.GREEN);
+			else if (percentage > 0.3) context.setFill(Color.ORANGE);
 			else context.setFill(Color.RED);
 			context.fillRect(slotX + 2, slotY + 2 + (barHeight - barHeight * percentage), barWidth, barHeight * percentage);
 		}

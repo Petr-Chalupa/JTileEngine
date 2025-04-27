@@ -24,7 +24,7 @@ public class Item extends GameObject {
 	}
 
 	public boolean use(Entity user) {
-		if (type.getMaxUses() != -1 && uses == 0) return false;
+		if (uses == 0) return false;
 
 		if (type.use(user)) uses--;
 		return uses > 0;
