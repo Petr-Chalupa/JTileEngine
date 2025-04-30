@@ -1,5 +1,8 @@
 package engine.core;
 
+import engine.gameobjects.GameObject;
+import engine.gameobjects.blocks.Shop;
+import engine.gameobjects.entities.Player;
 import engine.gameobjects.items.Item;
 import engine.gameobjects.items.ItemType;
 import engine.utils.LevelLoader;
@@ -17,6 +20,7 @@ public class Inventory {
 		CENTER, BOTTOM
 	}
 
+	private final GameObject parent;
 	private final InventoryType type;
 	private final String name;
 	private final int size;
@@ -25,7 +29,8 @@ public class Inventory {
 	private boolean isVisible;
 	private int selected = 0;
 
-	public Inventory(InventoryType type, String name, int size, int cols) {
+	public Inventory(GameObject parent, InventoryType type, String name, int size, int cols) {
+		this.parent = parent;
 		this.type = type;
 		this.name = name;
 		this.size = size;
@@ -173,22 +178,6 @@ public class Inventory {
 		// Render item
 		slot.getFirst().render(context, 0, 0, slotSize, slotSize, slotX, slotY, slotSize, slotSize);
 
-		// Render item usages if multiple
-		int maxUsages = slot.getFirst().getType().getMaxUses();
-		if (maxUsages > 1) {
-			double barHeight = slotSize - 4;
-			double barWidth = 4;
-			double percentage = slot.getFirst().getUses() / (double) maxUsages;
-			// Render background
-			context.setFill(Color.DARKGRAY);
-			context.fillRect(slotX + 2, slotY + 2, barWidth, barHeight);
-			// Render uses
-			if (percentage > 0.6) context.setFill(Color.GREEN);
-			else if (percentage > 0.3) context.setFill(Color.ORANGE);
-			else context.setFill(Color.RED);
-			context.fillRect(slotX + 2, slotY + 2 + (barHeight - barHeight * percentage), barWidth, barHeight * percentage);
-		}
-
 		// Render item count if multiple
 		if (slot.size() > 1) {
 			context.save();
@@ -197,6 +186,32 @@ public class Inventory {
 			context.setFont(new Font(20));
 			context.fillText("" + slot.size(), slotX + slotSize - 5, slotY + slotSize - 5);
 			context.restore(); // Reset
+		}
+
+		if (parent instanceof Player) {
+			// Render item usages if multiple
+			int maxUsages = slot.getFirst().getType().getMaxUses();
+			if (maxUsages > 1 && slot.getFirst().getUses() < maxUsages) {
+				double barHeight = slotSize - 4;
+				double barWidth = 4;
+				double percentage = slot.getFirst().getUses() / (double) maxUsages;
+				// Render background
+				context.setFill(Color.DARKGRAY);
+				context.fillRect(slotX + 2, slotY + 2, barWidth, barHeight);
+				// Render uses
+				if (percentage > 0.6) context.setFill(Color.GREEN);
+				else if (percentage > 0.3) context.setFill(Color.ORANGE);
+				else context.setFill(Color.RED);
+				context.fillRect(slotX + 2, slotY + 2 + (barHeight - barHeight * percentage), barWidth,
+						barHeight * percentage);
+			}
+		}
+
+		if (parent instanceof Shop) {
+			// Render item price
+			context.setFill(Color.YELLOW);
+			context.setFont(new Font(12));
+			context.fillText(slot.getFirst().getType().getPrice() + "$", slotX, slotY + size + 12);
 		}
 	}
 

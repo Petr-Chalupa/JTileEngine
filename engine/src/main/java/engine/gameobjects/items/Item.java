@@ -29,4 +29,5 @@ public class Item extends GameObject {
 		if (type.use(user)) uses--;
 		return uses > 0;
 	}
+
 }

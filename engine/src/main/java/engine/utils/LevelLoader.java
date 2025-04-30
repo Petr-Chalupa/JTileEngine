@@ -2,6 +2,7 @@ package engine.utils;
 
 import engine.gameobjects.GameObject;
 import engine.gameobjects.blocks.Chest;
+import engine.gameobjects.blocks.Shop;
 import engine.gameobjects.blocks.Tile;
 import engine.gameobjects.blocks.TileType;
 import engine.gameobjects.entities.Enemy;
@@ -118,6 +119,16 @@ public class LevelLoader {
 			Chest chest = new Chest(chestPos.getDouble(0) * tileSize, chestPos.getDouble(1) * tileSize,
 					chestSize * tileSize);
 			gameObjects.add(chest);
+		}
+
+		// Load shops
+		JSONArray shops = config.getJSONArray("shops");
+		for (int i = 0; i < shops.length(); i++) {
+			JSONObject shopData = shops.getJSONObject(i);
+			JSONArray shopPos = shopData.getJSONArray("pos");
+			double shopSize = shopData.getDouble("size");
+			Shop shop = new Shop(shopPos.getDouble(0) * tileSize, shopPos.getDouble(1) * tileSize, shopSize * tileSize);
+			gameObjects.add(shop);
 		}
 	}
 

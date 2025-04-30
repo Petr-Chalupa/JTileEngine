@@ -10,12 +10,14 @@ public class Entity extends GameObject {
 	private final LevelLoader levelLoader;
 	protected double speed;
 	protected double health;
+	protected int money;
 
 	public Entity(double posX, double posY, int layer, double size, double speed, double health) {
 		super(posX, posY, layer, size);
 		this.speed = speed;
 		this.maxHealth = health;
 		this.health = health;
+		this.money = 0;
 		this.levelLoader = LevelLoader.getInstance();
 	}
 
@@ -25,6 +27,14 @@ public class Entity extends GameObject {
 
 	public double getHealth() {
 		return health;
+	}
+
+	public int getMoney() {
+		return money;
+	}
+
+	public void setMoney(int money) {
+		this.money = money;
 	}
 
 	public void heal(double health) {
@@ -48,10 +58,12 @@ public class Entity extends GameObject {
 		if (!isInMap(deltaX, deltaY)) return false;
 		return levelLoader.getGameObjects()
 				.stream()
-				.filter(gameObject -> !gameObject.equals(this) && gameObject.isRendered() && gameObject.getCollider() != null)
+				.filter(gameObject -> !gameObject.equals(this) && gameObject.isRendered()
+						&& gameObject.getCollider() != null)
 				.allMatch(gameObject -> {
 					Bounds intersection = collider.getIntersection(gameObject.getCollider(), deltaX, deltaY);
-					return intersection == null || (gameObject instanceof Tile && ((Tile) gameObject).getType().isSolid());
+					return intersection == null
+							|| (gameObject instanceof Tile && ((Tile) gameObject).getType().isSolid());
 				});
 	}
 

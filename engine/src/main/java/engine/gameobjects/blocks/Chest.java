@@ -9,17 +9,16 @@ import engine.gameobjects.items.ItemType;
 import javafx.scene.canvas.GraphicsContext;
 
 public class Chest extends GameObject implements Interactable {
-	public enum State {
-		OPEN,
-		CLOSED,
+	public enum ChestState {
+		OPEN, CLOSED
 	}
 
 	private final Inventory inventory;
-	private State state = State.CLOSED;
+	private ChestState state = ChestState.CLOSED;
 
 	public Chest(double posX, double posY, double size) {
 		super(posX, posY, 1, size);
-		this.inventory = new Inventory(InventoryType.CENTER, "Chest", 15, 5);
+		this.inventory = new Inventory(this, InventoryType.CENTER, "Chest", 15, 5);
 
 		setSprite("chest_sprite.jpg");
 		setCollider(0, 0, size, size);
@@ -27,7 +26,7 @@ public class Chest extends GameObject implements Interactable {
 	}
 
 	public boolean isOpen() {
-		return this.state == State.OPEN;
+		return this.state == ChestState.OPEN;
 	}
 
 	public Inventory getInventory() {
@@ -49,10 +48,10 @@ public class Chest extends GameObject implements Interactable {
 	public void interact(Entity user) {
 		if (isOpen()) {
 			this.inventory.close();
-			state = State.CLOSED;
+			state = ChestState.CLOSED;
 		} else {
 			this.inventory.open();
-			state = State.OPEN;
+			state = ChestState.OPEN;
 		}
 	}
 
