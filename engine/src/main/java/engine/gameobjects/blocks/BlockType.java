@@ -1,14 +1,14 @@
 package engine.gameobjects.blocks;
 
-public enum TileType {
-	GRASS("tile_sprite0.png", true),
-	//
-	WATER("tile_sprite1.png", false);
+public enum BlockType {
+	CHEST("chest_sprite.png", true),
+	SHOP("shop_sprite.png", true),
+	STONE("stone_sprite.png", true);
 
 	private final String spritePath;
 	private final boolean isSolid;
 
-	TileType(String spritePath, boolean isSolid) {
+	BlockType(String spritePath, boolean isSolid) {
 		this.spritePath = spritePath;
 		this.isSolid = isSolid;
 	}

@@ -1,6 +1,7 @@
 package engine.core;
 
 import engine.gameobjects.GameObject;
+import engine.utils.LevelLoader;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.canvas.Canvas;
@@ -51,13 +52,9 @@ public class Camera {
 	public void update(Canvas canvas) {
 		if (target == null) return;
 
-		offsetX = canvas.getWidth() / 2 - target.getPosX() - (target.getSize() / 2.0);
-		offsetY = canvas.getHeight() / 2 - target.getPosY() - (target.getSize() / 2.0);
-		viewBounds = calculateViewBounds(canvas);
-	}
-
-	public Bounds calculateViewBounds(Canvas canvas) {
-		if (target == null) return new BoundingBox(0, 0, canvas.getWidth(), canvas.getHeight());
+		LevelLoader levelLoader = LevelLoader.getInstance();
+		double mapWidth = levelLoader.getCols() * levelLoader.getTileSize();
+		double mapHeight = levelLoader.getRows() * levelLoader.getTileSize();
 
 		double viewWorldCenterX = target.getPosX() + (target.getSize() / 2.0);
 		double viewWorldCenterY = target.getPosY() + (target.getSize() / 2.0);
@@ -66,8 +63,33 @@ public class Camera {
 		double viewRight = viewWorldCenterX + canvas.getWidth() / 2.0;
 		double viewTop = viewWorldCenterY - canvas.getHeight() / 2.0;
 		double viewBottom = viewWorldCenterY + canvas.getHeight() / 2.0;
+		double viewOffsetX = -viewLeft;
+		double viewOffsetY = -viewTop;
 
-		return new BoundingBox(viewLeft, viewTop, viewRight - viewLeft, viewBottom - viewTop);
+		if (viewLeft < 0) {
+			viewRight -= viewLeft;
+			viewOffsetX += viewLeft;
+			viewLeft = 0;
+		}
+		if (viewRight > mapWidth) {
+			viewLeft -= viewRight - mapWidth;
+			viewOffsetX += viewRight - mapWidth;
+			viewRight = mapWidth;
+		}
+		if (viewTop < 0) {
+			viewBottom -= viewTop;
+			viewOffsetY += viewTop;
+			viewTop = 0;
+		}
+		if (viewBottom > mapHeight) {
+			viewTop -= viewBottom - mapHeight;
+			viewOffsetY += viewBottom - mapHeight;
+			viewBottom = mapHeight;
+		}
+
+		offsetX = viewOffsetX;
+		offsetY = viewOffsetY;
+		viewBounds = new BoundingBox(viewLeft, viewTop, viewRight - viewLeft, viewBottom - viewTop);
 	}
 
 	public Bounds getVisibleIntersection(Bounds gameObjectBounds) {

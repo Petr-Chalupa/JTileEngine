@@ -10,4 +10,5 @@ module engine {
 	exports engine.gameobjects.entities;
 	exports engine.gameobjects.blocks;
 	exports engine.gameobjects.items;
+	exports engine.gameobjects.tiles;
 }

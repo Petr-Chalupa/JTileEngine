@@ -8,11 +8,11 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 public abstract class GameObject {
+	protected final int layer;
 	protected Image sprite;
 	protected boolean isRendered;
 	protected double posX;
 	protected double posY;
-	protected int layer;
 	protected double size;
 	protected Collider collider;
 	protected double maxInteractDist;
@@ -22,6 +22,7 @@ public abstract class GameObject {
 		this.posY = posY;
 		this.layer = layer;
 		this.size = size;
+		setCollider(0, 0, size, size);
 		setSprite("default_sprite.png");
 	}
 
@@ -49,8 +50,16 @@ public abstract class GameObject {
 		return posX;
 	}
 
+	public void setPosX(double posX) {
+		this.posX = posX;
+	}
+
 	public double getPosY() {
 		return posY;
+	}
+
+	public void setPosY(double posY) {
+		this.posY = posY;
 	}
 
 	public int getLayer() {
@@ -73,8 +82,7 @@ public abstract class GameObject {
 		this.collider = new Collider(this, posX, posY, width, height);
 	}
 
-	public void render(GraphicsContext context, double sx, double sy, double sw, double sh, double dx, double dy,
-					   double dw, double dh) {
+	public void render(GraphicsContext context, double sx, double sy, double sw, double sh, double dx, double dy, double dw, double dh) {
 		context.drawImage(sprite, sx, sy, sw, sh, dx, dy, dw, dh);
 	}
 

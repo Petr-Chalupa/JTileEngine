@@ -124,18 +124,18 @@ public class Renderer implements Runnable {
 				continue;
 			}
 
-			double goPosX = gameObject.getPosX();
-			double goPosY = gameObject.getPosY();
 			double goSize = gameObject.getSize();
-			double spriteWidth = gameObject.getSprite().getWidth();
-			double spriteHeight = gameObject.getSprite().getHeight();
-			double sourceX = (intersection.getMinX() - goPosX) * (spriteWidth / goSize);
-			double sourceY = (intersection.getMinY() - goPosY) * (spriteHeight / goSize);
-			double sourceWidth = intersection.getWidth() * (spriteWidth / goSize);
-			double sourceHeight = intersection.getHeight() * (spriteHeight / goSize);
-			double destX = goPosX - camera.getViewBounds().getMinX();
-			double destY = goPosY - camera.getViewBounds().getMinY();
-			gameObject.render(context, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, goSize, goSize);
+			double spriteWorldWidth = gameObject.getSprite().getWidth() / goSize;
+			double spriteWorldHeight = gameObject.getSprite().getHeight() / goSize;
+			double sourceX = (intersection.getMinX() - gameObject.getPosX()) * spriteWorldWidth;
+			double sourceY = (intersection.getMinY() - gameObject.getPosY()) * spriteWorldHeight;
+			double sourceWidth = intersection.getWidth() * spriteWorldWidth;
+			double sourceHeight = intersection.getHeight() * spriteWorldHeight;
+			double destX = intersection.getMinX() - camera.getViewBounds().getMinX();
+			double destY = intersection.getMinY() - camera.getViewBounds().getMinY();
+			double destWidth = intersection.getWidth();
+			double destHeight = intersection.getHeight();
+			gameObject.render(context, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight);
 			gameObject.setRendered(true);
 		}
 

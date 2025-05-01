@@ -22,7 +22,7 @@ public class ItemSwordCommand implements ItemCommand {
 
 		List<GameObject> gameObjectsCopy = new ArrayList<>(LevelLoader.getInstance().getGameObjects());
 		for (GameObject obj : gameObjectsCopy) {
-			if (obj instanceof Entity target && obj != user && user.getCollider() != null && target.getCollider() != null) {
+			if (obj instanceof Entity target && obj != user && target.getCollider() != null) {
 				double distance = user.getCollider().getDistanceTo(target.getCollider());
 				if (distance <= range) {
 					target.damage(damage);

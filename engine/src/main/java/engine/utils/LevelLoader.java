@@ -1,12 +1,13 @@
 package engine.utils;
 
+import engine.core.Camera;
 import engine.gameobjects.GameObject;
 import engine.gameobjects.blocks.Chest;
 import engine.gameobjects.blocks.Shop;
-import engine.gameobjects.blocks.Tile;
-import engine.gameobjects.blocks.TileType;
 import engine.gameobjects.entities.Enemy;
 import engine.gameobjects.entities.Player;
+import engine.gameobjects.tiles.Tile;
+import engine.gameobjects.tiles.TileType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -96,6 +97,7 @@ public class LevelLoader {
 		player = new Player(playerPos.getDouble(0) * tileSize, playerPos.getDouble(1) * tileSize, playerSize * tileSize,
 				playerSpeed, playerHealth);
 		gameObjects.add(player);
+		Camera.getInstance().setTarget(player);
 
 		// Load enemies
 		JSONArray enemies = config.getJSONArray("enemies");

@@ -1,4 +1,4 @@
-package engine.gameobjects.blocks;
+package engine.gameobjects;
 
 import engine.gameobjects.entities.Entity;
 

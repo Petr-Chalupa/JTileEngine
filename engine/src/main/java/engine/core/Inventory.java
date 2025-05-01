@@ -64,6 +64,14 @@ public class Inventory {
 		items.get(selected).removeFirst();
 	}
 
+	public void dropSelectedItem() {
+		if (items.get(selected).isEmpty()) return;
+		Item item = items.get(selected).removeFirst();
+		item.setPosX(parent.getPosX());
+		item.setPosY(parent.getPosY());
+		LevelLoader.getInstance().getGameObjects().add(item);
+	}
+
 	public void open() {
 		isVisible = true;
 	}
@@ -209,9 +217,16 @@ public class Inventory {
 
 		if (parent instanceof Shop) {
 			// Render item price
+			context.save();
+			context.setFill(new Color(0, 0, 0, 0.6));
+			context.fillRect(slotX, slotY, slotSize, slotSize);
+			double fontSize = slotSize / 4;
+			context.setFont(Font.font(null, javafx.scene.text.FontWeight.BOLD, fontSize));
 			context.setFill(Color.YELLOW);
-			context.setFont(new Font(12));
-			context.fillText(slot.getFirst().getType().getPrice() + "$", slotX, slotY + size + 12);
+			context.setTextAlign(TextAlignment.CENTER);
+			context.setTextBaseline(VPos.CENTER);
+			context.fillText(slot.getFirst().getType().getPrice() + "$", slotX + slotSize / 2, slotY + slotSize / 2);
+			context.restore(); // Reset
 		}
 	}
 

@@ -1,4 +1,4 @@
-package engine.gameobjects.blocks;
+package engine.gameobjects.tiles;
 
 import engine.gameobjects.GameObject;
 
@@ -17,4 +17,7 @@ public class Tile extends GameObject {
 		return type;
 	}
 
+	public boolean isWalkable() {
+		return type.isWalkable();
+	}
 }

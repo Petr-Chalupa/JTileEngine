@@ -6,8 +6,8 @@ import engine.core.Healthbar.HealthbarType;
 import engine.core.InputHandler;
 import engine.core.Inventory;
 import engine.core.Inventory.InventoryType;
+import engine.gameobjects.Interactable;
 import engine.gameobjects.blocks.Chest;
-import engine.gameobjects.blocks.Interactable;
 import engine.gameobjects.blocks.Shop;
 import engine.gameobjects.items.Item;
 import engine.gameobjects.items.ItemType;
@@ -27,8 +27,6 @@ public class Player extends Entity {
 		NORMAL, INTERACTING
 	}
 
-	private final Healthbar healthbar;
-	private final Inventory inventory;
 	private Inventory currentFocusedInventory;
 	private InputHandler inputHandler;
 	private PlayerState state = PlayerState.NORMAL;
@@ -41,18 +39,13 @@ public class Player extends Entity {
 		this.inventory = new Inventory(this, InventoryType.BOTTOM, null, 5, 5);
 		this.inventory.open();
 		this.currentFocusedInventory = inventory;
-		inventory.addItem(new Item(posX, posY, 1, 1, ItemType.SWORD_STRONG));
-		inventory.addItem(new Item(posX, posY, 1, 1, ItemType.GRANULE));
-		inventory.addItem(new Item(posX, posY, 1, 1, ItemType.GRANULE));
 
 		setSprite("player_sprite.png");
 		setInputHandler();
 		setCollider(0.1 * size, 0.6 * size, 0.8 * size, 0.4 * size);
-		money = 100;
-	}
+		System.out.println(getSprite().getHeight() + " " + getSprite().getWidth());
 
-	public Inventory getInventory() {
-		return inventory;
+		inventory.addItem(new Item(posX, posY, ItemType.SWORD_STRONG)); // Test only!
 	}
 
 	public void setInputHandler() {
@@ -66,6 +59,9 @@ public class Player extends Entity {
 		inputHandler.bindKeyPressed(KeyCode.E, event -> {
 			handleObjectInteract();
 			if (state == PlayerState.NORMAL) currentFocusedInventory = inventory;
+		});
+		inputHandler.bindKeyPressed(KeyCode.Q, event -> {
+			if (state == PlayerState.NORMAL) inventory.dropSelectedItem();
 		});
 		inputHandler.bindKeyPressed(KeyCode.TAB, event -> {
 			if (state != PlayerState.INTERACTING) return;
@@ -91,6 +87,10 @@ public class Player extends Entity {
 			int dir = (int) Math.signum(event.getDeltaY());
 			currentFocusedInventory.selectMove(dir);
 		});
+	}
+
+	public void setState(PlayerState state) {
+		this.state = state;
 	}
 
 	@Override
@@ -133,15 +133,16 @@ public class Player extends Entity {
 	@Override
 	public void damage(double damage) {
 		super.damage(damage);
-		System.out.println("player dead");
+		if (health == 0) System.out.println("player dead");
 	}
 
 	private Interactable getClosestInteractableObject() {
 		LevelLoader levelLoader = Engine.getInstance().getLevelLoader();
 		return (Interactable) levelLoader.getGameObjects()
 				.stream()
-				.filter(gameObject -> !gameObject.equals(this) && gameObject.isRendered()
-						&& gameObject instanceof Interactable && gameObject.getCollider() != null
+				.filter(gameObject -> !gameObject.equals(this)
+						&& gameObject.isRendered()
+						&& gameObject instanceof Interactable
 						&& this.collider.getDistanceTo(gameObject.getCollider()) <= maxInteractDist)
 				.min(Comparator.comparingDouble(gameObject -> this.collider.getDistanceTo(gameObject.getCollider())))
 				.orElse(null);
@@ -149,10 +150,7 @@ public class Player extends Entity {
 
 	private void handleObjectInteract() {
 		currentInteractable = getClosestInteractableObject();
-		if (currentInteractable == null) return;
-
-		state = state == PlayerState.NORMAL ? PlayerState.INTERACTING : PlayerState.NORMAL;
-		currentInteractable.interact(this);
+		if (currentInteractable != null) currentInteractable.interact(this);
 	}
 
 	private void handleItemUse() {

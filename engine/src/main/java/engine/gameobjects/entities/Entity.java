@@ -1,13 +1,19 @@
 package engine.gameobjects.entities;
 
+import engine.core.Healthbar;
+import engine.core.Inventory;
 import engine.gameobjects.GameObject;
-import engine.gameobjects.blocks.Tile;
+import engine.gameobjects.blocks.Block;
+import engine.gameobjects.items.Item;
+import engine.gameobjects.tiles.Tile;
 import engine.utils.LevelLoader;
 import javafx.geometry.Bounds;
 
 public class Entity extends GameObject {
 	protected final double maxHealth;
 	private final LevelLoader levelLoader;
+	protected Inventory inventory;
+	protected Healthbar healthbar;
 	protected double speed;
 	protected double health;
 	protected int money;
@@ -19,6 +25,10 @@ public class Entity extends GameObject {
 		this.health = health;
 		this.money = 0;
 		this.levelLoader = LevelLoader.getInstance();
+	}
+
+	public Inventory getInventory() {
+		return inventory;
 	}
 
 	public double getMaxHealth() {
@@ -46,24 +56,33 @@ public class Entity extends GameObject {
 	}
 
 	protected boolean isInMap(double deltaX, double deltaY) {
-		double tileSize = levelLoader.getTileSize();
-		double maxX = (levelLoader.getCols() - 1) * tileSize;
-		double maxY = (levelLoader.getRows() - 1) * tileSize;
-		double newX = posX + deltaX;
-		double newY = posY + deltaY;
-		return newX > 0 && newX < maxX && newY > 0 && newY < maxY;
+		double mapWidth = levelLoader.getCols() * levelLoader.getTileSize();
+		double mapHeight = levelLoader.getRows() * levelLoader.getTileSize();
+		if (collider == null) {
+			double newX = posX + deltaX;
+			double newY = posY + deltaY;
+			return newX >= 0 && newX + size <= mapWidth && newY >= 0 && newY + size <= mapHeight;
+		} else {
+			double newMinX = collider.getMinX() + deltaX;
+			double newMinY = collider.getMinY() + deltaY;
+			double newMaxX = collider.getMaxX() + deltaX;
+			double newMaxY = collider.getMaxY() + deltaY;
+			return newMinX >= 0 && newMaxX <= mapWidth && newMinY >= 0 && newMaxY <= mapHeight;
+		}
 	}
 
 	protected boolean canMove(double deltaX, double deltaY) {
 		if (!isInMap(deltaX, deltaY)) return false;
 		return levelLoader.getGameObjects()
 				.stream()
-				.filter(gameObject -> !gameObject.equals(this) && gameObject.isRendered()
-						&& gameObject.getCollider() != null)
+				.filter(gameObject -> !gameObject.equals(this)
+						&& gameObject.isRendered()
+						&& !(gameObject instanceof Item))
 				.allMatch(gameObject -> {
 					Bounds intersection = collider.getIntersection(gameObject.getCollider(), deltaX, deltaY);
 					return intersection == null
-							|| (gameObject instanceof Tile && ((Tile) gameObject).getType().isSolid());
+							|| (gameObject instanceof Block && !((Block) gameObject).isSolid())
+							|| (gameObject instanceof Tile && ((Tile) gameObject).isWalkable());
 				});
 	}
 
