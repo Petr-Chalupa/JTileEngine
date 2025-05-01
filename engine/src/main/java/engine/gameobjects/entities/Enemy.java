@@ -8,6 +8,9 @@ import engine.utils.LevelLoader;
 
 public class Enemy extends Entity {
 	private double attackCooldownElapsed = 0;
+	private double patrolTimeElapsed = 0;
+	private double patrolDirectionX = 0;
+	private double patrolDirectionY = 0;
 
 	public Enemy(double posX, double posY, double size, double speed, double health) {
 		super(posX, posY, 1, size, speed, health);
@@ -28,16 +31,57 @@ public class Enemy extends Entity {
 
 		Player player = LevelLoader.getInstance().getPlayer();
 		double distance = player.getCollider().getDistanceTo(this.getCollider());
-		if (distance <= searchRange) {
-			double deltaX = Math.signum(player.getPosX() - this.getPosX()) * speed * deltaTime;
-			double deltaY = Math.signum(player.getPosY() - this.getPosY()) * speed * deltaTime;
-			boolean canMove = canMove(deltaX, deltaY);
-			if (canMove) moveX(deltaX);
-			if (canMove) moveY(deltaY);
-		}
+		// Movement
+		if (distance <= searchRange) moveTowardsPlayer(deltaTime);
+		else patrol(deltaTime);
+		// Attacking
 		if (distance <= attackRange && attackCooldownElapsed >= attackCooldown) {
 			player.damage(damage);
 			attackCooldownElapsed = 0;
+		}
+	}
+
+	private void moveTowardsPlayer(double deltaTime) {
+		Player player = LevelLoader.getInstance().getPlayer();
+		double deltaX = Math.signum(player.getPosX() - this.getPosX()) * speed * deltaTime;
+		double deltaY = Math.signum(player.getPosY() - this.getPosY()) * speed * deltaTime;
+		if (canMove(deltaX, deltaY)) {
+			moveX(deltaX);
+			moveY(deltaY);
+		}
+	}
+
+	private void patrol(double deltaTime) {
+		patrolTimeElapsed += deltaTime;
+		double patrolDuration = 2;
+
+		if (patrolTimeElapsed >= patrolDuration) {
+			int direction = (int) (Math.random() * 4);
+			switch (direction) {
+				case 0: // Up
+					patrolDirectionX = 0;
+					patrolDirectionY = -1;
+					break;
+				case 1: // Down
+					patrolDirectionX = 0;
+					patrolDirectionY = 1;
+					break;
+				case 2: // Right
+					patrolDirectionX = 1;
+					patrolDirectionY = 0;
+					break;
+				case 3: // Left
+					patrolDirectionX = -1;
+					patrolDirectionY = 0;
+					break;
+			}
+			patrolTimeElapsed = 0;
+		}
+		double deltaX = patrolDirectionX * speed * deltaTime;
+		double deltaY = patrolDirectionY * speed * deltaTime;
+		if (canMove(deltaX, deltaY)) {
+			moveX(deltaX);
+			moveY(deltaY);
 		}
 	}
 
