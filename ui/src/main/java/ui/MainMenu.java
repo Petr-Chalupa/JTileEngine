@@ -3,23 +3,31 @@ package ui;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 
+import java.awt.*;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class MainMenu {
 
 	@FXML
-	private void clickPlay() throws IOException {
+	private void buttonPlay() throws IOException {
 		App.setRoot("level_menu");
 	}
 
 	@FXML
-	private void clickLevelEditor() throws IOException {
+	private void buttonLevelEditor() throws IOException {
 		LevelEditor controller = (LevelEditor) App.setRoot("level_editor");
 		controller.loadLevel("1");
 	}
 
 	@FXML
-	private void clickExit() throws IOException {
+	private void buttonExit() throws IOException {
 		Platform.exit();
+	}
+
+	@FXML
+	private void buttonReportBug() throws URISyntaxException, IOException {
+		Desktop.getDesktop().browse(new URI("https://github.com/Petr-Chalupa/JTileEngine/issues"));
 	}
 }
