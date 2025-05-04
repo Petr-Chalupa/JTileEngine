@@ -2,10 +2,10 @@ package ui;
 
 import engine.Engine;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 
 import java.io.IOException;
 
@@ -20,7 +20,7 @@ public class GameView {
 	@FXML
 	private VBox pauseMenu;
 	@FXML
-	private Text pauseMenuLevelName;
+	private Label pauseMenuLevelName;
 	@FXML
 	private VBox gameOverMenu;
 	@FXML

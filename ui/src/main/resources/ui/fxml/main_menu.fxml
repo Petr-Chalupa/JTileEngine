@@ -3,11 +3,14 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<VBox alignment="TOP_CENTER" prefHeight="480.0" prefWidth="640.0" spacing="20.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.MainMenu">
+
+<VBox alignment="TOP_CENTER" prefHeight="768.0" prefWidth="1024.0" spacing="20.0" styleClass="main_menu" stylesheets="@../css/main_menu.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.MainMenu">
    <children>
-      <Label text="Game Engine" textAlignment="CENTER">
+      <Label styleClass="title" text="Game Engine" textAlignment="CENTER">
          <font>
             <Font size="50.0" />
          </font>
@@ -17,9 +20,9 @@
       </Label>
       <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="20.0">
          <children>
-            <Button minHeight="40.0" minWidth="200.0" onAction="#clickPlay" text="Play" />
-            <Button minHeight="40.0" minWidth="200.0" onAction="#clickLevelEditor" text="Level editor" />
-            <Button minHeight="40.0" minWidth="200.0" onAction="#clickExit" text="Exit">
+            <Button minHeight="40.0" minWidth="200.0" onAction="#clickPlay" styleClass="menu_button" text="Play" />
+            <Button minHeight="40.0" minWidth="200.0" onAction="#clickLevelEditor" styleClass="menu_button" text="Level editor" />
+            <Button minHeight="40.0" minWidth="200.0" onAction="#clickExit" styleClass="menu_button" text="Exit">
                <VBox.margin>
                   <Insets top="40.0" />
                </VBox.margin>
@@ -29,6 +32,15 @@
             <Insets top="50.0" />
          </VBox.margin>
       </VBox>
+      <HBox alignment="BOTTOM_RIGHT" fillHeight="false" VBox.vgrow="ALWAYS">
+         <children>
+            <Region HBox.hgrow="ALWAYS" />
+            <Label text="Petr Chalupa, 2025" />
+         </children>
+         <VBox.margin>
+            <Insets top="20.0" />
+         </VBox.margin>
+      </HBox>
    </children>
    <padding>
       <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

@@ -1,102 +1,111 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<StackPane prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.GameView">
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<StackPane prefHeight="768.0" prefWidth="1024.0" stylesheets="@../css/game_view.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.GameView">
     <children>
-        <Pane fx:id="canvasParent" StackPane.alignment="CENTER"/>
-        <Button focusTraversable="false" onAction="#buttonPauseGame" text="| |" textAlignment="CENTER" StackPane.alignment="TOP_LEFT">
+        <Pane fx:id="canvasParent" StackPane.alignment="CENTER" />
+        <Button focusTraversable="false" onAction="#buttonPauseGame" styleClass="pause_button" text="| |" textAlignment="CENTER" StackPane.alignment="TOP_LEFT">
             <font>
-                <Font size="15.0"/>
+                <Font size="15.0" />
             </font>
             <StackPane.margin>
-                <Insets left="10.0" top="10.0"/>
+                <Insets left="10.0" top="10.0" />
             </StackPane.margin>
         </Button>
-        <VBox fx:id="pauseMenu" alignment="TOP_CENTER" spacing="25.0" style="-fx-background-color: #ffffffcc;" visible="false">
+        <VBox fx:id="pauseMenu" alignment="TOP_CENTER" spacing="25.0" styleClass="game_overlay" visible="false">
             <children>
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Paused">
-                    <font>
-                        <Font name="System Bold" size="60.0"/>
-                    </font>
-                </Text>
-                <Text fx:id="pauseMenuLevelName" layoutX="422.0" layoutY="125.0" strokeType="OUTSIDE" strokeWidth="0.0" text="-">
-                    <font>
-                        <Font name="System Italic" size="30.0"/>
-                    </font>
-                </Text>
+            <Label styleClass="overlay_title" text="Paused" />
+            <Label fx:id="pauseMenuLevelName" layoutX="475.0" layoutY="60.0" styleClass="level_name" text="-" />
                 <Button onAction="#buttonResumeGame" prefWidth="200.0" text="Resume" textAlignment="CENTER">
                     <font>
-                        <Font size="25.0"/>
+                        <Font size="25.0" />
                     </font>
                     <VBox.margin>
-                        <Insets top="50.0"/>
+                        <Insets top="50.0" />
                     </VBox.margin>
+               <styleClass>
+                  <String fx:value="overlay_button" />
+                  <String fx:value="resume_button" />
+               </styleClass>
                 </Button>
                 <Button layoutX="474.0" layoutY="240.0" onAction="#buttonMainMenu" prefWidth="200.0" text="Menu" textAlignment="CENTER">
                     <font>
-                        <Font size="25.0"/>
+                        <Font size="25.0" />
                     </font>
                     <VBox.margin>
-                        <Insets top="25.0"/>
+                        <Insets top="25.0" />
                     </VBox.margin>
+               <styleClass>
+                  <String fx:value="overlay_button" />
+                  <String fx:value="main_menu_button" />
+               </styleClass>
                 </Button>
             </children>
             <StackPane.margin>
-                <Insets/>
+                <Insets />
             </StackPane.margin>
             <padding>
-                <Insets top="50.0"/>
+                <Insets top="50.0" />
             </padding>
         </VBox>
-        <VBox fx:id="levelCompleteMenu" alignment="TOP_CENTER" layoutX="10.0" layoutY="10.0" spacing="25.0" style="-fx-background-color: #ffffffcc;" visible="false">
+        <VBox fx:id="levelCompleteMenu" alignment="TOP_CENTER" layoutX="10.0" layoutY="10.0" spacing="25.0" styleClass="game_overlay" visible="false">
             <children>
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Level complete!">
-                    <font>
-                        <Font name="System Bold" size="60.0"/>
-                    </font>
-                </Text>
+            <Label styleClass="overlay_title" text="Level complete!" />
                 <Button layoutX="474.0" layoutY="240.0" onAction="#buttonMainMenu" prefWidth="200.0" text="Menu" textAlignment="CENTER">
                     <font>
-                        <Font size="25.0"/>
+                        <Font size="25.0" />
                     </font>
                     <VBox.margin>
-                        <Insets top="25.0"/>
+                        <Insets top="25.0" />
                     </VBox.margin>
+               <styleClass>
+                  <String fx:value="main_menu_button" />
+                  <String fx:value="overlay_button" />
+               </styleClass>
                 </Button>
             </children>
             <padding>
-                <Insets top="50.0"/>
+                <Insets top="50.0" />
             </padding>
         </VBox>
-        <VBox fx:id="gameOverMenu" alignment="TOP_CENTER" layoutX="10.0" layoutY="10.0" spacing="25.0" style="-fx-background-color: #ffffffcc;" visible="false">
+        <VBox fx:id="gameOverMenu" alignment="TOP_CENTER" layoutX="10.0" layoutY="10.0" spacing="25.0" styleClass="game_overlay" visible="false">
             <children>
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Game over!">
-                    <font>
-                        <Font name="System Bold" size="60.0"/>
-                    </font>
-                </Text>
+            <Label styleClass="overlay_title" text="Game over!" />
                 <Button onAction="#buttonTryAgain" prefWidth="200.0" text="Try again" textAlignment="CENTER">
                     <font>
-                        <Font size="25.0"/>
+                        <Font size="25.0" />
                     </font>
                     <VBox.margin>
-                        <Insets top="50.0"/>
+                        <Insets top="50.0" />
                     </VBox.margin>
+               <styleClass>
+                  <String fx:value="try_again_button" />
+                  <String fx:value="overlay_button" />
+               </styleClass>
                 </Button>
                 <Button layoutX="474.0" layoutY="240.0" onAction="#buttonMainMenu" prefWidth="200.0" text="Menu" textAlignment="CENTER">
                     <font>
-                        <Font size="25.0"/>
+                        <Font size="25.0" />
                     </font>
                     <VBox.margin>
-                        <Insets top="25.0"/>
+                        <Insets top="25.0" />
                     </VBox.margin>
+               <styleClass>
+                  <String fx:value="main_menu_button" />
+                  <String fx:value="overlay_button" />
+               </styleClass>
                 </Button>
             </children>
             <padding>
-                <Insets top="50.0"/>
+                <Insets top="50.0" />
             </padding>
         </VBox>
     </children>

@@ -1,0 +1,101 @@
+.menu_button, .toggle_button {
+    -fx-min-width: 10px;
+    -fx-min-height: 10px;
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+}
+
+.toggle_button:selected {
+    -fx-background-color: #e67e22;
+    -fx-text-fill: white;
+    -fx-effect: innershadow(three-pass-box, rgba(0, 0, 0, 0.25), 3, 0, 0, 0);
+}
+
+.level_select {
+    -fx-padding: 15px;
+    -fx-hgap: 20px;
+    -fx-vgap: 20px;
+    -fx-alignment: center-left;
+    -fx-background-color: #f5f5f5;
+}
+
+.level_scroll_pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+.level_scroll_pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.no_levels_label {
+    -fx-text-fill: #000000;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-alignment: center;
+}
+
+.level_box {
+    -fx-background-color: #f4f4f4;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 15px;
+    -fx-spacing: 10px;
+    -fx-min-width: 250px;
+    -fx-alignment: center;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 4, 0, 0, 0);
+}
+
+.level_box:hover {
+    -fx-background-color: #e8e8e8;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.2), 8, 0, 0, 0);
+}
+
+.thumbnail {
+    -fx-fit-width: 100;
+    -fx-fit-height: 100;
+}
+
+.info_box {
+    -fx-spacing: 10px;
+    -fx-alignment: center-left;
+}
+
+.status_box {
+    -fx-spacing: 5px;
+    -fx-alignment: center;
+}
+
+.status_label {
+    -fx-text-fill: #000000;
+    -fx-font-size: 12px;
+}
+
+.level_name {
+    -fx-text-fill: #000000;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-alignment: center;
+    -fx-wrap-text: true;
+}
+
+.play_button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 4px;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+}
+
+.play_button:hover {
+    -fx-background-color: #45a049;
+}
+
+

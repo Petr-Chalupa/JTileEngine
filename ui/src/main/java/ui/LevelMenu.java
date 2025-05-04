@@ -3,11 +3,8 @@ package ui;
 import engine.Engine;
 import engine.core.LevelData;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -52,38 +49,39 @@ public class LevelMenu {
 			HBox levelBox = renderLevel(level);
 			levelSelect.getChildren().add(levelBox);
 		}
+
+		if (levels.isEmpty()) {
+			Label noLevelsLabel = new Label("No levels found");
+			noLevelsLabel.getStyleClass().add("no_levels_label");
+			levelSelect.getChildren().add(noLevelsLabel);
+		}
 	}
 
 	private HBox renderLevel(LevelData level) {
-		HBox levelBox = new HBox(15);
-		levelBox.setPadding(new Insets(10));
-		levelBox.setAlignment(Pos.CENTER_LEFT);
-		levelBox.setMinWidth(250);
-		levelBox.setStyle("-fx-background-color: #f4f4f4; -fx-border-color: #cccccc; -fx-border-radius: 5;");
+		HBox levelBox = new HBox();
+		levelBox.getStyleClass().add("level_box");
 
 		ImageView thumbnailView = new ImageView();
-		Image thumbnail = Engine.getInstance().getResourceManager().getImg(level.getThumbnailPath());
-		thumbnailView.setImage(thumbnail);
-		thumbnailView.setFitWidth(100);
-		thumbnailView.setFitHeight(100);
+		thumbnailView.getStyleClass().add("thumbnail");
+		thumbnailView.setImage(Engine.getInstance().getResourceManager().getImg(level.getThumbnailPath()));
 
-		VBox infoBox = new VBox(10);
-		infoBox.setAlignment(Pos.CENTER_LEFT);
-		HBox statusBox = new HBox(5);
-		statusBox.setAlignment(Pos.CENTER_LEFT);
+		VBox infoBox = new VBox();
+		infoBox.getStyleClass().add("info_box");
+
+		HBox statusBox = new HBox();
+		statusBox.getStyleClass().add("status_box");
 
 		Label nameLabel = new Label(level.getName());
-		nameLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+		nameLabel.getStyleClass().add("level_name");
 
 		Circle statusCircle = new Circle(6);
 		statusCircle.setFill(level.isCompleted() ? Color.GREEN : Color.GRAY);
 
 		Label statusLabel = new Label(level.isCompleted() ? "Completed" : "Not completed");
-		statusLabel.setStyle("-fx-font-size: 12px;");
+		statusLabel.getStyleClass().add("status_label");
 
 		Button playButton = new Button("Play");
-		playButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;");
-		playButton.setPrefWidth(80);
+		playButton.getStyleClass().add("play_button");
 		playButton.setOnAction(event -> playLevel(level));
 
 		statusBox.getChildren().addAll(statusCircle, statusLabel);
