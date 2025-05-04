@@ -10,10 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ResourceManager {
 	private static ResourceManager instance;
@@ -32,6 +29,10 @@ public class ResourceManager {
 	public static ResourceManager getInstance() {
 		if (instance == null) instance = new ResourceManager();
 		return instance;
+	}
+
+	public Path getUserLevelsPath() {
+		return userLevelsPath;
 	}
 
 	public Image getImg(String path) {
@@ -81,4 +82,20 @@ public class ResourceManager {
 		Files.copy(configFile.toPath(), targetDir.resolve("config.json"), StandardCopyOption.REPLACE_EXISTING);
 		Files.copy(mapFile.toPath(), targetDir.resolve("map.txt"), StandardCopyOption.REPLACE_EXISTING);
 	}
+
+	public List<String> getLevelsFromDir(File dir) {
+		List<String> levels = new ArrayList<>();
+
+		if (dir == null || !dir.exists() || !dir.isDirectory()) return levels;
+
+		File[] levelDirs = dir.listFiles();
+		if (levelDirs == null) return levels;
+
+		for (File levelDir : levelDirs) {
+			if (levelDir.isDirectory()) levels.add(levelDir.getName());
+		}
+
+		return levels;
+	}
+
 }

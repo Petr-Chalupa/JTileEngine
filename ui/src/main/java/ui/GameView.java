@@ -9,7 +9,11 @@ import javafx.scene.text.Text;
 
 import java.io.IOException;
 
+import static engine.core.GameStateManager.GameState;
+
 public class GameView {
+
+	private String levelName;
 
 	@FXML
 	private Pane canvasParent;
@@ -17,17 +21,19 @@ public class GameView {
 	private VBox pauseMenu;
 	@FXML
 	private Text pauseMenuLevelName;
+	@FXML
+	private VBox gameOverMenu;
+	@FXML
+	private VBox levelCompleteMenu;
 
 	@FXML
 	private void buttonPauseGame() {
 		App.getEngine().setPaused(true);
-		pauseMenu.setVisible(true);
 	}
 
 	@FXML
 	private void buttonResumeGame() {
 		App.getEngine().setPaused(false);
-		pauseMenu.setVisible(false);
 	}
 
 	@FXML
@@ -36,17 +42,38 @@ public class GameView {
 		App.setRoot("main_menu");
 	}
 
-	public void loadLvl(String path) {
+	@FXML
+	private void buttonTryAgain() {
+		App.getEngine().loadLevel(levelName); // Reload level
+	}
+
+	public void loadLevel(String name) {
 		Engine engine = App.getEngine();
 		engine.init(canvasParent, 60);
-		engine.loadLevel(path);
+		engine.loadLevel(name);
 
-		pauseMenuLevelName.setText(engine.getLevelLoader().getName());
+		levelName = name;
+		pauseMenuLevelName.setText(name);
 
 		engine.getInputHandler().bindKeyPressed(KeyCode.ESCAPE, event -> {
 			engine.setPaused(!engine.isPaused());
-			pauseMenu.setVisible(engine.isPaused());
 			engine.getInputHandler().clear();
+		});
+		engine.getGameStateManager().addListener((GameState state) -> {
+			pauseMenu.setVisible(false);
+			gameOverMenu.setVisible(false);
+			levelCompleteMenu.setVisible(false);
+			switch (state) {
+				case PAUSED:
+					pauseMenu.setVisible(true);
+					break;
+				case GAME_OVER:
+					gameOverMenu.setVisible(true);
+					break;
+				case LEVEL_COMPLETE:
+					levelCompleteMenu.setVisible(true);
+					break;
+			}
 		});
 	}
 }

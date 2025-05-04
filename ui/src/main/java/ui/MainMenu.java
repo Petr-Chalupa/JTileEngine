@@ -7,20 +7,19 @@ import java.io.IOException;
 
 public class MainMenu {
 
-    @FXML
-    private void clickPlay() throws IOException {
-        GameView controller = (GameView) App.setRoot("game_view");
-        controller.loadLvl("1");
-    }
+	@FXML
+	private void clickPlay() throws IOException {
+		App.setRoot("level_menu");
+	}
 
-    @FXML
-    private void clickLevelEditor() throws IOException {
-        LevelEditor controller = (LevelEditor) App.setRoot("level_editor");
-        controller.loadLevel("1");
-    }
+	@FXML
+	private void clickLevelEditor() throws IOException {
+		LevelEditor controller = (LevelEditor) App.setRoot("level_editor");
+		controller.loadLevel("1");
+	}
 
-    @FXML
-    private void clickExit() throws IOException {
-        Platform.exit();
-    }
+	@FXML
+	private void clickExit() throws IOException {
+		Platform.exit();
+	}
 }

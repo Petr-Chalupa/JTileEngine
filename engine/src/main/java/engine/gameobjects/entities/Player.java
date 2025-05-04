@@ -43,7 +43,6 @@ public class Player extends Entity {
 		setSprite("player_sprite.png");
 		setInputHandler();
 		setCollider(0.1 * size, 0.6 * size, 0.8 * size, 0.4 * size);
-		System.out.println(getSprite().getHeight() + " " + getSprite().getWidth());
 
 		inventory.addItem(new Item(posX, posY, ItemType.SWORD_STRONG)); // Test only!
 	}
@@ -133,7 +132,7 @@ public class Player extends Entity {
 	@Override
 	public void damage(double damage) {
 		super.damage(damage);
-		if (health == 0) System.out.println("player dead");
+		if (health == 0) Engine.getInstance().gameOver();
 	}
 
 	private Interactable getClosestInteractableObject() {

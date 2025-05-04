@@ -9,20 +9,20 @@ import java.io.IOException;
 
 public class LevelEditor {
 
-    @FXML
-    private Pane canvasParent;
+	@FXML
+	private Pane canvasParent;
 
-    @FXML
-    private void clickMainMenu() throws IOException {
-        App.getEngine().shutdown();
-        App.setRoot("main_menu");
-    }
+	@FXML
+	private void clickMainMenu() throws IOException {
+		App.getEngine().shutdown();
+		App.setRoot("main_menu");
+	}
 
-    public void loadLevel(String path) {
-        Engine engine = App.getEngine();
-        engine.init(canvasParent, 10);
+	public void loadLevel(String path) {
+		Engine engine = App.getEngine();
+		engine.init(canvasParent, 10);
 
-        LevelLoader levelLoader = LevelLoader.getInstance();
-        levelLoader.loadFile(path);
-    }
+		LevelLoader levelLoader = LevelLoader.getInstance();
+		levelLoader.loadLevel(path);
+	}
 }

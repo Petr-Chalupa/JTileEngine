@@ -1,9 +1,10 @@
 module ui {
-    requires javafx.controls;
-    requires javafx.fxml;
-    requires transitive engine;
+	requires javafx.controls;
+	requires javafx.fxml;
+	requires transitive engine;
+	requires java.desktop;
 
-    opens ui to javafx.fxml;
+	opens ui to javafx.fxml;
 
-    exports ui;
+	exports ui;
 }

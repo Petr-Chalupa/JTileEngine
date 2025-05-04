@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.*?>
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/23.0.1"
+           xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.LevelMenu">
+    <children>
+        <VBox>
+            <children>
+                <HBox fillHeight="false">
+                    <children>
+                        <Button alignment="CENTER" mnemonicParsing="false" onAction="#buttonMainMenu" text="Menu">
+                            <HBox.margin>
+                                <Insets left="30.0" top="20.0"/>
+                            </HBox.margin>
+                        </Button>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <ToggleButton mnemonicParsing="false" onAction="#buttonChangeLevelView" text="View custom levels">
+                            <HBox.margin>
+                                <Insets right="30.0" top="20.0"/>
+                            </HBox.margin>
+                        </ToggleButton>
+                    </children>
+                </HBox>
+                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" pannable="true">
+                    <content>
+                        <FlowPane fx:id="levelSelect" hgap="20.0" vgap="20.0">
+                            <padding>
+                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+                            </padding>
+                        </FlowPane>
+                    </content>
+                </ScrollPane>
+            </children>
+        </VBox>
+    </children>
+</StackPane>

@@ -13,12 +13,8 @@ import javafx.scene.canvas.GraphicsContext;
 import java.util.Arrays;
 
 public class Shop extends Block implements Interactable {
-	public enum ShopState {
-		OPEN, CLOSED
-	}
-
 	private final Inventory inventory;
-	private ShopState state = ShopState.CLOSED;
+	private boolean isOpen = false;
 
 	public Shop(double posX, double posY, double size) {
 		super(posX, posY, size, BlockType.SHOP);
@@ -28,7 +24,7 @@ public class Shop extends Block implements Interactable {
 	}
 
 	public boolean isOpen() {
-		return this.state == ShopState.OPEN;
+		return this.isOpen;
 	}
 
 	public Inventory getInventory() {
@@ -52,22 +48,34 @@ public class Shop extends Block implements Interactable {
 		}
 	}
 
-	@Override
-	public void interact(Entity user) {
-		if (isOpen()) {
-			this.inventory.close();
-			state = ShopState.CLOSED;
-			if (user instanceof Player player) player.setState(PlayerState.NORMAL);
-		} else {
+	public void toggle(Entity user) {
+		if (isOpen) close(user);
+		else open(user);
+	}
+
+	public void open(Entity user) {
+		if (!isOpen) {
 			this.inventory.open();
-			state = ShopState.OPEN;
+			isOpen = true;
 			if (user instanceof Player player) player.setState(PlayerState.INTERACTING);
 		}
+	}
+
+	public void close(Entity user) {
+		if (isOpen) {
+			this.inventory.close();
+			isOpen = false;
+			if (user instanceof Player player) player.setState(PlayerState.NORMAL);
+		}
+	}
+
+	@Override
+	public void interact(Entity user) {
+		toggle(user);
 	}
 
 	@Override
 	public void renderUI(GraphicsContext context) {
 		inventory.render(context);
 	}
-
 }

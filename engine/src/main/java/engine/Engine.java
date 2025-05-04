@@ -1,5 +1,7 @@
 package engine;
 
+import engine.core.GameStateManager;
+import engine.core.GameStateManager.GameState;
 import engine.core.InputHandler;
 import engine.core.Renderer;
 import engine.utils.LevelLoader;
@@ -16,8 +18,8 @@ public class Engine {
 	private static Engine instance;
 	private final LevelLoader levelLoader;
 	private final ResourceManager resourceManager;
+	private final GameStateManager gameStateManager;
 	private FileHandler logFileHandler;
-	private boolean initialized = false;
 	private Renderer renderer;
 	private Pane renderTarget;
 	private double FPS;
@@ -26,12 +28,22 @@ public class Engine {
 	private Engine() {
 		this.levelLoader = LevelLoader.getInstance();
 		this.resourceManager = ResourceManager.getInstance();
+		this.gameStateManager = GameStateManager.getInstance();
 		setupLogger();
 	}
 
 	public static Engine getInstance() {
 		if (instance == null) instance = new Engine();
 		return instance;
+	}
+
+	private boolean checkInitialized(boolean throwErr) {
+		boolean initialized = gameStateManager.getState() != GameState.UNINITIALIZED;
+		if (!initialized && throwErr) {
+			LOGGER.severe("Engine must be initialized!");
+			throw new IllegalStateException("Engine not initialized");
+		}
+		return initialized;
 	}
 
 	public Pane getRenderTarget() {
@@ -44,19 +56,19 @@ public class Engine {
 
 	public void setFPS(double fps) {
 		this.FPS = fps;
-		if (initialized) renderer.setFPS(fps);
+		if (checkInitialized(false)) renderer.setFPS(fps);
 		LOGGER.info("FPS set to: " + fps);
 	}
 
 	public boolean isPaused() {
-		return renderer == null || renderer.isPaused();
+		return gameStateManager.getState() == GameState.PAUSED;
 	}
 
 	public void setPaused(boolean paused) {
-		if (initialized) {
-			renderer.setPaused(paused);
-			LOGGER.info(paused ? "Engine paused" : "Engine resumed");
-		}
+		checkInitialized(true);
+		if (paused) gameStateManager.setState(GameState.PAUSED);
+		else gameStateManager.setState(GameState.RUNNING);
+		LOGGER.info(paused ? "Engine paused" : "Engine resumed");
 	}
 
 	public LevelLoader getLevelLoader() {
@@ -67,19 +79,17 @@ public class Engine {
 		return resourceManager;
 	}
 
+	public GameStateManager getGameStateManager() {
+		return gameStateManager;
+	}
+
 	public Renderer getRenderer() {
-		if (!initialized) {
-			LOGGER.severe("Engine must be initialized!");
-			throw new IllegalStateException("Engine not initialized");
-		}
+		checkInitialized(true);
 		return renderer;
 	}
 
 	public InputHandler getInputHandler() {
-		if (!initialized) {
-			LOGGER.severe("Engine must be initialized!");
-			throw new IllegalStateException("Engine not initialized");
-		}
+		checkInitialized(true);
 		return inputHandler;
 	}
 
@@ -104,25 +114,37 @@ public class Engine {
 		renderTarget = target;
 		inputHandler = new InputHandler(renderTarget.getScene());
 		renderer = new Renderer(renderTarget, FPS);
+		gameStateManager.setState(GameState.UNINITIALIZED);
 		renderer.start();
-		initialized = true;
+		gameStateManager.setState(GameState.RUNNING);
 	}
 
 	public void shutdown() {
 		LOGGER.info("Shutting down Engine");
 		if (renderer != null) renderer.stop();
 		if (logFileHandler != null) logFileHandler.close();
-		initialized = false;
+		gameStateManager.setState(GameState.UNINITIALIZED);
 	}
 
-	public void loadLevel(String path) {
-		if (!initialized) {
-			LOGGER.severe("Engine must be initialized!");
-			throw new IllegalStateException("Engine not initialized");
-		}
-		LOGGER.info("Loading level: " + path);
+	public void loadLevel(String name) {
+		checkInitialized(true);
+		LOGGER.info("Loading level: " + name);
 		setPaused(true);
-		levelLoader.loadFile(path);
+		levelLoader.loadLevel(name);
 		setPaused(false);
+	}
+
+	public void gameOver() {
+		checkInitialized(true);
+		renderer.setPaused(true);
+		gameStateManager.setState(GameState.GAME_OVER);
+		LOGGER.info("Game over");
+	}
+
+	public void levelComplete() {
+		checkInitialized(true);
+		renderer.setPaused(true);
+		gameStateManager.setState(GameState.LEVEL_COMPLETE);
+		LOGGER.info("Level complete");
 	}
 }

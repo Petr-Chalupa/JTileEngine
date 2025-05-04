@@ -10,12 +10,8 @@ import engine.gameobjects.items.ItemType;
 import javafx.scene.canvas.GraphicsContext;
 
 public class Chest extends Block implements Interactable {
-	public enum ChestState {
-		OPEN, CLOSED
-	}
-	
 	private final Inventory inventory;
-	private ChestState state = ChestState.CLOSED;
+	private boolean isOpen = false;
 
 	public Chest(double posX, double posY, double size) {
 		super(posX, posY, size, BlockType.CHEST);
@@ -25,7 +21,7 @@ public class Chest extends Block implements Interactable {
 	}
 
 	public boolean isOpen() {
-		return this.state == ChestState.OPEN;
+		return this.isOpen;
 	}
 
 	public Inventory getInventory() {
@@ -42,22 +38,34 @@ public class Chest extends Block implements Interactable {
 		}
 	}
 
-	@Override
-	public void interact(Entity user) {
-		if (isOpen()) {
-			this.inventory.close();
-			state = ChestState.CLOSED;
-			if (user instanceof Player player) player.setState(Player.PlayerState.NORMAL);
-		} else {
+	public void toggle(Entity user) {
+		if (isOpen) close(user);
+		else open(user);
+	}
+
+	public void open(Entity user) {
+		if (!isOpen) {
 			this.inventory.open();
-			state = ChestState.OPEN;
+			isOpen = true;
 			if (user instanceof Player player) player.setState(Player.PlayerState.INTERACTING);
 		}
+	}
+
+	public void close(Entity user) {
+		if (isOpen) {
+			this.inventory.close();
+			isOpen = false;
+			if (user instanceof Player player) player.setState(Player.PlayerState.NORMAL);
+		}
+	}
+
+	@Override
+	public void interact(Entity user) {
+		toggle(user);
 	}
 
 	@Override
 	public void renderUI(GraphicsContext context) {
 		inventory.render(context);
 	}
-
 }
