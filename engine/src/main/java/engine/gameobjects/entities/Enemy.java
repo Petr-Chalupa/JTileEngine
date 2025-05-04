@@ -95,12 +95,13 @@ public class Enemy extends Entity {
 		super.damage(damage);
 		if (this.health == 0) {
 			// Remove from the world
-			LevelLoader.getInstance().getGameObjects().remove(this);
+			LevelLoader.getInstance().getCurrentLevel().removeGameObject(this);
+
 			// Drop money
 			double offsetX = (Math.random() - 0.5) * 0.5 * size;
 			double offsetY = (Math.random() - 0.5) * 0.5 * size;
 			Item moneyItem = new Item(posX + offsetX, posY + offsetY, ItemType.MONEY, money);
-			LevelLoader.getInstance().getGameObjects().add(moneyItem);
+			LevelLoader.getInstance().getCurrentLevel().addGameObject(moneyItem);
 		}
 	}
 }

@@ -36,7 +36,6 @@ public class LevelData {
 		return builtin;
 	}
 
-
 	public String getPath() {
 		return path;
 	}
@@ -64,6 +63,11 @@ public class LevelData {
 	public void addGameObject(GameObject gameObject) {
 		this.gameObjects.add(gameObject);
 		if (gameObject instanceof Player) this.player = (Player) gameObject;
+	}
+	
+	public void removeGameObject(GameObject gameObject) {
+		this.gameObjects.remove(gameObject);
+		if (this.player == gameObject) this.player = null;
 	}
 
 	public int getRows() {

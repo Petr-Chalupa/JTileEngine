@@ -48,9 +48,9 @@ public class Item extends GameObject implements Interactable {
 		// Item pickup
 		if (type == ItemType.MONEY) {
 			user.setMoney(user.getMoney() + price);
-			LevelLoader.getInstance().getGameObjects().remove(this);
+			LevelLoader.getInstance().getCurrentLevel().removeGameObject(this);
 		} else if (user.getInventory().addItem(this)) {
-			LevelLoader.getInstance().getGameObjects().remove(this);
+			LevelLoader.getInstance().getCurrentLevel().removeGameObject(this);
 		}
 	}
 }

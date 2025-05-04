@@ -69,7 +69,7 @@ public class Inventory {
 		Item item = items.get(selected).removeFirst();
 		item.setPosX(parent.getPosX());
 		item.setPosY(parent.getPosY());
-		LevelLoader.getInstance().getGameObjects().add(item);
+		LevelLoader.getInstance().getCurrentLevel().addGameObject(item);
 	}
 
 	public void open() {
