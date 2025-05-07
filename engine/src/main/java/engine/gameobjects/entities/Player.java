@@ -34,7 +34,7 @@ public class Player extends Entity {
 
 	public Player(double posX, double posY, double size, double speed, double health) {
 		super(posX, posY, 2, size, speed, health);
-		this.maxInteractDist = 50;
+		this.maxInteractDist = 100;
 		this.healthbar = new Healthbar(this, HealthbarType.LEFT_BOTTOM);
 		this.inventory = new Inventory(this, InventoryType.BOTTOM, null, 5, 5);
 		this.inventory.open();
@@ -117,9 +117,20 @@ public class Player extends Entity {
 		healthbar.render(context);
 		inventory.render(context);
 
-		// Render money
+		// Render armor
 		double dx = 50;
 		double dy = (int) context.getCanvas().getHeight() - 75;
+		context.save();
+		context.setFill(Color.BLACK);
+		context.setTextAlign(TextAlignment.CENTER);
+		context.setTextBaseline(VPos.CENTER);
+		context.setFont(new Font(20));
+		context.fillText(armor + " ■", dx, dy);
+		context.restore(); // Reset
+
+		// Render money
+		dx = 50;
+		dy = (int) context.getCanvas().getHeight() - 100;
 		context.save();
 		context.setFill(Color.BLACK);
 		context.setTextAlign(TextAlignment.CENTER);
@@ -139,8 +150,7 @@ public class Player extends Entity {
 		LevelLoader levelLoader = Engine.getInstance().getLevelLoader();
 		return (Interactable) levelLoader.getGameObjects()
 				.stream()
-				.filter(gameObject -> !gameObject.equals(this)
-						&& gameObject.isRendered()
+				.filter(gameObject -> !gameObject.equals(this) && gameObject.isRendered()
 						&& gameObject instanceof Interactable
 						&& this.collider.getDistanceTo(gameObject.getCollider()) <= maxInteractDist)
 				.min(Comparator.comparingDouble(gameObject -> this.collider.getDistanceTo(gameObject.getCollider())))

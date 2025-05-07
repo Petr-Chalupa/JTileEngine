@@ -5,6 +5,7 @@ import engine.core.LevelData;
 import engine.gameobjects.GameObject;
 import engine.gameobjects.blocks.Chest;
 import engine.gameobjects.blocks.Shop;
+import engine.gameobjects.blocks.Stone;
 import engine.gameobjects.entities.Enemy;
 import engine.gameobjects.entities.Player;
 import engine.gameobjects.tiles.Tile;
@@ -38,15 +39,11 @@ public class LevelLoader {
 	}
 
 	public List<LevelData> getBuiltinLevels() {
-		return levels.values().stream()
-				.filter(LevelData::isBuiltin)
-				.collect(Collectors.toList());
+		return levels.values().stream().filter(LevelData::isBuiltin).collect(Collectors.toList());
 	}
 
 	public List<LevelData> getImportedLevels() {
-		return levels.values().stream()
-				.filter(level -> !level.isBuiltin())
-				.collect(Collectors.toList());
+		return levels.values().stream().filter(level -> !level.isBuiltin()).collect(Collectors.toList());
 	}
 
 	public LevelData getCurrentLevel() {
@@ -148,7 +145,8 @@ public class LevelLoader {
 		double playerSize = playerData.getDouble("size");
 		double playerSpeed = playerData.getDouble("speed") * tileSize;
 		double playerHealth = playerData.getDouble("health");
-		Player player = new Player(playerPos.getDouble(0) * tileSize, playerPos.getDouble(1) * tileSize, playerSize * tileSize, playerSpeed, playerHealth);
+		Player player = new Player(playerPos.getDouble(0) * tileSize, playerPos.getDouble(1) * tileSize,
+				playerSize * tileSize, playerSpeed, playerHealth);
 		levelData.addGameObject(player);
 		Camera.getInstance().setTarget(player);
 
@@ -160,7 +158,8 @@ public class LevelLoader {
 			double enemySize = enemyData.getDouble("size");
 			double enemySpeed = enemyData.getDouble("speed") * tileSize;
 			double enemyHealth = enemyData.getDouble("health");
-			Enemy enemy = new Enemy(enemyPos.getDouble(0) * tileSize, enemyPos.getDouble(1) * tileSize, enemySize * tileSize, enemySpeed, enemyHealth);
+			Enemy enemy = new Enemy(enemyPos.getDouble(0) * tileSize, enemyPos.getDouble(1) * tileSize,
+					enemySize * tileSize, enemySpeed, enemyHealth);
 			levelData.addGameObject(enemy);
 		}
 
@@ -170,7 +169,8 @@ public class LevelLoader {
 			JSONObject chestData = chests.getJSONObject(i);
 			JSONArray chestPos = chestData.getJSONArray("pos");
 			double chestSize = chestData.getDouble("size");
-			Chest chest = new Chest(chestPos.getDouble(0) * tileSize, chestPos.getDouble(1) * tileSize, chestSize * tileSize);
+			Chest chest = new Chest(chestPos.getDouble(0) * tileSize, chestPos.getDouble(1) * tileSize,
+					chestSize * tileSize);
 			levelData.addGameObject(chest);
 		}
 
@@ -182,6 +182,17 @@ public class LevelLoader {
 			double shopSize = shopData.getDouble("size");
 			Shop shop = new Shop(shopPos.getDouble(0) * tileSize, shopPos.getDouble(1) * tileSize, shopSize * tileSize);
 			levelData.addGameObject(shop);
+		}
+
+		// Load stones
+		JSONArray stones = config.getJSONArray("stones");
+		for (int i = 0; i < stones.length(); i++) {
+			JSONObject stoneData = stones.getJSONObject(i);
+			JSONArray stonePos = stoneData.getJSONArray("pos");
+			double stoneSize = stoneData.getDouble("size");
+			Stone stone = new Stone(stonePos.getDouble(0) * tileSize, stonePos.getDouble(1) * tileSize,
+					stoneSize * tileSize);
+			levelData.addGameObject(stone);
 		}
 	}
 

@@ -17,6 +17,7 @@ public class Entity extends GameObject {
 	protected double speed;
 	protected double health;
 	protected int money;
+	protected double armor;
 
 	public Entity(double posX, double posY, int layer, double size, double speed, double health) {
 		super(posX, posY, layer, size);
@@ -24,6 +25,7 @@ public class Entity extends GameObject {
 		this.maxHealth = health;
 		this.health = health;
 		this.money = 0;
+		this.armor = 0;
 		this.levelLoader = LevelLoader.getInstance();
 	}
 
@@ -43,8 +45,16 @@ public class Entity extends GameObject {
 		return money;
 	}
 
+	public double getArmor() {
+		return armor;
+	}
+
 	public void setMoney(int money) {
 		this.money = money;
+	}
+
+	public void setArmor(double armor) {
+		this.armor = armor;
 	}
 
 	public void heal(double health) {
@@ -52,7 +62,13 @@ public class Entity extends GameObject {
 	}
 
 	public void damage(double damage) {
-		this.health = Math.max(0, this.health - damage);
+		if (armor > 0 && Math.random() > 0.5) {
+			double healthDamage = armor - damage < 0 ? damage - armor : 0; // How much damage won't be covered by armor
+			armor = Math.max(0, armor - damage);
+			health = Math.max(0, health - healthDamage);
+		} else {
+			health = Math.max(0, health - damage);
+		}
 	}
 
 	protected boolean isInMap(double deltaX, double deltaY) {
@@ -75,13 +91,11 @@ public class Entity extends GameObject {
 		if (!isInMap(deltaX, deltaY)) return false;
 		return levelLoader.getGameObjects()
 				.stream()
-				.filter(gameObject -> !gameObject.equals(this)
-						&& gameObject.isRendered()
+				.filter(gameObject -> !gameObject.equals(this) && gameObject.isRendered()
 						&& !(gameObject instanceof Item))
 				.allMatch(gameObject -> {
 					Bounds intersection = collider.getIntersection(gameObject.getCollider(), deltaX, deltaY);
-					return intersection == null
-							|| (gameObject instanceof Block && !((Block) gameObject).isSolid())
+					return intersection == null || (gameObject instanceof Block && !((Block) gameObject).isSolid())
 							|| (gameObject instanceof Tile && ((Tile) gameObject).isWalkable());
 				});
 	}

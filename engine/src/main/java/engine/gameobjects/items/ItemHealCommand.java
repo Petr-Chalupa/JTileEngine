@@ -11,7 +11,8 @@ public class ItemHealCommand implements ItemCommand {
 
 	@Override
 	public boolean execute(Entity user) {
-		user.heal(amount);
-		return true;
+		boolean heal = user.getHealth() < user.getMaxHealth();
+		if (heal) user.heal(amount);
+		return heal;
 	}
 }

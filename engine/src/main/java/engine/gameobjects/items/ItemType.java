@@ -5,12 +5,10 @@ import engine.gameobjects.entities.Entity;
 public enum ItemType {
 	SWORD_BASIC("sword_sprite_basic.png", 1, 1, 1000, new ItemSwordCommand(1, 50)),
 	SWORD_STRONG("sword_sprite_strong.png", 1, 2, 50, new ItemSwordCommand(3, 70)),
-	ARMOR("armor_sprite.png", 1, 3, 1, null), // todo
-	MONEY("money_sprite.png", 1, 1, 1, null),
+	ARMOR("armor_sprite.png", 1, 3, 1, new ItemArmorCommand(1)), MONEY("money_sprite.png", 1, 1, 1, null),
 	MEAT("meat_sprite.png", 10, 5, 1, new ItemHealCommand(3)),
 	GRANULE("granule_sprite.png", 10, 6, 1, new ItemHealCommand(1)),
-	TREAT("treat_sprite.png", 10, 7, 1, new ItemHealCommand(5)),
-	HUMAN("human_sprite.png", 1, 8, 1, null);// todo
+	TREAT("treat_sprite.png", 10, 7, 1, new ItemHealCommand(5)), HUMAN("human_sprite.png", 1, 8, 1, null);// todo
 
 	private final String spritePath;
 	private final int stackSize;

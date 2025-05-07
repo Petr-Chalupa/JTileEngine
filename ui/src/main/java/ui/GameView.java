@@ -73,6 +73,8 @@ public class GameView {
 				case LEVEL_COMPLETE:
 					levelCompleteMenu.setVisible(true);
 					break;
+				default:
+					break;
 			}
 		});
 	}

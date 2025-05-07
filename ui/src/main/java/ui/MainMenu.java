@@ -17,8 +17,7 @@ public class MainMenu {
 
 	@FXML
 	private void buttonLevelEditor() throws IOException {
-		LevelEditor controller = (LevelEditor) App.setRoot("level_editor");
-		controller.loadLevel("1");
+		App.setRoot("level_editor");
 	}
 
 	@FXML
