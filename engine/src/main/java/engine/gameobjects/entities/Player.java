@@ -26,10 +26,11 @@ public class Player extends Entity {
 	private InputHandler inputHandler;
 	private PlayerState state = PlayerState.NORMAL;
 	private Interactable currentInteractable;
+	private final double interactRange;
 
 	public Player(double posX, double posY, double size, double speed, double health) {
 		super(posX, posY, 2, size, speed, health);
-		this.maxInteractDist = 100;
+		this.interactRange = 100;
 		this.inventory = new Inventory(this, UIRegion.BOTTOM_CENTER, 1, null, 5, 5);
 		this.inventory.open();
 		this.currentFocusedInventory = inventory;
@@ -43,6 +44,10 @@ public class Player extends Entity {
 		setCollider(0.1 * size, 0.6 * size, 0.8 * size, 0.4 * size);
 
 		inventory.addItem(new Item(posX, posY, ItemType.SWORD_STRONG)); // Test only!
+	}
+
+	public double getInteractRange() {
+		return interactRange;
 	}
 
 	public void setInputHandler() {
@@ -102,11 +107,7 @@ public class Player extends Entity {
 			if (inputHandler.isKeyPressed(KeyCode.A)) deltaX = -speed * deltaTime; // Left
 			else if (inputHandler.isKeyPressed(KeyCode.D)) deltaX = speed * deltaTime; // Right
 			else deltaX = 0;
-
-			if (canMove(deltaX, deltaY)) {
-				moveX(deltaX);
-				moveY(deltaY);
-			}
+			move(deltaX, deltaY);
 		}
 	}
 
@@ -122,7 +123,7 @@ public class Player extends Entity {
 				.stream()
 				.filter(gameObject -> !gameObject.equals(this) && gameObject.isRendered()
 						&& gameObject instanceof Interactable
-						&& this.collider.getDistanceTo(gameObject.getCollider()) <= maxInteractDist)
+						&& this.collider.getDistanceTo(gameObject.getCollider()) <= interactRange)
 				.min(Comparator.comparingDouble(gameObject -> this.collider.getDistanceTo(gameObject.getCollider())))
 				.orElse(null);
 	}

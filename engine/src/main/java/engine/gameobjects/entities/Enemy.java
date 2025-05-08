@@ -8,6 +8,8 @@ import engine.ui.UIRegion;
 import engine.utils.LevelLoader;
 
 public class Enemy extends Entity {
+	private final double searchRange = 300;
+	private final double attackRange = 100;
 	private double attackCooldownElapsed = 0;
 	private double patrolTimeElapsed = 0;
 	private double patrolDirectionX = 0;
@@ -24,11 +26,17 @@ public class Enemy extends Entity {
 		setCollider(0, 0, size, size);
 	}
 
+	public double getSearchRange() {
+		return searchRange;
+	}
+
+	public double getAttackRange() {
+		return attackRange;
+	}
+
 	@Override
 	public void update(double deltaTime) {
 		attackCooldownElapsed += deltaTime;
-		double searchRange = 300;
-		double attackRange = 100;
 		double attackCooldown = 2;
 		double damage = 1;
 
@@ -48,10 +56,7 @@ public class Enemy extends Entity {
 		Player player = LevelLoader.getInstance().getPlayer();
 		double deltaX = Math.signum(player.getPosX() - this.getPosX()) * speed * deltaTime;
 		double deltaY = Math.signum(player.getPosY() - this.getPosY()) * speed * deltaTime;
-		if (canMove(deltaX, deltaY)) {
-			moveX(deltaX);
-			moveY(deltaY);
-		}
+		move(deltaX, deltaY);
 	}
 
 	private void patrol(double deltaTime) {
@@ -82,10 +87,7 @@ public class Enemy extends Entity {
 		}
 		double deltaX = patrolDirectionX * speed * deltaTime;
 		double deltaY = patrolDirectionY * speed * deltaTime;
-		if (canMove(deltaX, deltaY)) {
-			moveX(deltaX);
-			moveY(deltaY);
-		}
+		move(deltaX, deltaY);
 	}
 
 	@Override

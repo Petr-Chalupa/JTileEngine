@@ -18,6 +18,7 @@ public class Entity extends GameObject {
 	protected double health;
 	protected int money;
 	protected double armor;
+	protected int direction = -1;
 
 	public Entity(double posX, double posY, int layer, double size, double speed, double health) {
 		super(posX, posY, layer, size);
@@ -51,6 +52,10 @@ public class Entity extends GameObject {
 
 	public double getArmor() {
 		return armor;
+	}
+
+	public int getDirection() {
+		return direction;
 	}
 
 	public void setArmor(double armor) {
@@ -100,12 +105,15 @@ public class Entity extends GameObject {
 				});
 	}
 
-	protected void moveX(double dist) {
-		posX += dist;
-	}
-
-	protected void moveY(double dist) {
-		posY += dist;
+	protected void move(double deltaX, double deltaY) {
+		if (!canMove(deltaX, deltaY)) return;
+		if (deltaX != 0) {
+			posX += deltaX;
+			direction = deltaX >= 0 ? 1 : -1;
+		}
+		if (deltaY != 0) {
+			posY += deltaY;
+		}
 	}
 
 }

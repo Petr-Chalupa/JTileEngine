@@ -14,7 +14,6 @@ public abstract class GameObject {
 	protected double posY;
 	protected double size;
 	protected Collider collider;
-	protected double maxInteractDist;
 
 	public GameObject(double posX, double posY, int layer, double size) {
 		this.posX = posX;
@@ -76,11 +75,7 @@ public abstract class GameObject {
 	public Collider getCollider() {
 		return collider;
 	}
-
-	public double getMaxInteractDist() {
-		return maxInteractDist;
-	}
-
+	
 	public void setCollider(double posX, double posY, double width, double height) {
 		this.collider = new Collider(this, posX, posY, width, height);
 	}
