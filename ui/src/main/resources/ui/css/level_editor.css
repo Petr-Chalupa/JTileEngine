@@ -23,7 +23,7 @@
     -fx-border-color: transparent;
 }
 
-.level_scroll_pane>.viewport {
+.level_scroll_pane > .viewport {
     -fx-background-color: transparent;
 }
 

@@ -1,24 +1,19 @@
 package engine.gameobjects.entities;
 
 import engine.Engine;
-import engine.core.Healthbar;
-import engine.core.Healthbar.HealthbarType;
 import engine.core.InputHandler;
-import engine.core.Inventory;
-import engine.core.Inventory.InventoryType;
+import engine.core.UIManager;
 import engine.gameobjects.Interactable;
 import engine.gameobjects.blocks.Chest;
 import engine.gameobjects.blocks.Shop;
 import engine.gameobjects.items.Item;
 import engine.gameobjects.items.ItemType;
+import engine.ui.Inventory;
+import engine.ui.PlayerStats;
+import engine.ui.UIRegion;
 import engine.utils.LevelLoader;
-import javafx.geometry.VPos;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.TextAlignment;
 
 import java.util.Comparator;
 
@@ -35,10 +30,13 @@ public class Player extends Entity {
 	public Player(double posX, double posY, double size, double speed, double health) {
 		super(posX, posY, 2, size, speed, health);
 		this.maxInteractDist = 100;
-		this.healthbar = new Healthbar(this, HealthbarType.LEFT_BOTTOM);
-		this.inventory = new Inventory(this, InventoryType.BOTTOM, null, 5, 5);
+		this.inventory = new Inventory(this, UIRegion.BOTTOM_CENTER, 1, null, 5, 5);
 		this.inventory.open();
 		this.currentFocusedInventory = inventory;
+
+		UIManager uiManager = UIManager.getInstance();
+		uiManager.addComponent(this.inventory);
+		uiManager.addComponent(new PlayerStats(this, UIRegion.BOTTOM_LEFT, 1, 0.8, 0.9, 5));
 
 		setSprite("player_sprite.png");
 		setInputHandler();
@@ -110,34 +108,6 @@ public class Player extends Entity {
 				moveY(deltaY);
 			}
 		}
-	}
-
-	@Override
-	public void renderUI(GraphicsContext context) {
-		healthbar.render(context);
-		inventory.render(context);
-
-		// Render armor
-		double dx = 50;
-		double dy = (int) context.getCanvas().getHeight() - 75;
-		context.save();
-		context.setFill(Color.BLACK);
-		context.setTextAlign(TextAlignment.CENTER);
-		context.setTextBaseline(VPos.CENTER);
-		context.setFont(new Font(20));
-		context.fillText(armor + " ■", dx, dy);
-		context.restore(); // Reset
-
-		// Render money
-		dx = 50;
-		dy = (int) context.getCanvas().getHeight() - 100;
-		context.save();
-		context.setFill(Color.BLACK);
-		context.setTextAlign(TextAlignment.CENTER);
-		context.setTextBaseline(VPos.CENTER);
-		context.setFont(new Font(20));
-		context.fillText(money + "$", dx, dy);
-		context.restore(); // Reset
 	}
 
 	@Override

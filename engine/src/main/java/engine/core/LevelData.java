@@ -44,12 +44,12 @@ public class LevelData {
 		return completed;
 	}
 
-	public String getThumbnailPath() {
-		return thumbnailPath;
-	}
-
 	public void setCompleted(boolean completed) {
 		this.completed = completed;
+	}
+
+	public String getThumbnailPath() {
+		return thumbnailPath;
 	}
 
 	public void setThumbnailPath(String thumbnailPath) {
@@ -64,7 +64,7 @@ public class LevelData {
 		this.gameObjects.add(gameObject);
 		if (gameObject instanceof Player) this.player = (Player) gameObject;
 	}
-	
+
 	public void removeGameObject(GameObject gameObject) {
 		this.gameObjects.remove(gameObject);
 		if (this.player == gameObject) this.player = null;

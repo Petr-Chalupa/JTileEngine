@@ -8,22 +8,23 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 public class Renderer implements Runnable {
 	private static Thread RENDER_THREAD;
 	private final LevelLoader levelLoader;
-	private final Canvas canvas;
+	private final UIManager uiManager;
 	private final Camera camera;
+	private final Canvas canvas;
 	private volatile boolean isPaused = false;
 	private double FPS;
 
 	public Renderer(Pane target, double FPS) {
 		this.levelLoader = LevelLoader.getInstance();
-		this.canvas = new Canvas();
+		this.uiManager = UIManager.getInstance();
 		this.camera = Camera.getInstance();
+		this.canvas = new Canvas();
 		this.FPS = FPS;
 
 		target.getChildren().add(canvas);
@@ -31,20 +32,19 @@ public class Renderer implements Runnable {
 		canvas.heightProperty().bind(target.heightProperty());
 
 		GameStateManager.getInstance().addListener((GameStateManager.GameState newState) -> {
-					switch (newState) {
-						case PAUSED:
-						case GAME_OVER:
-						case LEVEL_COMPLETE:
-							setPaused(true);
-							break;
-						case RUNNING:
-							setPaused(false);
-							break;
-						default:
-							break;
-					}
-				}
-		);
+			switch (newState) {
+				case PAUSED:
+				case GAME_OVER:
+				case LEVEL_COMPLETE:
+					setPaused(true);
+					break;
+				case RUNNING:
+					setPaused(false);
+					break;
+				default:
+					break;
+			}
+		});
 	}
 
 	public Canvas getCanvas() {
@@ -111,8 +111,7 @@ public class Renderer implements Runnable {
 	}
 
 	private void update(double deltaTime) {
-		List<GameObject> gameObjectsCopy = new ArrayList<>(levelLoader.getGameObjects());
-		for (GameObject gameObject : gameObjectsCopy) {
+		for (GameObject gameObject : levelLoader.getGameObjects()) {
 			gameObject.update(deltaTime);
 		}
 	}
@@ -151,12 +150,12 @@ public class Renderer implements Runnable {
 			double destY = intersection.getMinY() - camera.getViewBounds().getMinY();
 			double destWidth = intersection.getWidth();
 			double destHeight = intersection.getHeight();
-			gameObject.render(context, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight);
+			context.drawImage(gameObject.getSprite(), sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight);
 			gameObject.setRendered(true);
 		}
 
 		// Render UI of visible game objects
-		sortedObjects.stream().filter(GameObject::isRendered).forEach(gameObject -> gameObject.renderUI(context));
+		uiManager.render(context, canvas);
 	}
 
 }

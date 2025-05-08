@@ -12,39 +12,39 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class App extends Application {
-    private static Scene scene;
-    private static Engine engine;
+	private static Scene scene;
+	private static Engine engine;
 
-    @Override
-    public void start(Stage stage) throws IOException {
-        scene = new Scene(new Group(), 1024, 768);
-        setRoot("main_menu");
-        App.engine = Engine.getInstance();
+	public static Object setRoot(String fxml) throws IOException {
+		FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("fxml/" + fxml + ".fxml"));
+		scene.setRoot(fxmlLoader.load());
+		return fxmlLoader.getController();
+	}
 
-        stage.setTitle("Game engine");
-        stage.getIcons().add(new Image(App.class.getResource("img/logo.png").toExternalForm()));
-        stage.setScene(scene);
-        stage.show();
-    }
+	public static Engine getEngine() {
+		return engine;
+	}
 
-    @Override
-    public void stop() {
-        engine.shutdown();
-        Platform.exit();
-        System.exit(0);
-    }
+	public static void main(String[] args) {
+		launch();
+	}
 
-    public static Object setRoot(String fxml) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("fxml/" + fxml + ".fxml"));
-        scene.setRoot(fxmlLoader.load());
-        return fxmlLoader.getController();
-    }
+	@Override
+	public void start(Stage stage) throws IOException {
+		scene = new Scene(new Group(), 1024, 768);
+		setRoot("main_menu");
+		App.engine = Engine.getInstance();
 
-    public static Engine getEngine() {
-        return engine;
-    }
+		stage.setTitle("Game engine");
+		stage.getIcons().add(new Image(App.class.getResource("img/logo.png").toExternalForm()));
+		stage.setScene(scene);
+		stage.show();
+	}
 
-    public static void main(String[] args) {
-        launch();
-    }
+	@Override
+	public void stop() {
+		engine.shutdown();
+		Platform.exit();
+		System.exit(0);
+	}
 }

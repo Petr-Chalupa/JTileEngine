@@ -31,6 +31,10 @@ public class ResourceManager {
 		return instance;
 	}
 
+	public void clearCache() {
+		imgCache.clear();
+	}
+
 	public Path getUserLevelsPath() {
 		return userLevelsPath;
 	}

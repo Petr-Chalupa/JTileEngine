@@ -4,7 +4,6 @@ import engine.core.Collider;
 import engine.utils.ResourceManager;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 public abstract class GameObject {
@@ -80,13 +79,6 @@ public abstract class GameObject {
 
 	public void setCollider(double posX, double posY, double width, double height) {
 		this.collider = new Collider(this, posX, posY, width, height);
-	}
-
-	public void render(GraphicsContext context, double sx, double sy, double sw, double sh, double dx, double dy, double dw, double dh) {
-		context.drawImage(sprite, sx, sy, sw, sh, dx, dy, dw, dh);
-	}
-
-	public void renderUI(GraphicsContext context) {
 	}
 
 	public void update(double deltaTime) {

@@ -1,4 +1,4 @@
-package engine.core;
+package engine.ui;
 
 import engine.gameobjects.GameObject;
 import engine.gameobjects.blocks.Shop;
@@ -6,6 +6,8 @@ import engine.gameobjects.entities.Player;
 import engine.gameobjects.items.Item;
 import engine.gameobjects.items.ItemType;
 import engine.utils.LevelLoader;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -15,23 +17,17 @@ import javafx.scene.text.TextAlignment;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Inventory {
-	public enum InventoryType {
-		CENTER, BOTTOM
-	}
-
-	private final GameObject parent;
-	private final InventoryType type;
+public class Inventory extends UIComponent {
 	private final String name;
 	private final int size;
 	private final int cols;
 	private final List<List<Item>> items;
 	private boolean isVisible;
 	private int selected = 0;
+	private final double nameSize = 20;
 
-	public Inventory(GameObject parent, InventoryType type, String name, int size, int cols) {
-		this.parent = parent;
-		this.type = type;
+	public Inventory(GameObject parent, UIRegion region, int layer, String name, int size, int cols) {
+		super(parent, region, layer, region == UIRegion.CENTER_CENTER ? 0.5 : 0.9, region == UIRegion.CENTER_CENTER ? 0.5 : 0.9, 5);
 		this.name = name;
 		this.size = size;
 		this.cols = cols;
@@ -131,29 +127,35 @@ public class Inventory {
 		}
 	}
 
-	public void render(GraphicsContext context) {
-		if (!isVisible) return;
+	public double calculateSlotSize(double availableWidth, double availableHeight) {
+		int rows = Math.ceilDiv(size, cols);
+		double usableHeight = availableHeight - (name != null ? nameSize : 0);
+		return Math.min((availableWidth - padding * (cols + 1)) / cols, (usableHeight - padding * (rows + 1)) / rows);
+	}
+
+	@Override
+	public Bounds calculateBounds(Bounds regionBounds) {
+		double regionWidth = regionBounds.getWidth();
+		double regionHeight = regionBounds.getHeight();
+
+		double availableWidth = calculateAvailableWidth(regionWidth);
+		double availableHeight = calculateAvailableHeight(regionHeight);
+		double slotSize = calculateSlotSize(availableWidth, availableHeight);
 
 		int rows = Math.ceilDiv(size, cols);
-		double nameSize = 20;
-		double gap = 5;
-		double slotSize = LevelLoader.getInstance().getTileSize();
-		double width = cols * (slotSize + gap) + gap;
-		double height = rows * (slotSize + gap) + gap + (name != null ? nameSize : 0);
+		double actualWidth = cols * slotSize + (cols + 1) * padding;
+		double actualHeight = rows * slotSize + (rows + 1) * padding + (name != null ? nameSize : 0);
 
-		double dx = 0;
-		double dy = 0;
-		if (type == InventoryType.CENTER) {
-			dx = (context.getCanvas().getWidth() - width) / 2;
-			dy = (context.getCanvas().getHeight() - height) / 2;
-		} else if (type == InventoryType.BOTTOM) {
-			dx = (context.getCanvas().getWidth() - width) / 2;
-			dy = context.getCanvas().getHeight() - height - gap;
-		}
+		return centerBounds(regionBounds, new BoundingBox(0, 0, actualWidth, actualHeight));
+	}
+
+	@Override
+	public void render(GraphicsContext context, double width, double height) {
+		if (!isVisible) return;
 
 		// Render background
 		context.setFill(new Color(0, 0, 0, 0.75));
-		context.fillRect(dx, dy, width, height);
+		context.fillRect(0, 0, width, height);
 
 		// Render name (centered)
 		if (name != null) {
@@ -161,15 +163,16 @@ public class Inventory {
 			context.setFill(Color.WHITE);
 			context.setTextAlign(TextAlignment.CENTER);
 			context.setTextBaseline(VPos.CENTER);
-			context.fillText(name, dx + width / 2, dy + nameSize / 2);
+			context.fillText(name, width / 2, nameSize / 2);
 			context.restore(); // Reset
-			dy += nameSize;
 		}
+
+		double slotSize = calculateSlotSize(width, height);
 
 		// Render slots with items, mark the selected slot
 		for (int i = 0; i < size; i++) {
-			double slotX = dx + gap + (i % cols) * (slotSize + gap);
-			double slotY = dy + gap + (i / cols) * (slotSize + gap);
+			double slotX = padding + (i % cols) * (slotSize + padding);
+			double slotY = (name != null ? nameSize : 0) + padding + (i / cols) * (slotSize + padding);
 			if (i == selected) {
 				context.setStroke(Color.WHITE);
 				context.setLineWidth(2);
@@ -184,7 +187,7 @@ public class Inventory {
 
 	private void renderItem(GraphicsContext context, List<Item> slot, double slotSize, double slotX, double slotY) {
 		// Render item
-		slot.getFirst().render(context, 0, 0, slotSize, slotSize, slotX, slotY, slotSize, slotSize);
+		context.drawImage(slot.getFirst().getSprite(), slotX, slotY, slotSize, slotSize);
 
 		// Render item count if multiple
 		if (slot.size() > 1) {
@@ -210,8 +213,7 @@ public class Inventory {
 				if (percentage > 0.6) context.setFill(Color.GREEN);
 				else if (percentage > 0.3) context.setFill(Color.ORANGE);
 				else context.setFill(Color.RED);
-				context.fillRect(slotX + 2, slotY + 2 + (barHeight - barHeight * percentage), barWidth,
-						barHeight * percentage);
+				context.fillRect(slotX + 2, slotY + 2 + (barHeight - barHeight * percentage), barWidth, barHeight * percentage);
 			}
 		}
 

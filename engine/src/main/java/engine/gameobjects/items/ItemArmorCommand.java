@@ -12,6 +12,6 @@ public class ItemArmorCommand implements ItemCommand {
 	@Override
 	public boolean execute(Entity user) {
 		user.setArmor(user.getArmor() + amount);
-		return false;
+		return true;
 	}
 }

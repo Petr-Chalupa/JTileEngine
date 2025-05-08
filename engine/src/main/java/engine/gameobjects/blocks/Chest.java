@@ -1,13 +1,13 @@
 package engine.gameobjects.blocks;
 
-import engine.core.Inventory;
-import engine.core.Inventory.InventoryType;
+import engine.Engine;
 import engine.gameobjects.Interactable;
 import engine.gameobjects.entities.Entity;
 import engine.gameobjects.entities.Player;
 import engine.gameobjects.items.Item;
 import engine.gameobjects.items.ItemType;
-import javafx.scene.canvas.GraphicsContext;
+import engine.ui.Inventory;
+import engine.ui.UIRegion;
 
 public class Chest extends Block implements Interactable {
 	private final Inventory inventory;
@@ -15,7 +15,9 @@ public class Chest extends Block implements Interactable {
 
 	public Chest(double posX, double posY, double size) {
 		super(posX, posY, size, BlockType.CHEST);
-		this.inventory = new Inventory(this, InventoryType.CENTER, "Chest", 15, 5);
+		this.inventory = new Inventory(this, UIRegion.CENTER_CENTER, 0, "Chest", 15, 5);
+
+		Engine.getInstance().getUIManager().addComponent(this.inventory);
 
 		generateLoot();
 	}
@@ -64,8 +66,4 @@ public class Chest extends Block implements Interactable {
 		toggle(user);
 	}
 
-	@Override
-	public void renderUI(GraphicsContext context) {
-		inventory.render(context);
-	}
 }

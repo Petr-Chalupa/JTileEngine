@@ -1,14 +1,14 @@
 package engine.gameobjects.blocks;
 
-import engine.core.Inventory;
-import engine.core.Inventory.InventoryType;
+import engine.Engine;
 import engine.gameobjects.Interactable;
 import engine.gameobjects.entities.Entity;
 import engine.gameobjects.entities.Player;
 import engine.gameobjects.entities.Player.PlayerState;
 import engine.gameobjects.items.Item;
 import engine.gameobjects.items.ItemType;
-import javafx.scene.canvas.GraphicsContext;
+import engine.ui.Inventory;
+import engine.ui.UIRegion;
 
 import java.util.Arrays;
 
@@ -18,7 +18,9 @@ public class Shop extends Block implements Interactable {
 
 	public Shop(double posX, double posY, double size) {
 		super(posX, posY, size, BlockType.SHOP);
-		this.inventory = new Inventory(this, InventoryType.CENTER, "Shop", 9, 3);
+		this.inventory = new Inventory(this, UIRegion.CENTER_CENTER, 0, "Shop", 9, 3);
+
+		Engine.getInstance().getUIManager().addComponent(this.inventory);
 
 		generateLoot();
 	}
@@ -74,8 +76,4 @@ public class Shop extends Block implements Interactable {
 		toggle(user);
 	}
 
-	@Override
-	public void renderUI(GraphicsContext context) {
-		inventory.render(context);
-	}
 }

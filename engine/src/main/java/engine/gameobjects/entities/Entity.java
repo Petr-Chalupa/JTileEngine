@@ -1,11 +1,11 @@
 package engine.gameobjects.entities;
 
-import engine.core.Healthbar;
-import engine.core.Inventory;
 import engine.gameobjects.GameObject;
 import engine.gameobjects.blocks.Block;
 import engine.gameobjects.items.Item;
 import engine.gameobjects.tiles.Tile;
+import engine.ui.Healthbar;
+import engine.ui.Inventory;
 import engine.utils.LevelLoader;
 import javafx.geometry.Bounds;
 
@@ -45,12 +45,12 @@ public class Entity extends GameObject {
 		return money;
 	}
 
-	public double getArmor() {
-		return armor;
-	}
-
 	public void setMoney(int money) {
 		this.money = money;
+	}
+
+	public double getArmor() {
+		return armor;
 	}
 
 	public void setArmor(double armor) {

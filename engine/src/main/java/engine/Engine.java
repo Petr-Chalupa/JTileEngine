@@ -4,6 +4,7 @@ import engine.core.GameStateManager;
 import engine.core.GameStateManager.GameState;
 import engine.core.InputHandler;
 import engine.core.Renderer;
+import engine.core.UIManager;
 import engine.utils.LevelLoader;
 import engine.utils.ResourceManager;
 import javafx.scene.layout.Pane;
@@ -19,6 +20,7 @@ public class Engine {
 	private final LevelLoader levelLoader;
 	private final ResourceManager resourceManager;
 	private final GameStateManager gameStateManager;
+	private final UIManager uiManager;
 	private FileHandler logFileHandler;
 	private Renderer renderer;
 	private Pane renderTarget;
@@ -29,6 +31,7 @@ public class Engine {
 		this.levelLoader = LevelLoader.getInstance();
 		this.resourceManager = ResourceManager.getInstance();
 		this.gameStateManager = GameStateManager.getInstance();
+		this.uiManager = UIManager.getInstance();
 		setupLogger();
 	}
 
@@ -83,6 +86,10 @@ public class Engine {
 		return gameStateManager;
 	}
 
+	public UIManager getUIManager() {
+		return uiManager;
+	}
+
 	public Renderer getRenderer() {
 		checkInitialized(true);
 		return renderer;
@@ -110,11 +117,13 @@ public class Engine {
 	}
 
 	public void init(Pane target, double FPS) {
+		if (checkInitialized(false)) return;
 		LOGGER.info("Initializing Engine");
+		resourceManager.clearCache();
+		uiManager.clearComponents();
 		renderTarget = target;
 		inputHandler = new InputHandler(renderTarget.getScene());
 		renderer = new Renderer(renderTarget, FPS);
-		gameStateManager.setState(GameState.UNINITIALIZED);
 		renderer.start();
 		gameStateManager.setState(GameState.RUNNING);
 	}
