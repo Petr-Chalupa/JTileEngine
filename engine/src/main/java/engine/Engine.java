@@ -5,6 +5,7 @@ import engine.core.GameStateManager.GameState;
 import engine.core.InputHandler;
 import engine.core.Renderer;
 import engine.core.UIManager;
+import engine.utils.DebugManager;
 import engine.utils.LevelLoader;
 import engine.utils.ResourceManager;
 import javafx.scene.layout.Pane;
@@ -21,6 +22,7 @@ public class Engine {
 	private final ResourceManager resourceManager;
 	private final GameStateManager gameStateManager;
 	private final UIManager uiManager;
+	private final DebugManager debugManager;
 	private FileHandler logFileHandler;
 	private Renderer renderer;
 	private Pane renderTarget;
@@ -32,6 +34,7 @@ public class Engine {
 		this.resourceManager = ResourceManager.getInstance();
 		this.gameStateManager = GameStateManager.getInstance();
 		this.uiManager = UIManager.getInstance();
+		this.debugManager = DebugManager.getInstance();
 		setupLogger();
 	}
 
@@ -88,6 +91,10 @@ public class Engine {
 
 	public UIManager getUIManager() {
 		return uiManager;
+	}
+
+	public DebugManager getDebugManager() {
+		return debugManager;
 	}
 
 	public Renderer getRenderer() {

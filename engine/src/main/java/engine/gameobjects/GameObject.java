@@ -77,6 +77,10 @@ public abstract class GameObject {
 		return collider;
 	}
 
+	public double getMaxInteractDist() {
+		return maxInteractDist;
+	}
+
 	public void setCollider(double posX, double posY, double width, double height) {
 		this.collider = new Collider(this, posX, posY, width, height);
 	}

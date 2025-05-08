@@ -12,8 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class UIManager {
-	List<UIComponent> components = new ArrayList<>();
 	private static UIManager instance;
+	List<UIComponent> components = new ArrayList<>();
 
 	private UIManager() {
 		GameStateManager.getInstance().addListener((GameStateManager.GameState newState) -> {
@@ -53,7 +53,6 @@ public class UIManager {
 
 	public void render(GraphicsContext context, Canvas canvas) {
 		HashMap<UIRegion, Bounds> regionsBounds = calculateRegionsBounds(canvas);
-		drawRegionBounds(context, canvas, true);
 
 		// Sort components based on the layer
 		List<UIComponent> sortedComponents = components
@@ -65,56 +64,11 @@ public class UIManager {
 			if (!component.getParent().isRendered()) continue;
 
 			Bounds componentBounds = component.calculateBounds(regionsBounds.get(component.getRegion()));
-
 			context.save();
 			context.translate(componentBounds.getMinX(), componentBounds.getMinY());
 			component.render(context, componentBounds.getWidth(), componentBounds.getHeight());
-			context.restore(); // Reset
+			context.restore();
 		}
-	}
-
-	public void drawRegionBounds(GraphicsContext context, Canvas canvas, boolean drawLabels) {
-		// Nastavení stylu
-		context.save();
-		context.setStroke(javafx.scene.paint.Color.LIGHTGRAY);
-		context.setLineWidth(1);
-		context.setLineDashes(5, 5); // Přerušovaná čára
-
-		// Nastavení fontu pro popisky
-		if (drawLabels) {
-			context.setFont(new javafx.scene.text.Font(10));
-			context.setFill(javafx.scene.paint.Color.LIGHTGRAY);
-		}
-
-		double canvasWidth = canvas.getWidth();
-		double canvasHeight = canvas.getHeight();
-
-		// Procházení všech regionů (kromě FLOAT)
-		for (UIRegion region : UIRegion.values()) {
-			if (region == UIRegion.FLOAT) continue;
-
-			// Získání hranic regionu
-			Bounds bounds = region.getBounds(canvasWidth, canvasHeight);
-
-			// Vykreslení obdélníku
-			context.strokeRect(
-					bounds.getMinX(),
-					bounds.getMinY(),
-					bounds.getWidth(),
-					bounds.getHeight()
-			);
-
-			// Vykreslení názvu regionu
-			if (drawLabels) {
-				context.fillText(
-						region.name(),
-						bounds.getMinX() + 5,
-						bounds.getMinY() + 15
-				);
-			}
-		}
-
-		context.restore();
 	}
 
 }

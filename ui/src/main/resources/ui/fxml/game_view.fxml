@@ -83,10 +83,10 @@
                     <VBox.margin>
                         <Insets top="50.0"/>
                     </VBox.margin>
-               <styleClass>
-                  <String fx:value="try_again_button" />
-                  <String fx:value="overlay_button" />
-               </styleClass>
+                    <styleClass>
+                        <String fx:value="try_again_button"/>
+                        <String fx:value="overlay_button"/>
+                    </styleClass>
                 </Button>
                 <Button layoutX="474.0" layoutY="240.0" onAction="#buttonMainMenu" prefWidth="200.0" text="Menu" textAlignment="CENTER">
                     <font>

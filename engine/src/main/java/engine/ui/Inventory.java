@@ -164,7 +164,7 @@ public class Inventory extends UIComponent {
 			context.setTextAlign(TextAlignment.CENTER);
 			context.setTextBaseline(VPos.CENTER);
 			context.fillText(name, width / 2, nameSize / 2);
-			context.restore(); // Reset
+			context.restore();
 		}
 
 		double slotSize = calculateSlotSize(width, height);
@@ -196,7 +196,7 @@ public class Inventory extends UIComponent {
 			context.setTextAlign(TextAlignment.RIGHT);
 			context.setFont(new Font(20));
 			context.fillText("" + slot.size(), slotX + slotSize - 5, slotY + slotSize - 5);
-			context.restore(); // Reset
+			context.restore();
 		}
 
 		if (parent instanceof Player) {
@@ -228,7 +228,7 @@ public class Inventory extends UIComponent {
 			context.setTextAlign(TextAlignment.CENTER);
 			context.setTextBaseline(VPos.CENTER);
 			context.fillText(slot.getFirst().getType().getPrice() + "$", slotX + slotSize / 2, slotY + slotSize / 2);
-			context.restore(); // Reset
+			context.restore();
 		}
 	}
 

@@ -37,6 +37,14 @@ public class Collider {
 		return getMinY() + (getMaxY() - getMinY()) / 2;
 	}
 
+	public double getWidth() {
+		return box.getWidth();
+	}
+
+	public double getHeight() {
+		return box.getHeight();
+	}
+
 	public Bounds getIntersection(Collider c, double deltaX, double deltaY) {
 		double minX = Math.max(getMinX() + deltaX, c.getMinX());
 		double minY = Math.max(getMinY() + deltaY, c.getMinY());

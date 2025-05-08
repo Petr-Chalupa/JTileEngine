@@ -1,6 +1,7 @@
 package engine.core;
 
 import engine.gameobjects.GameObject;
+import engine.utils.DebugManager;
 import engine.utils.LevelLoader;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
@@ -15,6 +16,7 @@ public class Renderer implements Runnable {
 	private static Thread RENDER_THREAD;
 	private final LevelLoader levelLoader;
 	private final UIManager uiManager;
+	private final DebugManager debugManager;
 	private final Camera camera;
 	private final Canvas canvas;
 	private volatile boolean isPaused = false;
@@ -23,6 +25,7 @@ public class Renderer implements Runnable {
 	public Renderer(Pane target, double FPS) {
 		this.levelLoader = LevelLoader.getInstance();
 		this.uiManager = UIManager.getInstance();
+		this.debugManager = DebugManager.getInstance();
 		this.camera = Camera.getInstance();
 		this.canvas = new Canvas();
 		this.FPS = FPS;
@@ -138,7 +141,7 @@ public class Renderer implements Runnable {
 				gameObject.setRendered(false);
 				continue;
 			}
-
+			// Render the game object itself
 			double goSize = gameObject.getSize();
 			double spriteWorldWidth = gameObject.getSprite().getWidth() / goSize;
 			double spriteWorldHeight = gameObject.getSprite().getHeight() / goSize;
@@ -152,10 +155,16 @@ public class Renderer implements Runnable {
 			double destHeight = intersection.getHeight();
 			context.drawImage(gameObject.getSprite(), sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight);
 			gameObject.setRendered(true);
+			// Render enabled game object debug info
+			debugManager.renderForGameObject(context, gameObject);
 		}
 
 		// Render UI of visible game objects
 		uiManager.render(context, canvas);
+		// Render UI debug info (if enabled)
+		if (debugManager.isFeatureEnabled(DebugManager.Features.UI_REGIONS)) {
+			debugManager.renderUIRegionsBounds(context, canvas);
+		}
 	}
 
 }

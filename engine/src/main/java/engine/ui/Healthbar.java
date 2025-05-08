@@ -62,7 +62,7 @@ public class Healthbar extends UIComponent {
 			context.setTextBaseline(VPos.CENTER);
 			context.setFont(new Font(height - 2));
 			context.fillText((int) (healthPercentage * 100) + "%", width / 2, height / 2);
-			context.restore(); // Reset
+			context.restore();
 		}
 	}
 
