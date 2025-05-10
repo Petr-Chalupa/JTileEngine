@@ -1,8 +1,7 @@
 package engine.gameobjects.entities;
 
 import engine.core.UIManager;
-import engine.gameobjects.items.Item;
-import engine.gameobjects.items.ItemType;
+import engine.gameobjects.items.Money;
 import engine.ui.Healthbar;
 import engine.ui.UIRegion;
 import engine.utils.LevelLoader;
@@ -101,7 +100,7 @@ public class Enemy extends Entity {
 			// Drop money
 			double offsetX = (Math.random() - 0.5) * 0.5 * size;
 			double offsetY = (Math.random() - 0.5) * 0.5 * size;
-			Item moneyItem = new Item(posX + offsetX, posY + offsetY, ItemType.MONEY, money);
+			Money moneyItem = new Money(posX + offsetX, posY + offsetY, money);
 			LevelLoader.getInstance().getCurrentLevel().addGameObject(moneyItem);
 		}
 	}

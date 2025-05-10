@@ -6,6 +6,9 @@ import engine.gameobjects.GameObject;
 import engine.gameobjects.entities.Enemy;
 import engine.gameobjects.entities.Entity;
 import engine.gameobjects.entities.Player;
+import engine.gameobjects.items.Item;
+import engine.gameobjects.items.Sword;
+import engine.ui.Inventory;
 import engine.ui.UIRegion;
 import javafx.geometry.Bounds;
 import javafx.scene.canvas.Canvas;
@@ -21,8 +24,9 @@ public class DebugManager {
 		GAMEOBJECT_BOUNDS,
 		GAMEOBJECT_COLLIDERS,
 		ENTITY_FACING_DIRECTION_X,
-		PLAYER_MAX_INTERACT_DIST,
-		ENEMY_SEARCH_ATTACK_DIST,
+		PLAYER_MAX_INTERACT_RANGE,
+		ITEM_SWORD_RANGE,
+		ENEMY_SEARCH_ATTACK_RANGE,
 		UI_REGIONS
 	}
 
@@ -33,9 +37,10 @@ public class DebugManager {
 	private final Color COLOR_GAMEOBJECT_BOUNDS = Color.RED;
 	private final Color COLOR_GAMEOBJECT_COLLIDERS = Color.GREEN;
 	private final Color COLOR_ENTITY_DIRECTION = Color.PURPLE;
-	private final Color COLOR_PLAYER_INTERACT_DIST = Color.BLUE;
-	private final Color COLOR_ENEMY_SEARCH_DIST = Color.LIGHTBLUE;
-	private final Color COLOR_ENEMY_ATTACK_DIST = Color.DARKBLUE;
+	private final Color COLOR_PLAYER_INTERACT_RANGE = Color.BLUE;
+	private final Color COLOR_ITEM_SWORD_RANGE = Color.AQUAMARINE;
+	private final Color COLOR_ENEMY_SEARCH_RANGE = Color.LIGHTBLUE;
+	private final Color COLOR_ENEMY_ATTACK_RANGE = Color.DARKBLUE;
 	private final Color COLOR_UI_REGIONS = Color.YELLOW;
 
 	private DebugManager() {
@@ -71,8 +76,9 @@ public class DebugManager {
 		if (enabledFeatures.contains(Features.GAMEOBJECT_BOUNDS)) renderGameObjectBounds(context, gameObject);
 		if (enabledFeatures.contains(Features.GAMEOBJECT_COLLIDERS)) renderGameObjectCollider(context, gameObject);
 		if (enabledFeatures.contains(Features.ENTITY_FACING_DIRECTION_X) && gameObject instanceof Entity entity) renderEntityFacingDirectionX(context, entity);
-		if (enabledFeatures.contains(Features.PLAYER_MAX_INTERACT_DIST) && gameObject instanceof Player player) renderPlayerMaxInteractDist(context, player);
-		if (enabledFeatures.contains(Features.ENEMY_SEARCH_ATTACK_DIST) && gameObject instanceof Enemy enemy) renderEnemySearchAttackDist(context, enemy);
+		if (enabledFeatures.contains(Features.PLAYER_MAX_INTERACT_RANGE) && gameObject instanceof Player player) renderPlayerMaxInteractRange(context, player);
+		if (enabledFeatures.contains(Features.ITEM_SWORD_RANGE) && gameObject instanceof Player player) renderSwordRange(context, player);
+		if (enabledFeatures.contains(Features.ENEMY_SEARCH_ATTACK_RANGE) && gameObject instanceof Enemy enemy) renderEnemySearchAttackRange(context, enemy);
 	}
 
 	private void renderGameObjectBounds(GraphicsContext context, GameObject gameObject) {
@@ -127,21 +133,21 @@ public class DebugManager {
 		context.restore();
 	}
 
-	private void renderPlayerMaxInteractDist(GraphicsContext context, Player player) {
+	private void renderPlayerMaxInteractRange(GraphicsContext context, Player player) {
 		Collider collider = player.getCollider();
 		double objectCenterX = camera.worldToScreenX(collider.getCenterX());
 		double objectCenterY = camera.worldToScreenY(collider.getCenterY());
 		double interactRange = player.getInteractRange();
 
 		context.save();
-		context.setStroke(COLOR_PLAYER_INTERACT_DIST);
+		context.setStroke(COLOR_PLAYER_INTERACT_RANGE);
 		context.setLineWidth(1);
-		context.setLineDashes(3, 3); // Make it dashed for better visibility
+		context.setLineDashes(3, 3);
 		context.strokeOval(objectCenterX - interactRange, objectCenterY - interactRange, 2 * interactRange, 2 * interactRange);
 		context.restore();
 	}
 
-	private void renderEnemySearchAttackDist(GraphicsContext context, Enemy enemy) {
+	private void renderEnemySearchAttackRange(GraphicsContext context, Enemy enemy) {
 		Collider collider = enemy.getCollider();
 		double objectCenterX = camera.worldToScreenX(collider.getCenterX());
 		double objectCenterY = camera.worldToScreenY(collider.getCenterY());
@@ -149,12 +155,30 @@ public class DebugManager {
 		double attackRange = enemy.getAttackRange();
 
 		context.save();
-		context.setStroke(COLOR_ENEMY_SEARCH_DIST);
+		context.setStroke(COLOR_ENEMY_SEARCH_RANGE);
 		context.setLineWidth(1);
-		context.setLineDashes(3, 3); // Make it dashed for better visibility
+		context.setLineDashes(3, 3);
 		context.strokeOval(objectCenterX - searchRange, objectCenterY - searchRange, 2 * searchRange, 2 * searchRange);
-		context.setStroke(COLOR_ENEMY_ATTACK_DIST);
+		context.setStroke(COLOR_ENEMY_ATTACK_RANGE);
 		context.strokeOval(objectCenterX - attackRange, objectCenterY - attackRange, 2 * attackRange, 2 * attackRange);
+		context.restore();
+	}
+
+	private void renderSwordRange(GraphicsContext context, Player player) {
+		Inventory inventory = player.getInventory();
+		Item selectedItem = inventory.getSelectedItem();
+		if (!(selectedItem instanceof Sword sword)) return;
+
+		Collider collider = player.getCollider();
+		double objectCenterX = camera.worldToScreenX(collider.getCenterX());
+		double objectCenterY = camera.worldToScreenY(collider.getCenterY());
+		double range = sword.getRange();
+
+		context.save();
+		context.setLineWidth(1);
+		context.setLineDashes(3, 3);
+		context.setStroke(COLOR_ITEM_SWORD_RANGE);
+		context.strokeOval(objectCenterX - range, objectCenterY - range, 2 * range, 2 * range);
 		context.restore();
 	}
 

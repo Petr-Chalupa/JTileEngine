@@ -4,7 +4,6 @@ import engine.gameobjects.GameObject;
 import engine.gameobjects.blocks.Shop;
 import engine.gameobjects.entities.Player;
 import engine.gameobjects.items.Item;
-import engine.gameobjects.items.ItemType;
 import engine.utils.LevelLoader;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
@@ -96,8 +95,8 @@ public class Inventory extends UIComponent {
 				slot.add(item);
 				return true;
 			}
-			ItemType firstItemType = slot.getFirst().getType();
-			if (firstItemType == item.getType() && slot.size() < firstItemType.getStackSize()) {
+			Item firstItem = slot.getFirst();
+			if (firstItem.getType() == item.getType() && slot.size() < firstItem.getStackSize()) {
 				slot.add(item);
 				return true;
 			}
@@ -108,8 +107,8 @@ public class Inventory extends UIComponent {
 				slot.add(item);
 				return true;
 			} else {
-				ItemType firstItemType = slot.getFirst().getType();
-				if (firstItemType == item.getType() && slot.size() < firstItemType.getStackSize()) {
+				Item firstItem = slot.getFirst();
+				if (firstItem.getType() == item.getType() && slot.size() < firstItem.getStackSize()) {
 					slot.add(item);
 					return true;
 				}
@@ -201,11 +200,11 @@ public class Inventory extends UIComponent {
 
 		if (parent instanceof Player) {
 			// Render item usages if multiple
-			int maxUsages = slot.getFirst().getType().getMaxUses();
-			if (maxUsages > 1 && slot.getFirst().getUses() < maxUsages) {
+			int maxUses = slot.getFirst().getMaxUses();
+			if (maxUses > 1 && slot.getFirst().getUses() < maxUses) {
 				double barHeight = slotSize - 4;
 				double barWidth = 4;
-				double percentage = slot.getFirst().getUses() / (double) maxUsages;
+				double percentage = slot.getFirst().getUses() / (double) maxUses;
 				// Render background
 				context.setFill(Color.DARKGRAY);
 				context.fillRect(slotX + 2, slotY + 2, barWidth, barHeight);
@@ -227,7 +226,7 @@ public class Inventory extends UIComponent {
 			context.setFill(Color.YELLOW);
 			context.setTextAlign(TextAlignment.CENTER);
 			context.setTextBaseline(VPos.CENTER);
-			context.fillText(slot.getFirst().getType().getPrice() + "$", slotX + slotSize / 2, slotY + slotSize / 2);
+			context.fillText(slot.getFirst().getPrice() + "$", slotX + slotSize / 2, slotY + slotSize / 2);
 			context.restore();
 		}
 	}

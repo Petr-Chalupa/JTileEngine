@@ -6,50 +6,58 @@ import engine.gameobjects.entities.Entity;
 import engine.utils.LevelLoader;
 
 public class Item extends GameObject implements Interactable {
-	private final ItemType type;
-	private int uses;
-	private int price;
+	private final ItemType itemType;
+	protected String name;
+	protected int maxUses;
+	protected int uses;
+	protected int stackSize;
+	protected int price;
 
-	public Item(double posX, double posY, ItemType type) {
+	public Item(double posX, double posY, ItemType itemType) {
 		super(posX, posY, 1, 0.5 * LevelLoader.getInstance().getTileSize());
-		this.type = type;
-		this.uses = type.getMaxUses();
-		this.price = type.getPrice();
 
-		setSprite(type.getSpritePath());
-	}
+		this.itemType = itemType;
 
-	public Item(double posX, double posY, ItemType type, int price) {
-		this(posX, posY, type);
-		this.price = price;
+		setSprite(itemType.getSpritePath());
 	}
 
 	public ItemType getType() {
-		return type;
+		return itemType;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public int getMaxUses() {
+		return maxUses;
 	}
 
 	public int getUses() {
 		return uses;
 	}
 
+	public int getStackSize() {
+		return stackSize;
+	}
+
 	public int getPrice() {
 		return price;
 	}
 
-	public boolean use(Entity user) {
-		if (uses == 0) return false;
+	public void use(Entity user) {
+		if (uses == 0) return;
+		if (useAction(user)) uses--;
+	}
 
-		if (type.use(user)) uses--;
-		return uses > 0;
+	protected boolean useAction(Entity user) {
+		return false;
 	}
 
 	@Override
 	public void interact(Entity user) {
 		// Item pickup
-		if (type == ItemType.MONEY) {
-			user.setMoney(user.getMoney() + price);
-			LevelLoader.getInstance().getCurrentLevel().removeGameObject(this);
-		} else if (user.getInventory().addItem(this)) {
+		if (user.getInventory().addItem(this)) {
 			LevelLoader.getInstance().getCurrentLevel().removeGameObject(this);
 		}
 	}

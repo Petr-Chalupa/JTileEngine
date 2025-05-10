@@ -7,7 +7,7 @@ import engine.gameobjects.Interactable;
 import engine.gameobjects.blocks.Chest;
 import engine.gameobjects.blocks.Shop;
 import engine.gameobjects.items.Item;
-import engine.gameobjects.items.ItemType;
+import engine.gameobjects.items.Sword;
 import engine.ui.Inventory;
 import engine.ui.PlayerStats;
 import engine.ui.UIRegion;
@@ -43,7 +43,7 @@ public class Player extends Entity {
 		setInputHandler();
 		setCollider(0.1 * size, 0.6 * size, 0.8 * size, 0.4 * size);
 
-		inventory.addItem(new Item(posX, posY, ItemType.SWORD_STRONG)); // Test only!
+		inventory.addItem(new Sword(posX, posY, Sword.SwordType.STRONG)); // Test only!
 	}
 
 	public double getInteractRange() {
@@ -136,8 +136,9 @@ public class Player extends Entity {
 	private void handleItemUse() {
 		Item selectedItem = inventory.getSelectedItem();
 		if (selectedItem != null) {
-			boolean hasAnotherUse = selectedItem.use(this);
-			if (!hasAnotherUse) inventory.removeSelectedItem();
+			selectedItem.use(this);
+			System.out.println(selectedItem.getUses());
+			if (selectedItem.getUses() == 0) inventory.removeSelectedItem();
 		}
 	}
 

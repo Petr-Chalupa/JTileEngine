@@ -5,8 +5,7 @@ import engine.gameobjects.Interactable;
 import engine.gameobjects.entities.Entity;
 import engine.gameobjects.entities.Player;
 import engine.gameobjects.entities.Player.PlayerState;
-import engine.gameobjects.items.Item;
-import engine.gameobjects.items.ItemType;
+import engine.gameobjects.items.*;
 import engine.ui.Inventory;
 import engine.ui.UIRegion;
 
@@ -37,7 +36,23 @@ public class Shop extends Block implements Interactable {
 		ItemType[] itemTypes = Arrays.stream(ItemType.values()).filter(type -> type != ItemType.MONEY).toArray(ItemType[]::new);
 		for (int i = 0; i < inventory.getSize(); i++) {
 			ItemType itemType = itemTypes[(int) (Math.random() * itemTypes.length)];
-			inventory.addItem(new Item(posX, posY, itemType), i);
+			Item item = null;
+			switch (itemType) {
+				case MEAT:
+				case GRANULE:
+				case TREAT:
+					item = new Food(posX, posY, itemType == ItemType.MEAT ? Food.FoodType.MEAT : itemType == ItemType.GRANULE ? Food.FoodType.GRANULE : Food.FoodType.TREAT);
+					break;
+				case ARMOR:
+					item = new Armor(posX, posY);
+					break;
+				case HUMAN:
+					item = new Human(posX, posY);
+					break;
+				default:
+					break;
+			}
+			if (item != null) inventory.addItem(item, i);
 		}
 	}
 
