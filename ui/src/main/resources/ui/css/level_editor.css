@@ -1,4 +1,4 @@
-.menu_button {
+.menu_button, .preset_button {
     -fx-min-width: 10px;
     -fx-min-height: 10px;
     -fx-background-color: #3498db;
@@ -9,15 +9,22 @@
     -fx-cursor: hand;
 }
 
-.level_select {
-    -fx-padding: 15px;
-    -fx-hgap: 20px;
-    -fx-vgap: 20px;
-    -fx-alignment: center-left;
-    -fx-background-color: #f5f5f5;
+.selector {
+    -fx-padding: 50px;
+}
+
+.preset_selector {
+    -fx-max-width: 500px;
+    -fx-padding: 0 0 10px 0;
+}
+
+.text-field {
+    -fx-max-width: 500px;
+    -fx-font-size: 16px;
 }
 
 .level_scroll_pane {
+    -fx-max-width: 500px;
     -fx-background-color: transparent;
     -fx-background: transparent;
     -fx-border-color: transparent;
@@ -27,9 +34,64 @@
     -fx-background-color: transparent;
 }
 
+.level_select {
+    -fx-padding: 10px 0 0 0;
+    -fx-spacing: 10px;
+    -fx-hgap: 20px;
+    -fx-vgap: 20px;
+    -fx-alignment: center-left;
+    -fx-background-color: #f5f5f5;
+}
+
 .no_levels_label {
     -fx-text-fill: #000000;
     -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-text-alignment: center;
+}
+
+.level_box {
+    -fx-background-color: #f4f4f4;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 10px;
+    -fx-spacing: 10px;
+    -fx-pref-width: 495px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 4, 0, 0, 0);
+}
+
+.level_box:hover {
+    -fx-background-color: #e8e8e8;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.2), 8, 0, 0, 0);
+}
+
+.thumbnail {
+    -fx-fit-width: 50;
+    -fx-fit-height: 50;
+}
+
+.info_box {
+    -fx-spacing: 10px;
+    -fx-alignment: center;
+}
+
+.level_name {
+    -fx-text-fill: #000000;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-wrap-text: true;
+}
+
+.load_button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 4px;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+}
+
+.load_button:hover {
+    -fx-background-color: #45a049;
 }

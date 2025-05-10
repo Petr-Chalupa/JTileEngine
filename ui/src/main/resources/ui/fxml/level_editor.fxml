@@ -1,53 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Text?>
-<StackPane xmlns:fx="http://javafx.com/fxml/1" stylesheets="@../css/level_editor.css" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="ui.LevelEditor">
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane prefHeight="768.0" prefWidth="1024.0" stylesheets="@../css/level_editor.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.LevelEditor">
     <children>
-        <VBox fx:id="selector" prefHeight="200.0" prefWidth="100.0">
-            <children>
+      <VBox>
+         <children>
                 <Button onAction="#clickMainMenu" styleClass="menu_button" text="Menu" textAlignment="CENTER">
                     <VBox.margin>
-                        <Insets left="10.0" top="10.0"/>
+                        <Insets left="10.0" top="10.0" />
                     </VBox.margin>
                 </Button>
-                <ScrollPane pannable="true" prefHeight="200.0" prefWidth="200.0" styleClass="level_scroll_pane" VBox.vgrow="ALWAYS">
-                    <content>
-                        <VBox fx:id="levelSelect" styleClass="level_select"/>
-                    </content>
-                </ScrollPane>
-            </children>
-        </VBox>
-        <BorderPane fx:id="editor" minHeight="380.0" minWidth="640.0" visible="false">
-            <top>
-                <Button onAction="#clickMainMenu" styleClass="menu_button" text="Menu" textAlignment="CENTER" BorderPane.alignment="TOP_LEFT">
-                    <BorderPane.margin>
-                        <Insets left="10.0" top="10.0"/>
-                    </BorderPane.margin>
-                </Button>
-            </top>
-            <left>
-                <VBox alignment="TOP_CENTER" spacing="150.0" BorderPane.alignment="CENTER">
-                    <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Game objects to add"/>
-                        <Text layoutX="10.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Game objects in game"/>
-                    </children>
-                </VBox>
-            </left>
-            <right>
-                <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-                    <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Selected game object properties"/>
-                    </children>
-                </VBox>
-            </right>
-            <center>
-                <Pane fx:id="canvasParent" BorderPane.alignment="CENTER"/>
-            </center>
-        </BorderPane>
+            <StackPane prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+               <children>
+                    <VBox fx:id="selector" alignment="TOP_CENTER" styleClass="selector" StackPane.alignment="TOP_CENTER">
+                        <children>
+                        <HBox styleClass="preset_selector">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#clickCreateNew" styleClass="preset_button" text="Create new" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Button mnemonicParsing="false" onAction="#clickImport" styleClass="preset_button" text="Import" />
+                           </children>
+                        </HBox>
+                        <TextField fx:id="filterInput" onKeyReleased="#filterSelect" promptText="Level name" />
+                            <ScrollPane pannable="true" prefHeight="200.0" prefWidth="200.0" styleClass="level_scroll_pane" VBox.vgrow="ALWAYS">
+                                <content>
+                                    <VBox fx:id="levelSelect" styleClass="level_select" />
+                                </content>
+                            </ScrollPane>
+                        </children>
+                     <StackPane.margin>
+                        <Insets />
+                     </StackPane.margin>
+                    </VBox>
+                  <TabPane fx:id="editor" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" visible="false">
+                    <tabs>
+                      <Tab text="Config" />
+                        <Tab text="Map">
+                          <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                        <Pane fx:id="canvasParent" />
+                                 </children>
+                              </AnchorPane>
+                          </content>
+                        </Tab>
+                    </tabs>
+                  </TabPane>
+               </children>
+            </StackPane>
+         </children>
+      </VBox>
     </children>
 </StackPane>
