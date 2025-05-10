@@ -20,7 +20,7 @@ public class DebugManager {
 	public enum Features {
 		GAMEOBJECT_BOUNDS,
 		GAMEOBJECT_COLLIDERS,
-		ENTITY_DIRECTION,
+		ENTITY_FACING_DIRECTION_X,
 		PLAYER_MAX_INTERACT_DIST,
 		ENEMY_SEARCH_ATTACK_DIST,
 		UI_REGIONS
@@ -70,7 +70,7 @@ public class DebugManager {
 	public void renderForGameObject(GraphicsContext context, GameObject gameObject) {
 		if (enabledFeatures.contains(Features.GAMEOBJECT_BOUNDS)) renderGameObjectBounds(context, gameObject);
 		if (enabledFeatures.contains(Features.GAMEOBJECT_COLLIDERS)) renderGameObjectCollider(context, gameObject);
-		if (enabledFeatures.contains(Features.ENTITY_DIRECTION) && gameObject instanceof Entity entity) renderEntityDirection(context, entity);
+		if (enabledFeatures.contains(Features.ENTITY_FACING_DIRECTION_X) && gameObject instanceof Entity entity) renderEntityFacingDirectionX(context, entity);
 		if (enabledFeatures.contains(Features.PLAYER_MAX_INTERACT_DIST) && gameObject instanceof Player player) renderPlayerMaxInteractDist(context, player);
 		if (enabledFeatures.contains(Features.ENEMY_SEARCH_ATTACK_DIST) && gameObject instanceof Enemy enemy) renderEnemySearchAttackDist(context, enemy);
 	}
@@ -105,11 +105,11 @@ public class DebugManager {
 		context.restore();
 	}
 
-	private void renderEntityDirection(GraphicsContext context, Entity entity) {
+	private void renderEntityFacingDirectionX(GraphicsContext context, Entity entity) {
 		Collider collider = entity.getCollider();
 		double objectCenterX = camera.worldToScreenX(collider.getCenterX());
 		double objectCenterY = camera.worldToScreenY(collider.getCenterY());
-		int direction = entity.getDirection();
+		int direction = entity.getFacingDirectionX();
 		double arrowSize = 10.0;
 		double endX = objectCenterX + collider.getWidth() * direction;
 

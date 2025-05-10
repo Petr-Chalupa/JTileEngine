@@ -18,7 +18,7 @@ public class Entity extends GameObject {
 	protected double health;
 	protected int money;
 	protected double armor;
-	protected int direction = -1;
+	protected int facingDirectionX = -1; // -1 = left, 1 = right
 
 	public Entity(double posX, double posY, int layer, double size, double speed, double health) {
 		super(posX, posY, layer, size);
@@ -54,8 +54,8 @@ public class Entity extends GameObject {
 		return armor;
 	}
 
-	public int getDirection() {
-		return direction;
+	public int getFacingDirectionX() {
+		return facingDirectionX;
 	}
 
 	public void setArmor(double armor) {
@@ -109,7 +109,7 @@ public class Entity extends GameObject {
 		if (!canMove(deltaX, deltaY)) return;
 		if (deltaX != 0) {
 			posX += deltaX;
-			direction = deltaX >= 0 ? 1 : -1;
+			facingDirectionX = (int) Math.signum(deltaX);
 		}
 		if (deltaY != 0) {
 			posY += deltaY;

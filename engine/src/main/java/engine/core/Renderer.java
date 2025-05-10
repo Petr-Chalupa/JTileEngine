@@ -1,6 +1,7 @@
 package engine.core;
 
 import engine.gameobjects.GameObject;
+import engine.gameobjects.entities.Entity;
 import engine.utils.DebugManager;
 import engine.utils.LevelLoader;
 import javafx.application.Platform;
@@ -141,7 +142,7 @@ public class Renderer implements Runnable {
 				gameObject.setRendered(false);
 				continue;
 			}
-			// Render the game object itself
+
 			double goSize = gameObject.getSize();
 			double spriteWorldWidth = gameObject.getSprite().getWidth() / goSize;
 			double spriteWorldHeight = gameObject.getSprite().getHeight() / goSize;
@@ -153,8 +154,16 @@ public class Renderer implements Runnable {
 			double destY = intersection.getMinY() - camera.getViewBounds().getMinY();
 			double destWidth = intersection.getWidth();
 			double destHeight = intersection.getHeight();
+			context.save();
+			if (gameObject instanceof Entity entity) {
+				context.translate(destX + destWidth / 2, destY + destHeight / 2);
+				context.scale(entity.getFacingDirectionX(), 1);
+				context.translate(-(destX + destWidth / 2), -(destY + destHeight / 2));
+			}
 			context.drawImage(gameObject.getSprite(), sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight);
+			context.restore();
 			gameObject.setRendered(true);
+
 			// Render enabled game object debug info
 			debugManager.renderForGameObject(context, gameObject);
 		}
