@@ -1,5 +1,6 @@
 package engine.core;
 
+import engine.Engine;
 import javafx.scene.Scene;
 import javafx.scene.input.*;
 
@@ -19,38 +20,31 @@ public class InputHandler {
 		scene.setOnKeyPressed(event -> {
 			KeyCode code = event.getCode();
 			pressedKeys.add(code);
-			if (!keyPressedCallbacks.containsKey(code)) return;
-			for (Consumer<KeyEvent> callback : keyPressedCallbacks.get(code)) {
-				callback.accept(event);
-			}
+			executeCallbacks(keyPressedCallbacks.get(code), event);
 		});
 		scene.setOnKeyReleased(event -> {
 			KeyCode code = event.getCode();
 			pressedKeys.remove(code);
-			if (!keyReleasedCallbacks.containsKey(code)) return;
-			for (Consumer<KeyEvent> callback : keyReleasedCallbacks.get(code)) {
-				callback.accept(event);
-			}
+			executeCallbacks(keyReleasedCallbacks.get(code), event);
 		});
 		scene.setOnMousePressed(event -> {
 			pressedButtons.add(event.getButton());
-			if (!mousePressedCallbacks.containsKey(event.getButton())) return;
-			for (Consumer<MouseEvent> callback : mousePressedCallbacks.get(event.getButton())) {
-				callback.accept(event);
-			}
+			executeCallbacks(mousePressedCallbacks.get(event.getButton()), event);
 		});
 		scene.setOnMouseReleased(event -> {
 			pressedButtons.remove(event.getButton());
-			if (!mouseReleasedCallbacks.containsKey(event.getButton())) return;
-			for (Consumer<MouseEvent> callback : mouseReleasedCallbacks.get(event.getButton())) {
-				callback.accept(event);
-			}
+			executeCallbacks(mouseReleasedCallbacks.get(event.getButton()), event);
 		});
 		scene.setOnScroll(event -> {
-			for (Consumer<ScrollEvent> callback : mouseScrollCallbacks) {
-				callback.accept(event);
-			}
+			executeCallbacks(mouseScrollCallbacks, event);
 		});
+	}
+
+	private <T> void executeCallbacks(List<Consumer<T>> callbacks, T event) {
+		if (callbacks == null || Engine.getInstance().isPaused()) return;
+		for (Consumer<T> callback : callbacks) {
+			callback.accept(event);
+		}
 	}
 
 	public void bindKeyPressed(KeyCode code, Consumer<KeyEvent> callback) {

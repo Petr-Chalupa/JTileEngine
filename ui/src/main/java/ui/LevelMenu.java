@@ -63,7 +63,7 @@ public class LevelMenu {
 
 		ImageView thumbnailView = new ImageView();
 		thumbnailView.getStyleClass().add("thumbnail");
-		thumbnailView.setImage(Engine.getInstance().getResourceManager().getImg(level.getThumbnailPath()));
+		thumbnailView.setImage(Engine.getInstance().getResourceManager().getImg(level.getThumbnail()));
 
 		VBox infoBox = new VBox();
 		infoBox.getStyleClass().add("info_box");

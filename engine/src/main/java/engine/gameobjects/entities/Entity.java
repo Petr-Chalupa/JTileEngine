@@ -42,6 +42,10 @@ public class Entity extends GameObject {
 		return health;
 	}
 
+	public double getSpeed() {
+		return speed;
+	}
+
 	public int getMoney() {
 		return money;
 	}
@@ -77,30 +81,26 @@ public class Entity extends GameObject {
 	}
 
 	protected boolean isInMap(double deltaX, double deltaY) {
-		double mapWidth = levelLoader.getCols() * levelLoader.getTileSize();
-		double mapHeight = levelLoader.getRows() * levelLoader.getTileSize();
-		if (collider == null) {
-			double newX = posX + deltaX;
-			double newY = posY + deltaY;
-			return newX >= 0 && newX + size <= mapWidth && newY >= 0 && newY + size <= mapHeight;
-		} else {
-			double newMinX = collider.getMinX() + deltaX;
-			double newMinY = collider.getMinY() + deltaY;
-			double newMaxX = collider.getMaxX() + deltaX;
-			double newMaxY = collider.getMaxY() + deltaY;
-			return newMinX >= 0 && newMaxX <= mapWidth && newMinY >= 0 && newMaxY <= mapHeight;
-		}
+		double mapWidth = levelLoader.getCols();
+		double mapHeight = levelLoader.getRows();
+		double newMinX = collider.getMinX() + deltaX;
+		double newMinY = collider.getMinY() + deltaY;
+		double newMaxX = collider.getMaxX() + deltaX;
+		double newMaxY = collider.getMaxY() + deltaY;
+		return newMinX >= 0 && newMaxX <= mapWidth && newMinY >= 0 && newMaxY <= mapHeight;
 	}
 
 	protected boolean canMove(double deltaX, double deltaY) {
 		if (!isInMap(deltaX, deltaY)) return false;
 		return levelLoader.getGameObjects()
 				.stream()
-				.filter(gameObject -> !gameObject.equals(this) && gameObject.isRendered()
+				.filter(gameObject -> !gameObject.equals(this)
+						&& gameObject.isRendered()
 						&& !(gameObject instanceof Item))
 				.allMatch(gameObject -> {
 					Bounds intersection = collider.getIntersection(gameObject.getCollider(), deltaX, deltaY);
-					return intersection == null || (gameObject instanceof Block && !((Block) gameObject).isSolid())
+					return intersection == null
+							|| (gameObject instanceof Block && !((Block) gameObject).isSolid())
 							|| (gameObject instanceof Tile && ((Tile) gameObject).isWalkable());
 				});
 	}

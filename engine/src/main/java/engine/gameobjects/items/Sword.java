@@ -22,7 +22,7 @@ public class Sword extends Item {
 				this.maxUses = 50;
 				this.price = 10;
 				this.damage = 2;
-				this.range = 125;
+				this.range = 3;
 				this.maxHitsPerAttack = 2;
 				break;
 			case BASIC:
@@ -30,7 +30,7 @@ public class Sword extends Item {
 				this.maxUses = 10;
 				this.price = 2;
 				this.damage = 1;
-				this.range = 100;
+				this.range = 1;
 				this.maxHitsPerAttack = 1;
 				break;
 		}

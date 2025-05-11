@@ -10,7 +10,6 @@ public class Block extends GameObject {
 		this.type = type;
 
 		setSprite(type.getSpritePath());
-		setCollider(0, 0, size, size);
 	}
 
 	public BlockType getType() {

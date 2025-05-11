@@ -26,11 +26,10 @@ public class Player extends Entity {
 	private InputHandler inputHandler;
 	private PlayerState state = PlayerState.NORMAL;
 	private Interactable currentInteractable;
-	private final double interactRange;
+	private final double interactRange = 2;
 
 	public Player(double posX, double posY, double size, double speed, double health) {
 		super(posX, posY, 2, size, speed, health);
-		this.interactRange = 100;
 		this.inventory = new Inventory(this, UIRegion.BOTTOM_CENTER, 1, null, 5, 5);
 		this.inventory.open();
 		this.currentFocusedInventory = inventory;
@@ -137,7 +136,6 @@ public class Player extends Entity {
 		Item selectedItem = inventory.getSelectedItem();
 		if (selectedItem != null) {
 			selectedItem.use(this);
-			System.out.println(selectedItem.getUses());
 			if (selectedItem.getUses() == 0) inventory.removeSelectedItem();
 		}
 	}

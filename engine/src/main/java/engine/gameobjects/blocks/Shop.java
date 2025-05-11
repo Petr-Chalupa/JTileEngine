@@ -17,7 +17,7 @@ public class Shop extends Block implements Interactable {
 
 	public Shop(double posX, double posY, double size) {
 		super(posX, posY, size, BlockType.SHOP);
-		this.inventory = new Inventory(this, UIRegion.CENTER_CENTER, 0, "Shop", 9, 3);
+		this.inventory = new Inventory(this, UIRegion.CENTER_CENTER, 1, "Shop", 9, 3);
 
 		Engine.getInstance().getUIManager().addComponent(this.inventory);
 

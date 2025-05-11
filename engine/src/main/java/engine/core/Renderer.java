@@ -137,17 +137,18 @@ public class Renderer implements Runnable {
 
 		// Render visible game objects
 		for (GameObject gameObject : sortedObjects) {
-			Bounds intersection = camera.getVisibleIntersection(gameObject.getBounds());
+			Bounds intersection = camera.getVisibleIntersection(gameObject.getRealBounds());
 			if (intersection == null) {
 				gameObject.setRendered(false);
 				continue;
 			}
 
-			double goSize = gameObject.getSize();
+			double tileSize = GameSettings.getInstance().getTileSize();
+			double goSize = gameObject.getSize() * tileSize;
 			double spriteWorldWidth = gameObject.getSprite().getWidth() / goSize;
 			double spriteWorldHeight = gameObject.getSprite().getHeight() / goSize;
-			double sourceX = (intersection.getMinX() - gameObject.getPosX()) * spriteWorldWidth;
-			double sourceY = (intersection.getMinY() - gameObject.getPosY()) * spriteWorldHeight;
+			double sourceX = (intersection.getMinX() - gameObject.getPosX() * tileSize) * spriteWorldWidth;
+			double sourceY = (intersection.getMinY() - gameObject.getPosY() * tileSize) * spriteWorldHeight;
 			double sourceWidth = intersection.getWidth() * spriteWorldWidth;
 			double sourceHeight = intersection.getHeight() * spriteWorldHeight;
 			double destX = intersection.getMinX() - camera.getViewBounds().getMinX();

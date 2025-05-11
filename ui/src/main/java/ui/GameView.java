@@ -1,9 +1,11 @@
 package ui;
 
 import engine.Engine;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
@@ -12,7 +14,7 @@ import java.io.IOException;
 import static engine.core.GameStateManager.GameState;
 
 public class GameView {
-
+	private Engine engine;
 	private String levelName;
 
 	@FXML
@@ -38,6 +40,7 @@ public class GameView {
 
 	@FXML
 	private void buttonMainMenu() throws IOException {
+		App.getEngine().saveLevel(levelName);
 		App.getEngine().shutdown();
 		App.setRoot("main_menu");
 	}
@@ -47,18 +50,30 @@ public class GameView {
 		App.getEngine().loadLevel(levelName); // Reload level
 	}
 
+	@FXML
+	public void initialize() {
+		engine = App.getEngine();
+
+		EventHandler<KeyEvent> escapeKeyHandler = event -> {
+			if (event.getCode() == KeyCode.ESCAPE) {
+				engine.setPaused(!engine.isPaused());
+				engine.getInputHandler().clear();
+				event.consume();
+			}
+		};
+		canvasParent.sceneProperty().addListener((observable, oldScene, newScene) -> {
+			if (oldScene != null) oldScene.removeEventFilter(KeyEvent.KEY_PRESSED, escapeKeyHandler);
+			if (newScene != null) newScene.addEventFilter(KeyEvent.KEY_PRESSED, escapeKeyHandler);
+		});
+	}
+
 	public void loadLevel(String name) {
-		Engine engine = App.getEngine();
 		engine.init(canvasParent, 60);
 		engine.loadLevel(name);
 
 		levelName = name;
 		pauseMenuLevelName.setText(name);
 
-		engine.getInputHandler().bindKeyPressed(KeyCode.ESCAPE, event -> {
-			engine.setPaused(!engine.isPaused());
-			engine.getInputHandler().clear();
-		});
 		engine.getGameStateManager().addListener((GameState state) -> {
 			pauseMenu.setVisible(false);
 			gameOverMenu.setVisible(false);

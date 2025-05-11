@@ -2,6 +2,7 @@ package engine.utils;
 
 import engine.core.Camera;
 import engine.core.Collider;
+import engine.core.GameSettings;
 import engine.gameobjects.GameObject;
 import engine.gameobjects.entities.Enemy;
 import engine.gameobjects.entities.Entity;
@@ -16,7 +17,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
-import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 public class DebugManager {
@@ -32,7 +33,7 @@ public class DebugManager {
 
 	private static DebugManager instance;
 	private final Camera camera;
-	private final List<Features> enabledFeatures = new ArrayList<>();
+	private final EnumSet<Features> enabledFeatures = EnumSet.noneOf(Features.class);
 
 	private final Color COLOR_GAMEOBJECT_BOUNDS = Color.RED;
 	private final Color COLOR_GAMEOBJECT_COLLIDERS = Color.GREEN;
@@ -50,6 +51,10 @@ public class DebugManager {
 	public static DebugManager getInstance() {
 		if (instance == null) instance = new DebugManager();
 		return instance;
+	}
+
+	public EnumSet<Features> getEnabledFeatures() {
+		return enabledFeatures;
 	}
 
 	public boolean isFeatureEnabled(Features feature) {
@@ -87,10 +92,11 @@ public class DebugManager {
 		double boundsMinY = camera.worldToScreenY(bounds.getMinY());
 		double boundsCenterX = camera.worldToScreenX(bounds.getCenterX());
 		double boundsCenterY = camera.worldToScreenY(bounds.getCenterY());
+		double tileSize = GameSettings.getInstance().getTileSize();
 
 		context.save();
 		context.setStroke(COLOR_GAMEOBJECT_BOUNDS);
-		context.strokeRect(boundsMinX, boundsMinY, bounds.getWidth(), bounds.getHeight());
+		context.strokeRect(boundsMinX, boundsMinY, bounds.getWidth() * tileSize, bounds.getHeight() * tileSize);
 		context.strokeLine(boundsCenterX - 3, boundsCenterY, boundsCenterX + 3, boundsCenterY);
 		context.strokeLine(boundsCenterX, boundsCenterY - 3, boundsCenterX, boundsCenterY + 3);
 		context.restore();
@@ -117,7 +123,7 @@ public class DebugManager {
 		double objectCenterY = camera.worldToScreenY(collider.getCenterY());
 		int direction = entity.getFacingDirectionX();
 		double arrowSize = 10.0;
-		double endX = objectCenterX + collider.getWidth() * direction;
+		double endX = objectCenterX + collider.getWidth() * GameSettings.getInstance().getTileSize() * direction;
 
 		context.save();
 		context.setStroke(COLOR_ENTITY_DIRECTION);
@@ -137,7 +143,7 @@ public class DebugManager {
 		Collider collider = player.getCollider();
 		double objectCenterX = camera.worldToScreenX(collider.getCenterX());
 		double objectCenterY = camera.worldToScreenY(collider.getCenterY());
-		double interactRange = player.getInteractRange();
+		double interactRange = player.getInteractRange() * GameSettings.getInstance().getTileSize();
 
 		context.save();
 		context.setStroke(COLOR_PLAYER_INTERACT_RANGE);
@@ -151,8 +157,8 @@ public class DebugManager {
 		Collider collider = enemy.getCollider();
 		double objectCenterX = camera.worldToScreenX(collider.getCenterX());
 		double objectCenterY = camera.worldToScreenY(collider.getCenterY());
-		double searchRange = enemy.getSearchRange();
-		double attackRange = enemy.getAttackRange();
+		double searchRange = enemy.getSearchRange() * GameSettings.getInstance().getTileSize();
+		double attackRange = enemy.getAttackRange() * GameSettings.getInstance().getTileSize();
 
 		context.save();
 		context.setStroke(COLOR_ENEMY_SEARCH_RANGE);
@@ -172,7 +178,7 @@ public class DebugManager {
 		Collider collider = player.getCollider();
 		double objectCenterX = camera.worldToScreenX(collider.getCenterX());
 		double objectCenterY = camera.worldToScreenY(collider.getCenterY());
-		double range = sword.getRange();
+		double range = sword.getRange() * GameSettings.getInstance().getTileSize();
 
 		context.save();
 		context.setLineWidth(1);

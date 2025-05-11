@@ -14,7 +14,7 @@ public class Chest extends Block implements Interactable {
 
 	public Chest(double posX, double posY, double size) {
 		super(posX, posY, size, BlockType.CHEST);
-		this.inventory = new Inventory(this, UIRegion.CENTER_CENTER, 0, "Chest", 15, 5);
+		this.inventory = new Inventory(this, UIRegion.CENTER_CENTER, 1, "Chest", 15, 5);
 
 		Engine.getInstance().getUIManager().addComponent(this.inventory);
 

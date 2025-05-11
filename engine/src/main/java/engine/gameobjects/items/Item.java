@@ -14,7 +14,7 @@ public class Item extends GameObject implements Interactable {
 	protected int price;
 
 	public Item(double posX, double posY, ItemType itemType) {
-		super(posX, posY, 1, 0.5 * LevelLoader.getInstance().getTileSize());
+		super(posX, posY, 1, 0.5);
 
 		this.itemType = itemType;
 

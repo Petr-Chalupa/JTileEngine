@@ -1,6 +1,7 @@
 package engine.ui;
 
 import engine.core.Camera;
+import engine.core.GameSettings;
 import engine.gameobjects.entities.Entity;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
@@ -29,9 +30,10 @@ public class Healthbar extends UIComponent {
 	public Bounds calculateBounds(Bounds regionBounds) {
 		if (region == UIRegion.FLOAT) {
 			Camera camera = Camera.getInstance();
-			double barWidth = parent.getSize() * 1.5;
+			double tileSize = GameSettings.getInstance().getTileSize();
+			double barWidth = parent.getSize() * tileSize * 1.5;
 			double barHeight = 8;
-			double x = camera.worldToScreenX(parent.getPosX()) - ((barWidth - parent.getSize()) / 2);
+			double x = camera.worldToScreenX(parent.getPosX()) - ((barWidth - parent.getSize() * tileSize) / 2);
 			double y = camera.worldToScreenY(parent.getPosY()) - barHeight;
 			return new BoundingBox(x, y, barWidth, barHeight);
 		} else {

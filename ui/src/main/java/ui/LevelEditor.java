@@ -2,7 +2,6 @@ package ui;
 
 import engine.Engine;
 import engine.core.LevelData;
-import engine.utils.LevelLoader;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -84,7 +83,7 @@ public class LevelEditor {
 
 		ImageView thumbnailView = new ImageView();
 		thumbnailView.getStyleClass().add("thumbnail");
-		thumbnailView.setImage(Engine.getInstance().getResourceManager().getImg(level.getThumbnailPath()));
+		thumbnailView.setImage(Engine.getInstance().getResourceManager().getImg(level.getThumbnail()));
 
 		HBox infoBox = new HBox();
 		infoBox.getStyleClass().add("info_box");
@@ -108,11 +107,5 @@ public class LevelEditor {
 
 	public void loadLevel(String name) {
 		openEditor();
-
-		Engine engine = App.getEngine();
-		engine.init(canvasParent, 10);
-
-		LevelLoader levelLoader = LevelLoader.getInstance();
-		levelLoader.loadLevel(name);
 	}
 }

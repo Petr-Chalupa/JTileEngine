@@ -5,12 +5,11 @@ import engine.gameobjects.GameObject;
 public class Tile extends GameObject {
 	private final TileType type;
 
-	public Tile(double posX, double posY, double size, TileType type) {
-		super(posX, posY, 0, size);
+	public Tile(double posX, double posY, TileType type) {
+		super(posX, posY, 0, 1);
 		this.type = type;
 
 		setSprite(type.getSpritePath());
-		setCollider(0, 0, size, size);
 	}
 
 	public TileType getType() {

@@ -7,8 +7,8 @@ import engine.ui.UIRegion;
 import engine.utils.LevelLoader;
 
 public class Enemy extends Entity {
-	private final double searchRange = 300;
-	private final double attackRange = 100;
+	private final double searchRange = 5;
+	private final double attackRange = 2;
 	private double attackCooldownElapsed = 0;
 	private double patrolTimeElapsed = 0;
 	private double patrolDirectionX = 0;
@@ -22,7 +22,6 @@ public class Enemy extends Entity {
 		UIManager.getInstance().addComponent(this.healthbar);
 
 		setSprite("enemy_sprite.png");
-		setCollider(0, 0, size, size);
 	}
 
 	public double getSearchRange() {

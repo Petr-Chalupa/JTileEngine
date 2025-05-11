@@ -1,26 +1,28 @@
 package engine.utils;
 
 import javafx.scene.image.Image;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ResourceManager {
 	private static ResourceManager instance;
 	private final Map<String, Image> imgCache = new HashMap<>();
-	private final Path userLevelsPath;
+	private final Path builtinSavePath;
+	private final Path userSavePath;
 
 	private ResourceManager() {
+		builtinSavePath = Paths.get("engine/src/main/resources/engine/").toAbsolutePath();
+		userSavePath = Paths.get(System.getenv("APPDATA"), "GameEngine");
+
 		try {
-			userLevelsPath = Paths.get(System.getenv("APPDATA"), "GameEngine", "levels");
-			Files.createDirectories(userLevelsPath);
+			Files.createDirectories(userSavePath);
 		} catch (IOException e) {
 			throw new RuntimeException("Failed to create user levels directory", e);
 		}
@@ -35,8 +37,12 @@ public class ResourceManager {
 		imgCache.clear();
 	}
 
-	public Path getUserLevelsPath() {
-		return userLevelsPath;
+	public Path getBuiltinSavePath() {
+		return builtinSavePath;
+	}
+
+	public Path getUserSavePath() {
+		return userSavePath;
 	}
 
 	public Image getImg(String path) {
@@ -49,32 +55,8 @@ public class ResourceManager {
 		});
 	}
 
-	public JSONObject getLevelConfig(String levelName) {
-		String configString = getLevelData(levelName, "config.json");
-		return new JSONObject(configString);
-	}
-
-	public List<String> getLevelMap(String levelName) {
-		String mapString = getLevelData(levelName, "map.txt");
-		return Arrays.stream(mapString.split("\\R")).filter(line -> !line.isEmpty()).toList();
-	}
-
-	private String getLevelData(String levelName, String fileName) {
-		try {
-			URL bultinLevelURL = getClass().getResource("/engine/levels/" + levelName + "/" + fileName);
-			if (bultinLevelURL != null) return Files.readString(Path.of(bultinLevelURL.toURI()));
-
-			Path userLevelPath = userLevelsPath.resolve(levelName).resolve(fileName);
-			if (Files.exists(userLevelPath)) return Files.readString(userLevelPath);
-
-			throw new RuntimeException("Level not found: " + levelName + " - " + fileName);
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to load level: " + levelName + " - " + fileName, e);
-		}
-	}
-
 	public void importLevel(File path, String levelName) throws IOException {
-		Path targetDir = userLevelsPath.resolve(levelName);
+		Path targetDir = userSavePath.resolve(levelName);
 		Files.createDirectories(targetDir);
 
 		File configFile = new File(path, "config.json");
@@ -85,21 +67,6 @@ public class ResourceManager {
 
 		Files.copy(configFile.toPath(), targetDir.resolve("config.json"), StandardCopyOption.REPLACE_EXISTING);
 		Files.copy(mapFile.toPath(), targetDir.resolve("map.txt"), StandardCopyOption.REPLACE_EXISTING);
-	}
-
-	public List<String> getLevelsFromDir(File dir) {
-		List<String> levels = new ArrayList<>();
-
-		if (dir == null || !dir.exists() || !dir.isDirectory()) return levels;
-
-		File[] levelDirs = dir.listFiles();
-		if (levelDirs == null) return levels;
-
-		for (File levelDir : levelDirs) {
-			if (levelDir.isDirectory()) levels.add(levelDir.getName());
-		}
-
-		return levels;
 	}
 
 }

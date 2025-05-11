@@ -1,12 +1,10 @@
 package engine.utils;
 
-import engine.core.Camera;
 import engine.core.LevelData;
 import engine.gameobjects.GameObject;
-import engine.gameobjects.blocks.Chest;
-import engine.gameobjects.blocks.Shop;
-import engine.gameobjects.blocks.Stone;
+import engine.gameobjects.blocks.*;
 import engine.gameobjects.entities.Enemy;
+import engine.gameobjects.entities.Entity;
 import engine.gameobjects.entities.Player;
 import engine.gameobjects.tiles.Tile;
 import engine.gameobjects.tiles.TileType;
@@ -14,28 +12,27 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class LevelLoader {
 	private static LevelLoader instance;
 	private final Map<String, LevelData> levels = new HashMap<>();
-	private LevelData currentLevel;
+	private final Map<String, Path> levelPaths = new HashMap<>();
+	private String currentLevelName;
 
 	private LevelLoader() {
-		loadAllLevels();
+		ResourceManager resourceManager = ResourceManager.getInstance();
+		loadAllLevelsMetadata(resourceManager.getBuiltinSavePath().resolve("levels"));
+		loadAllLevelsMetadata(resourceManager.getUserSavePath().resolve("levels"));
 	}
 
 	public static LevelLoader getInstance() {
 		if (instance == null) instance = new LevelLoader();
 		return instance;
-	}
-
-	public List<LevelData> getAllLevels() {
-		return new ArrayList<>(levels.values());
 	}
 
 	public List<LevelData> getBuiltinLevels() {
@@ -47,153 +44,245 @@ public class LevelLoader {
 	}
 
 	public LevelData getCurrentLevel() {
-		return currentLevel;
+		return currentLevelName != null ? levels.get(currentLevelName) : null;
 	}
 
 	public String getName() {
-		return currentLevel != null ? currentLevel.getName() : null;
+		LevelData level = getCurrentLevel();
+		return level != null ? level.getName() : null;
 	}
 
 	public boolean isCompleted() {
-		return currentLevel != null && currentLevel.isCompleted();
+		LevelData level = getCurrentLevel();
+		return level != null && level.isCompleted();
 	}
 
 	public List<GameObject> getGameObjects() {
-		return currentLevel != null ? currentLevel.getGameObjects() : new ArrayList<>();
+		LevelData level = getCurrentLevel();
+		return level != null ? level.getGameObjects() : new ArrayList<>();
 	}
 
 	public int getRows() {
-		return currentLevel != null ? currentLevel.getRows() : 0;
+		LevelData level = getCurrentLevel();
+		return level != null ? level.getRows() : 0;
 	}
 
 	public int getCols() {
-		return currentLevel != null ? currentLevel.getCols() : 0;
-	}
-
-	public int getTileSize() {
-		return currentLevel != null ? currentLevel.getTileSize() : 0;
+		LevelData level = getCurrentLevel();
+		return level != null ? level.getCols() : 0;
 	}
 
 	public Player getPlayer() {
-		return currentLevel != null ? currentLevel.getPlayer() : null;
+		LevelData level = getCurrentLevel();
+		return level != null ? level.getPlayer() : null;
 	}
 
-	private void loadLevelConfig(LevelData levelData) {
-		try {
-			JSONObject config = ResourceManager.getInstance().getLevelConfig(levelData.getPath());
-			levelData.setCompleted(config.getBoolean("completed"));
-			if (config.has("thumbnail")) levelData.setThumbnailPath(config.getString("thumbnail"));
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to load config data of level " + levelData.getName(), e);
-		}
-	}
-
-	private void loadAllLevels() {
-		try {
-			ResourceManager resourceManager = ResourceManager.getInstance();
-
-			File builtinURL = new File(getClass().getResource("/engine/levels/").toURI());
-			for (String name : resourceManager.getLevelsFromDir(builtinURL)) {
-				LevelData levelData = new LevelData(builtinURL.getPath() + "/" + name, name, true);
-				loadLevelConfig(levelData);
-				levels.put(name, levelData);
-			}
-
-			File importedURL = new File(resourceManager.getUserLevelsPath().toUri());
-			for (String name : resourceManager.getLevelsFromDir(importedURL)) {
-				LevelData levelData = new LevelData(importedURL.getPath() + "/" + name, name, false);
-				loadLevelConfig(levelData);
-				levels.put(name, levelData);
-			}
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to load levels", e);
+	public void setCurrentLevel(String name) {
+		if (levels.containsKey(name)) {
+			currentLevelName = name;
 		}
 	}
 
 	public void loadLevel(String name) {
-		if (currentLevel != null) currentLevel.clearGameData();
-
-		LevelData levelData = levels.get(name);
-		if (levelData == null) throw new RuntimeException("Level " + name + " not found");
-		currentLevel = levelData;
-
-		JSONObject config = ResourceManager.getInstance().getLevelConfig(levelData.getPath());
-
-		// Load map data
-		JSONObject map = config.getJSONObject("map");
-		int rows = map.getInt("rows");
-		int cols = map.getInt("cols");
-		int tileSize = map.getInt("tileSize");
-		levelData.setRows(rows);
-		levelData.setCols(cols);
-		levelData.setTileSize(tileSize);
-
-		// Read the map from a text file and create tiles
-		List<String> mapLines = ResourceManager.getInstance().getLevelMap(levelData.getPath());
-		for (int row = 0; row < rows; row++) {
-			String[] tileNumbers = mapLines.get(row).split(" ");
-			for (int col = 0; col < cols; col++) {
-				int tileType = Integer.parseInt(tileNumbers[col]);
-				Tile tile = new Tile(col * tileSize, row * tileSize, tileSize, TileType.values()[tileType]);
-				levelData.addGameObject(tile);
+		LevelData level = levels.get(name);
+		if (!level.isLoaded()) {
+			try {
+				Path configPath = levelPaths.get(name);
+				loadLevelObjects(level, configPath);
+			} catch (IOException e) {
+				throw new RuntimeException("Failed to load level " + name, e);
 			}
 		}
+		currentLevelName = name;
+	}
 
-		// Load player data
-		JSONObject playerData = config.getJSONObject("player");
-		JSONArray playerPos = playerData.getJSONArray("pos");
-		double playerSize = playerData.getDouble("size");
-		double playerSpeed = playerData.getDouble("speed") * tileSize;
-		double playerHealth = playerData.getDouble("health");
-		Player player = new Player(playerPos.getDouble(0) * tileSize, playerPos.getDouble(1) * tileSize,
-				playerSize * tileSize, playerSpeed, playerHealth);
-		levelData.addGameObject(player);
-		Camera.getInstance().setTarget(player);
+	private void loadAllLevelsMetadata(Path levelsDir) {
+		File[] dirs = levelsDir.toFile().listFiles(File::isDirectory);
+		if (dirs == null) return;
 
-		// Load enemies
-		JSONArray enemies = config.getJSONArray("enemies");
-		for (int i = 0; i < enemies.length(); i++) {
-			JSONObject enemyData = enemies.getJSONObject(i);
-			JSONArray enemyPos = enemyData.getJSONArray("pos");
-			double enemySize = enemyData.getDouble("size");
-			double enemySpeed = enemyData.getDouble("speed") * tileSize;
-			double enemyHealth = enemyData.getDouble("health");
-			Enemy enemy = new Enemy(enemyPos.getDouble(0) * tileSize, enemyPos.getDouble(1) * tileSize,
-					enemySize * tileSize, enemySpeed, enemyHealth);
-			levelData.addGameObject(enemy);
-		}
-
-		// Load chests
-		JSONArray chests = config.getJSONArray("chests");
-		for (int i = 0; i < chests.length(); i++) {
-			JSONObject chestData = chests.getJSONObject(i);
-			JSONArray chestPos = chestData.getJSONArray("pos");
-			double chestSize = chestData.getDouble("size");
-			Chest chest = new Chest(chestPos.getDouble(0) * tileSize, chestPos.getDouble(1) * tileSize,
-					chestSize * tileSize);
-			levelData.addGameObject(chest);
-		}
-
-		// Load shops
-		JSONArray shops = config.getJSONArray("shops");
-		for (int i = 0; i < shops.length(); i++) {
-			JSONObject shopData = shops.getJSONObject(i);
-			JSONArray shopPos = shopData.getJSONArray("pos");
-			double shopSize = shopData.getDouble("size");
-			Shop shop = new Shop(shopPos.getDouble(0) * tileSize, shopPos.getDouble(1) * tileSize, shopSize * tileSize);
-			levelData.addGameObject(shop);
-		}
-
-		// Load stones
-		JSONArray stones = config.getJSONArray("stones");
-		for (int i = 0; i < stones.length(); i++) {
-			JSONObject stoneData = stones.getJSONObject(i);
-			JSONArray stonePos = stoneData.getJSONArray("pos");
-			double stoneSize = stoneData.getDouble("size");
-			Stone stone = new Stone(stonePos.getDouble(0) * tileSize, stonePos.getDouble(1) * tileSize,
-					stoneSize * tileSize);
-			levelData.addGameObject(stone);
+		for (File dir : dirs) {
+			Path configPath = dir.toPath().resolve("config.json");
+			if (Files.exists(configPath)) {
+				try {
+					LevelData data = loadLevelMetadata(configPath);
+					String name = data.getName();
+					levels.put(name, data);
+					levelPaths.put(name, configPath);
+				} catch (IOException e) {
+					throw new RuntimeException("Failed to load metadata from " + configPath, e);
+				}
+			}
 		}
 	}
 
+	private LevelData loadLevelMetadata(Path configPath) throws IOException {
+		String content = Files.readString(configPath);
+		JSONObject obj = new JSONObject(content);
+
+		LevelData level = new LevelData(
+				obj.optString("name", configPath.getParent().getFileName().toString()),
+				obj.optBoolean("builtin", false)
+		);
+		level.setAuthor(obj.optString("author", ""));
+		level.setThumbnail(obj.optString("thumbnail", ""));
+		level.setCompleted(obj.optBoolean("completed", false));
+		level.setCreated(new Date(obj.optLong("created", 0)));
+		level.setUpdated(new Date(obj.optLong("updated", 0)));
+		level.setRows(obj.optInt("rows", 0));
+		level.setCols(obj.optInt("cols", 0));
+		return level;
+	}
+
+	private void loadLevelObjects(LevelData levelData, Path configPath) throws IOException {
+		if (levelData.isLoaded()) return;
+
+		String content = Files.readString(configPath);
+		JSONObject obj = new JSONObject(content);
+
+		// Player
+		if (obj.has("player")) {
+			JSONObject p = obj.getJSONObject("player");
+			Player player = new Player(
+					p.getDouble("posX"),
+					p.getDouble("posY"),
+					p.getDouble("size"),
+					p.getDouble("speed"),
+					p.getDouble("health")
+			);
+			player.setMoney(p.optInt("money", 0));
+			player.setArmor(p.optDouble("armor", 0));
+			levelData.setPlayer(player);
+			levelData.addGameObject(player);
+		}
+
+		// Tiles
+		for (Object item : obj.optJSONArray("tiles")) {
+			JSONObject t = (JSONObject) item;
+			Tile tile = new Tile(
+					t.getDouble("posX"),
+					t.getDouble("posY"),
+					TileType.values()[t.getInt("type")]
+			);
+			levelData.addTile(tile);
+			levelData.addGameObject(tile);
+		}
+
+		// Blocks
+		for (Object item : obj.optJSONArray("blocks")) {
+			JSONObject b = (JSONObject) item;
+			double x = b.getDouble("posX");
+			double y = b.getDouble("posY");
+			double size = b.getDouble("size");
+			BlockType type = BlockType.values()[b.getInt("type")];
+
+			Block block = switch (type) {
+				case CHEST -> new Chest(x, y, size);
+				case SHOP -> new Shop(x, y, size);
+				case STONE -> new Stone(x, y, size);
+				default -> new Block(x, y, size, type);
+			};
+
+			levelData.addBlock(block);
+			levelData.addGameObject(block);
+		}
+
+		// Entities
+		for (Object item : obj.optJSONArray("entities")) {
+			JSONObject e = (JSONObject) item;
+			String type = e.optString("class", "Entity");
+			double x = e.getDouble("posX");
+			double y = e.getDouble("posY");
+			double size = e.getDouble("size");
+			double speed = e.getDouble("speed");
+			double health = e.getDouble("health");
+
+			Entity entity = switch (type) {
+				case "Enemy" -> new Enemy(x, y, size, speed, health);
+				default -> new Entity(x, y, 1, size, speed, health);
+			};
+
+			levelData.addEntity(entity);
+			levelData.addGameObject(entity);
+		}
+
+		levelData.setLoaded(true);
+	}
+
+	public void saveLevel(String name) {
+		try {
+			LevelData levelData = levels.get(name);
+			Path configPath = levelPaths.get(name);
+			if (levelData == null || configPath == null) {
+				throw new RuntimeException("Cannot save level: no data or path found for name '" + name + "'");
+			}
+			saveLevel(levelData, configPath);
+		} catch (IOException e) {
+			throw new RuntimeException("Failed to save level " + name, e);
+		}
+	}
+
+	private void saveLevel(LevelData levelData, Path path) throws IOException {
+		JSONObject obj = new JSONObject();
+
+		obj.put("name", levelData.getName());
+		obj.put("author", levelData.getAuthor());
+		obj.put("builtin", levelData.isBuiltin());
+		obj.put("completed", levelData.isCompleted());
+		obj.put("thumbnail", levelData.getThumbnail());
+		obj.put("created", levelData.getCreated().getTime());
+		obj.put("updated", levelData.getUpdated().getTime());
+		obj.put("rows", levelData.getRows());
+		obj.put("cols", levelData.getCols());
+
+		JSONArray tiles = new JSONArray();
+		for (Tile t : levelData.getTiles()) {
+			JSONObject tile = new JSONObject();
+			tile.put("posX", t.getPosX());
+			tile.put("posY", t.getPosY());
+			tile.put("type", t.getType().ordinal());
+			tiles.put(tile);
+		}
+		obj.put("tiles", tiles);
+
+		JSONArray blocks = new JSONArray();
+		for (Block b : levelData.getBlocks()) {
+			JSONObject block = new JSONObject();
+			block.put("posX", b.getPosX());
+			block.put("posY", b.getPosY());
+			block.put("size", b.getSize());
+			block.put("type", b.getType().ordinal());
+			blocks.put(block);
+		}
+		obj.put("blocks", blocks);
+
+		JSONArray entities = new JSONArray();
+		for (Entity e : levelData.getEntities()) {
+			if (e instanceof Player) continue;
+			JSONObject ent = new JSONObject();
+			ent.put("posX", e.getPosX());
+			ent.put("posY", e.getPosY());
+			ent.put("size", e.getSize());
+			ent.put("speed", e.getSpeed());
+			ent.put("health", e.getHealth());
+			ent.put("class", e.getClass().getSimpleName());
+			entities.put(ent);
+		}
+		obj.put("entities", entities);
+
+		if (levelData.getPlayer() != null) {
+			Player p = levelData.getPlayer();
+			JSONObject player = new JSONObject();
+			player.put("posX", p.getPosX());
+			player.put("posY", p.getPosY());
+			player.put("size", p.getSize());
+			player.put("speed", p.getSpeed());
+			player.put("health", p.getHealth());
+			player.put("money", p.getMoney());
+			player.put("armor", p.getArmor());
+			player.put("class", "Player");
+			obj.put("player", player);
+		}
+
+		Files.writeString(path, obj.toString(4));
+	}
 }

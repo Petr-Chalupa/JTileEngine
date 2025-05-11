@@ -41,23 +41,27 @@ public class Camera {
 		return viewBounds;
 	}
 
-	public double worldToScreenX(double worldX) {
-		return worldX + offsetX;
+	public double worldToScreenX(double posX) {
+		double tileSize = GameSettings.getInstance().getTileSize();
+		return posX * tileSize + offsetX;
 	}
 
-	public double worldToScreenY(double worldY) {
-		return worldY + offsetY;
+	public double worldToScreenY(double posY) {
+		double tileSize = GameSettings.getInstance().getTileSize();
+		return posY * tileSize + offsetY;
 	}
 
 	public void update(Canvas canvas) {
 		if (target == null) return;
 
+		double tileSize = GameSettings.getInstance().getTileSize();
+		
 		LevelLoader levelLoader = LevelLoader.getInstance();
-		double mapWidth = levelLoader.getCols() * levelLoader.getTileSize();
-		double mapHeight = levelLoader.getRows() * levelLoader.getTileSize();
+		double mapWidth = levelLoader.getCols() * tileSize;
+		double mapHeight = levelLoader.getRows() * tileSize;
 
-		double viewWorldCenterX = target.getPosX() + (target.getSize() / 2.0);
-		double viewWorldCenterY = target.getPosY() + (target.getSize() / 2.0);
+		double viewWorldCenterX = target.getPosX() * tileSize + (target.getSize() * tileSize / 2.0);
+		double viewWorldCenterY = target.getPosY() * tileSize + (target.getSize() * tileSize / 2.0);
 
 		double viewLeft = viewWorldCenterX - canvas.getWidth() / 2.0;
 		double viewRight = viewWorldCenterX + canvas.getWidth() / 2.0;

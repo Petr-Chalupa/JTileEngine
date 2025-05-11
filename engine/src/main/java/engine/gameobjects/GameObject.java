@@ -1,6 +1,7 @@
 package engine.gameobjects;
 
 import engine.core.Collider;
+import engine.core.GameSettings;
 import engine.utils.ResourceManager;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
@@ -20,6 +21,7 @@ public abstract class GameObject {
 		this.posY = posY;
 		this.layer = layer;
 		this.size = size;
+
 		setCollider(0, 0, size, size);
 		setSprite("default_sprite.png");
 	}
@@ -60,22 +62,31 @@ public abstract class GameObject {
 		this.posY = posY;
 	}
 
-	public int getLayer() {
-		return layer;
-	}
-
 	public double getSize() {
 		return size;
+	}
+
+	public void setSize(double size) {
+		this.size = size;
+	}
+
+	public int getLayer() {
+		return layer;
 	}
 
 	public Bounds getBounds() {
 		return new BoundingBox(posX, posY, size, size);
 	}
 
+	public Bounds getRealBounds() {
+		double tileSize = GameSettings.getInstance().getTileSize();
+		return new BoundingBox(posX * tileSize, posY * tileSize, size * tileSize, size * tileSize);
+	}
+
 	public Collider getCollider() {
 		return collider;
 	}
-	
+
 	public void setCollider(double posX, double posY, double width, double height) {
 		this.collider = new Collider(this, posX, posY, width, height);
 	}

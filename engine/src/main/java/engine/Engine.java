@@ -150,6 +150,12 @@ public class Engine {
 		setPaused(false);
 	}
 
+	public void saveLevel(String name) {
+		checkInitialized(true);
+		LOGGER.info("Saving level: " + name);
+		levelLoader.saveLevel(name);
+	}
+
 	public void gameOver() {
 		checkInitialized(true);
 		renderer.setPaused(true);
