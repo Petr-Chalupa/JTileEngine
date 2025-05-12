@@ -9,8 +9,10 @@ import engine.gameobjects.blocks.*;
 import engine.gameobjects.entities.Enemy;
 import engine.gameobjects.entities.Entity;
 import engine.gameobjects.entities.Player;
+import engine.gameobjects.items.*;
 import engine.gameobjects.tiles.Tile;
 import engine.gameobjects.tiles.TileType;
+import engine.ui.Inventory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -87,12 +89,6 @@ public class LevelLoader {
 		return level != null ? level.getPlayer() : null;
 	}
 
-	public void setCurrentLevel(String name) {
-		if (levels.containsKey(name)) {
-			currentLevelName = name;
-		}
-	}
-
 	public void loadLevel(String name) {
 		LevelData level = levels.get(name);
 		if (!level.isLoaded()) {
@@ -129,8 +125,10 @@ public class LevelLoader {
 		String content = Files.readString(configPath);
 		JSONObject obj = new JSONObject(content);
 
-		LevelData level = new LevelData(obj.optString("name", configPath.getParent().getFileName().toString()),
-				obj.optBoolean("builtin", false));
+		LevelData level = new LevelData(
+				obj.optString("name", configPath.getParent().getFileName().toString()),
+				obj.optBoolean("builtin", false)
+		);
 		level.setAuthor(obj.optString("author", ""));
 		level.setThumbnail(obj.optString("thumbnail", ""));
 		level.setCompleted(obj.optBoolean("completed", false));
@@ -149,47 +147,17 @@ public class LevelLoader {
 		JSONObject obj = new JSONObject(content);
 
 		for (Object item : obj.optJSONArray("tiles")) {
-			JSONObject t = (JSONObject) item;
-			Tile tile = new Tile(t.getDouble("posX"), t.getDouble("posY"), TileType.values()[t.getInt("type")]);
-			levelData.addGameObject(tile);
+			levelData.addGameObject(deserializeTile((JSONObject) item));
 		}
 
 		for (Object item : obj.optJSONArray("blocks")) {
-			JSONObject b = (JSONObject) item;
-			double x = b.getDouble("posX");
-			double y = b.getDouble("posY");
-			double size = b.getDouble("size");
-			BlockType type = BlockType.values()[b.getInt("type")];
-
-			Block block = switch (type) {
-				case CHEST -> new Chest(x, y, size);
-				case SHOP -> new Shop(x, y, size);
-				case STONE -> new Stone(x, y, size);
-				default -> new Block(x, y, size, type);
-			};
-
-			levelData.addGameObject(block);
+			levelData.addGameObject(deserializeBlock((JSONObject) item));
 		}
 
 		for (Object item : obj.optJSONArray("entities")) {
-			JSONObject e = (JSONObject) item;
-			String type = e.optString("type", "Entity");
-			double x = e.getDouble("posX");
-			double y = e.getDouble("posY");
-			double size = e.getDouble("size");
-			double speed = e.getDouble("speed");
-			double health = e.getDouble("health");
-
-			Entity entity = switch (type) {
-				case "Player" -> new Player(x, y, size, speed, health);
-				case "Enemy" -> new Enemy(x, y, size, speed, health);
-				default -> new Entity(x, y, 1, size, speed, health);
-			};
-			entity.setArmor(e.optDouble("armor", 0));
-			entity.setMoney(e.optInt("money", 0));
-
+			Entity entity = deserializeEntity((JSONObject) item);
+			System.out.println(entity.getClass().getSimpleName() + " " + entity.getPosX() + ", " + entity.getPosY() + " " + entity.getSize());
 			if (entity instanceof Player) Camera.getInstance().setTarget(entity);
-
 			levelData.addGameObject(entity);
 		}
 
@@ -225,40 +193,164 @@ public class LevelLoader {
 
 		JSONArray tiles = new JSONArray();
 		for (Tile t : levelData.getTiles()) {
-			JSONObject tile = new JSONObject();
-			tile.put("posX", t.getPosX());
-			tile.put("posY", t.getPosY());
-			tile.put("type", t.getType().ordinal());
-			tiles.put(tile);
+			tiles.put(serializeTile(t));
 		}
 		obj.put("tiles", tiles);
 
 		JSONArray blocks = new JSONArray();
 		for (Block b : levelData.getBlocks()) {
-			JSONObject block = new JSONObject();
-			block.put("posX", b.getPosX());
-			block.put("posY", b.getPosY());
-			block.put("size", b.getSize());
-			block.put("type", b.getType().ordinal());
-			blocks.put(block);
+			blocks.put(serializeBlock(b));
 		}
 		obj.put("blocks", blocks);
 
 		JSONArray entities = new JSONArray();
 		for (Entity e : levelData.getEntities()) {
-			JSONObject entity = new JSONObject();
-			entity.put("posX", e.getPosX());
-			entity.put("posY", e.getPosY());
-			entity.put("size", e.getSize());
-			entity.put("speed", e.getSpeed());
-			entity.put("health", e.getHealth());
-			entity.put("money", e.getMoney());
-			entity.put("armor", e.getArmor());
-			entity.put("type", e.getClass().getSimpleName());
-			entities.put(entity);
+			entities.put(serializeEntity(e));
 		}
 		obj.put("entities", entities);
 
 		Files.writeString(path, obj.toString(4));
 	}
+
+	/* --------------- SERIALIZATION --------------- */
+
+	private JSONArray serializeInventory(Inventory inventory) {
+		JSONArray obj = new JSONArray();
+		for (int i = 0; i < inventory.getSize(); i++) {
+			JSONArray slotObj = new JSONArray();
+			inventory.getSlot(i).forEach(item -> slotObj.put(serializeItem(item)));
+			obj.put(slotObj);
+		}
+		return obj;
+	}
+
+	private JSONObject serializeBlock(Block block) {
+		JSONObject obj = new JSONObject();
+		obj.put("posX", block.getPosX());
+		obj.put("posY", block.getPosY());
+		obj.put("size", block.getSize());
+		obj.put("type", block.getType().ordinal());
+		if (block instanceof Chest chest && chest.getInventory() != null) {
+			obj.put("inventory", serializeInventory(chest.getInventory()));
+		}
+		if (block instanceof Shop shop && shop.getInventory() != null) {
+			obj.put("inventory", serializeInventory(shop.getInventory()));
+		}
+		return obj;
+	}
+
+	private JSONObject serializeEntity(Entity entity) {
+		JSONObject obj = new JSONObject();
+		obj.put("posX", entity.getPosX());
+		obj.put("posY", entity.getPosY());
+		obj.put("size", entity.getSize());
+		obj.put("speed", entity.getSpeed());
+		obj.put("health", entity.getHealth());
+		obj.put("money", entity.getMoney());
+		obj.put("armor", entity.getArmor());
+		obj.put("type", entity.getClass().getSimpleName());
+		if (entity.getInventory() != null) obj.put("inventory", serializeInventory(entity.getInventory()));
+		return obj;
+	}
+
+	private JSONObject serializeItem(Item item) {
+		JSONObject obj = new JSONObject();
+		obj.put("posX", item.getPosX());
+		obj.put("posY", item.getPosY());
+		obj.put("name", item.getName());
+		obj.put("maxUses", item.getMaxUses());
+		obj.put("uses", item.getUses());
+		obj.put("stackSize", item.getStackSize());
+		obj.put("price", item.getPrice());
+		obj.put("type", item.getType().ordinal());
+		return obj;
+	}
+
+	private JSONObject serializeTile(Tile tile) {
+		JSONObject obj = new JSONObject();
+		obj.put("posX", tile.getPosX());
+		obj.put("posY", tile.getPosY());
+		obj.put("type", tile.getType().ordinal());
+		return obj;
+	}
+
+	/* -------------- DESERIALIZATION ------------ */
+
+	private List<List<Item>> deserializeInventory(JSONArray obj) {
+		List<List<Item>> items = new ArrayList<>();
+		for (Object slotObj : obj) {
+			List<Item> slot = new ArrayList<>();
+			for (Object itemObj : (JSONArray) slotObj) {
+				slot.add(deserializeItem((JSONObject) itemObj));
+			}
+			items.add(slot);
+		}
+		return items;
+	}
+
+	private Block deserializeBlock(JSONObject obj) {
+		double x = obj.optDouble("posX", 0);
+		double y = obj.optDouble("posY", 0);
+		double size = obj.optDouble("size", 1);
+		BlockType type = BlockType.values()[obj.optInt("type", 0)];
+		Block block = switch (type) {
+			case CHEST -> new Chest(x, y, size);
+			case SHOP -> new Shop(x, y, size);
+			case STONE -> new Stone(x, y, size);
+		};
+		if (block instanceof Chest chest && obj.has("inventory")) chest.getInventory().setItems(deserializeInventory(obj.getJSONArray("inventory")));
+		if (block instanceof Shop shop && obj.has("inventory")) shop.getInventory().setItems(deserializeInventory(obj.getJSONArray("inventory")));
+		return block;
+	}
+
+	private Entity deserializeEntity(JSONObject obj) {
+		double x = obj.optDouble("posX", 0);
+		double y = obj.optDouble("posY", 0);
+		double size = obj.optDouble("size", 1);
+		double speed = obj.optDouble("speed", 1);
+		double health = obj.optDouble("health", 1);
+		String type = obj.optString("type", "Entity");
+		Entity entity = switch (type) {
+			case "Player" -> new Player(x, y, size, speed, health);
+			case "Enemy" -> new Enemy(x, y, size, speed, health);
+			default -> new Entity(x, y, 1, size, speed, health);
+		};
+		entity.setArmor(obj.optDouble("armor", 0));
+		entity.setMoney(obj.optInt("money", 0));
+		if (entity.getInventory() != null && obj.has("inventory")) entity.getInventory().setItems(deserializeInventory(obj.getJSONArray("inventory")));
+		return entity;
+	}
+
+	private Item deserializeItem(JSONObject obj) {
+		double x = obj.optDouble("posX", 0);
+		double y = obj.optDouble("posY", 0);
+		String name = obj.optString("name", "Item");
+		int maxUses = obj.optInt("maxUses", 1);
+		int uses = obj.optInt("uses", 1);
+		int stackSize = obj.optInt("stackSize", 1);
+		ItemType type = ItemType.values()[obj.optInt("type", 0)];
+		Item item = switch (type) {
+			case SWORD_BASIC -> new Sword(x, y, Sword.SwordType.BASIC);
+			case SWORD_STRONG -> new Sword(x, y, Sword.SwordType.STRONG);
+			case ARMOR -> new Armor(x, y);
+			case MONEY -> new Money(x, y, obj.optInt("price", 1));
+			case MEAT -> new Food(x, y, Food.FoodType.MEAT);
+			case GRANULE -> new Food(x, y, Food.FoodType.GRANULE);
+			case TREAT -> new Food(x, y, Food.FoodType.TREAT);
+			case HUMAN -> new Human(x, y);
+		};
+		item.setName(name);
+		item.setMaxUses(maxUses);
+		item.setUses(uses);
+		item.setStackSize(stackSize);
+		return item;
+	}
+
+	private Tile deserializeTile(JSONObject obj) {
+		double x = obj.optDouble("posX", 0);
+		double y = obj.optDouble("posY", 0);
+		TileType type = TileType.values()[obj.optInt("type", 0)];
+		return new Tile(x, y, type);
+	}
+
 }

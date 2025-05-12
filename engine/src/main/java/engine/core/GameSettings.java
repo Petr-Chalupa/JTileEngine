@@ -4,11 +4,10 @@ import engine.Engine;
 import engine.utils.DebugManager;
 import engine.utils.DebugManager.Features;
 import engine.utils.ResourceManager;
+import org.json.JSONObject;
 
 import java.util.EnumSet;
 import java.util.logging.Level;
-
-import org.json.JSONObject;
 
 public class GameSettings {
 	private static GameSettings instance;

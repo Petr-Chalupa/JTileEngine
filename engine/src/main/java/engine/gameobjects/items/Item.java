@@ -45,6 +45,22 @@ public class Item extends GameObject implements Interactable {
 		return price;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setMaxUses(int maxUses) {
+		this.maxUses = maxUses;
+	}
+
+	public void setUses(int uses) {
+		this.uses = uses;
+	}
+
+	public void setStackSize(int stackSize) {
+		this.stackSize = stackSize;
+	}
+
 	public void use(Entity user) {
 		if (uses == 0) return;
 		if (useAction(user)) uses--;

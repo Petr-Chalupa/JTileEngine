@@ -50,16 +50,16 @@ public class Entity extends GameObject {
 		return money;
 	}
 
-	public void setMoney(int money) {
-		this.money = money;
-	}
-
 	public double getArmor() {
 		return armor;
 	}
 
 	public int getFacingDirectionX() {
 		return facingDirectionX;
+	}
+
+	public void setMoney(int money) {
+		this.money = money;
 	}
 
 	public void setArmor(double armor) {

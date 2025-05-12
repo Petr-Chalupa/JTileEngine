@@ -1,9 +1,8 @@
 package engine.utils;
 
+import engine.Engine;
 import javafx.scene.image.Image;
 import org.json.JSONObject;
-
-import engine.Engine;
 
 import java.io.File;
 import java.io.IOException;

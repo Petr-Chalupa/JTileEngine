@@ -20,7 +20,7 @@ public class Inventory extends UIComponent {
 	private final String name;
 	private final int size;
 	private final int cols;
-	private final List<List<Item>> items;
+	private List<List<Item>> items;
 	private boolean isVisible;
 	private int selected = 0;
 	private final double nameSize = 20;
@@ -39,6 +39,10 @@ public class Inventory extends UIComponent {
 
 	public int getSize() {
 		return size;
+	}
+
+	public List<Item> getSlot(int index) {
+		return items.get(index);
 	}
 
 	public Item getSelectedItem() {
@@ -81,6 +85,10 @@ public class Inventory extends UIComponent {
 
 	public void selectMove(int delta) {
 		this.selected = Math.max(0, Math.min(size - 1, selected + delta));
+	}
+
+	public void setItems(List<List<Item>> items) {
+		this.items = items;
 	}
 
 	public boolean addItem(Item item) {

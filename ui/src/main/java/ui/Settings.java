@@ -5,11 +5,7 @@ import engine.core.GameSettings;
 import engine.utils.DebugManager;
 import engine.utils.DebugManager.Features;
 import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Slider;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -56,8 +52,7 @@ public class Settings {
 			debugInfoBox.getChildren().add(featureBox);
 		}
 		// Logging
-		loggingChoiceBox.getItems()
-				.addAll(Level.ALL, Level.SEVERE, Level.WARNING, Level.INFO, Level.FINE, Level.CONFIG, Level.OFF);
+		loggingChoiceBox.getItems().addAll(Level.ALL, Level.SEVERE, Level.WARNING, Level.INFO, Level.FINE, Level.CONFIG, Level.OFF);
 		loggingChoiceBox.setValue(Engine.LOGGER.getLevel());
 	}
 
