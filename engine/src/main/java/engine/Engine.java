@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 public class Engine {
-	public static final Logger LOGGER = Logger.getLogger(Engine.class.getName());
+	public static final Logger LOGGER = Logger.getLogger("JTileEngine");
 	private static Engine instance;
 	private final LevelLoader levelLoader;
 	private final ResourceManager resourceManager;
@@ -117,7 +117,7 @@ public class Engine {
 
 	private void setupLogger() {
 		try {
-			logFileHandler = new FileHandler("engine.log", true);
+			logFileHandler = new FileHandler(resourceManager.getUserSavePath().resolve("engine.log").toString(), true);
 			logFileHandler.setFormatter(new SimpleFormatter());
 			LOGGER.addHandler(logFileHandler);
 			LOGGER.setLevel(Level.ALL);

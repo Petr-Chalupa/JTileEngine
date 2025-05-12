@@ -40,7 +40,7 @@
                     <execution>
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>gameengine.ui.App</mainClass>
+                            <mainClass>jtileengine.ui.App</mainClass>
                         </configuration>
                     </execution>
                 </executions>

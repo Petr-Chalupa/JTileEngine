@@ -1,5 +1,6 @@
 package engine.utils;
 
+import engine.Engine;
 import engine.core.Camera;
 import engine.core.GameStateManager;
 import engine.core.LevelData;
@@ -99,7 +100,7 @@ public class LevelLoader {
 				Path configPath = levelPaths.get(name);
 				loadLevelObjects(level, configPath);
 			} catch (IOException e) {
-				throw new RuntimeException("Failed to load level " + name, e);
+				Engine.LOGGER.severe("Failed to load level " + name + ": " + e.getMessage());
 			}
 		}
 		currentLevelName = name;
@@ -118,7 +119,7 @@ public class LevelLoader {
 					levels.put(name, data);
 					levelPaths.put(name, configPath);
 				} catch (IOException e) {
-					throw new RuntimeException("Failed to load metadata from " + configPath, e);
+					Engine.LOGGER.severe("Failed to load level metadata from " + configPath + ": " + e.getMessage());
 				}
 			}
 		}
@@ -128,10 +129,8 @@ public class LevelLoader {
 		String content = Files.readString(configPath);
 		JSONObject obj = new JSONObject(content);
 
-		LevelData level = new LevelData(
-				obj.optString("name", configPath.getParent().getFileName().toString()),
-				obj.optBoolean("builtin", false)
-		);
+		LevelData level = new LevelData(obj.optString("name", configPath.getParent().getFileName().toString()),
+				obj.optBoolean("builtin", false));
 		level.setAuthor(obj.optString("author", ""));
 		level.setThumbnail(obj.optString("thumbnail", ""));
 		level.setCompleted(obj.optBoolean("completed", false));
@@ -152,13 +151,8 @@ public class LevelLoader {
 		// Player
 		if (obj.has("player")) {
 			JSONObject p = obj.getJSONObject("player");
-			Player player = new Player(
-					p.getDouble("posX"),
-					p.getDouble("posY"),
-					p.getDouble("size"),
-					p.getDouble("speed"),
-					p.getDouble("health")
-			);
+			Player player = new Player(p.getDouble("posX"), p.getDouble("posY"), p.getDouble("size"),
+					p.getDouble("speed"), p.getDouble("health"));
 			player.setMoney(p.optInt("money", 0));
 			player.setArmor(p.optDouble("armor", 0));
 			levelData.addGameObject(player);
@@ -168,11 +162,7 @@ public class LevelLoader {
 		// Tiles
 		for (Object item : obj.optJSONArray("tiles")) {
 			JSONObject t = (JSONObject) item;
-			Tile tile = new Tile(
-					t.getDouble("posX"),
-					t.getDouble("posY"),
-					TileType.values()[t.getInt("type")]
-			);
+			Tile tile = new Tile(t.getDouble("posX"), t.getDouble("posY"), TileType.values()[t.getInt("type")]);
 			levelData.addGameObject(tile);
 		}
 
@@ -220,11 +210,12 @@ public class LevelLoader {
 			LevelData levelData = levels.get(name);
 			Path configPath = levelPaths.get(name);
 			if (levelData == null || configPath == null) {
-				throw new RuntimeException("Cannot save level: no data or path found for name '" + name + "'");
+				Engine.LOGGER.severe("Cannot save level: no data or path found for name '" + name + "'");
+				return;
 			}
 			saveLevel(levelData, configPath);
 		} catch (IOException e) {
-			throw new RuntimeException("Failed to save level " + name, e);
+			Engine.LOGGER.severe("Failed to save level " + name + ": " + e.getMessage());
 		}
 	}
 

@@ -1,4 +1,6 @@
 {
-  "tileSize": 64,
-  "soundsEnabled": false
+    "tileSize": 64,
+    "soundsEnabled": false,
+    "debug_info": {},
+    "logging": "ALL"
 }

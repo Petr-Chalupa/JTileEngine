@@ -96,7 +96,7 @@ public class LevelMenu {
 			GameView controller = (GameView) App.setRoot("game_view");
 			controller.loadLevel(level.getName());
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			Engine.LOGGER.severe("Failed to load level: " + e.getMessage());
 		}
 	}
 

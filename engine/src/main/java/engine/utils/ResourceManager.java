@@ -3,6 +3,8 @@ package engine.utils;
 import javafx.scene.image.Image;
 import org.json.JSONObject;
 
+import engine.Engine;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,12 +22,12 @@ public class ResourceManager {
 
 	private ResourceManager() {
 		builtinSavePath = Paths.get("engine/src/main/resources/engine/").toAbsolutePath();
-		userSavePath = Paths.get(System.getenv("APPDATA"), "GameEngine");
+		userSavePath = Paths.get(System.getenv("APPDATA"), "JTileEngine");
 
 		try {
 			Files.createDirectories(userSavePath);
 		} catch (IOException e) {
-			throw new RuntimeException("Failed to create user levels directory", e);
+			Engine.LOGGER.severe("Failed to create user levels directory: " + e.getMessage());
 		}
 	}
 
@@ -51,7 +53,8 @@ public class ResourceManager {
 			try {
 				return new Image(getClass().getResource("/engine/img/" + path).toString());
 			} catch (Exception e) {
-				throw new RuntimeException("Failed to load sprite: " + path, e);
+				Engine.LOGGER.severe("Failed to load sprite: " + path + ": " + e.getMessage());
+				return null;
 			}
 		});
 	}
@@ -64,7 +67,8 @@ public class ResourceManager {
 			}
 			return new JSONObject(Files.readString(settingsPath));
 		} catch (IOException e) {
-			throw new RuntimeException("Failed to load game settings", e);
+			Engine.LOGGER.severe("Failed to load game settings: " + e.getMessage());
+			return null;
 		}
 	}
 
@@ -73,7 +77,7 @@ public class ResourceManager {
 			Path settingsPath = userSavePath.resolve("settings.json");
 			Files.writeString(settingsPath, settings.toString(4));
 		} catch (IOException e) {
-			throw new RuntimeException("Failed to save game settings", e);
+			Engine.LOGGER.severe("Failed to save game settings: " + e.getMessage());
 		}
 	}
 
