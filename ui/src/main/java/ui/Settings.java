@@ -5,7 +5,10 @@ import engine.core.GameSettings;
 import engine.utils.DebugManager;
 import engine.utils.DebugManager.Features;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Slider;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -45,10 +48,9 @@ public class Settings {
 		for (Features feature : debugManager.getFeatures()) {
 			HBox featureBox = new HBox();
 			featureBox.getStyleClass().add("debug_feature");
-			RadioButton featureButton = new RadioButton();
+			RadioButton featureButton = new RadioButton(feature.name());
 			featureButton.setSelected(debugManager.isFeatureEnabled(feature));
-			Label featureLabel = new Label(feature.name());
-			featureBox.getChildren().addAll(featureButton, featureLabel);
+			featureBox.getChildren().addAll(featureButton);
 			debugInfoBox.getChildren().add(featureBox);
 		}
 		// Logging

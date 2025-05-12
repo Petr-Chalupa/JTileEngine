@@ -35,7 +35,7 @@ public class App extends Application {
 		setRoot("main_menu");
 		App.engine = Engine.getInstance();
 
-		stage.setTitle("Game engine");
+		stage.setTitle("JTile Game Engine");
 		stage.getIcons().add(new Image(App.class.getResource("img/logo.png").toExternalForm()));
 		stage.setScene(scene);
 		stage.show();
