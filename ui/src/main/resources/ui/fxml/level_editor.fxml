@@ -28,9 +28,9 @@
                         <children>
                         <HBox styleClass="preset_selector">
                            <children>
-                              <Button mnemonicParsing="false" onAction="#clickCreateNew" styleClass="preset_button" text="Create new" />
+                              <Button disable="true" mnemonicParsing="false" onAction="#clickCreateNew" styleClass="preset_button" text="Create new" />
                               <Region HBox.hgrow="ALWAYS" />
-                              <Button mnemonicParsing="false" onAction="#clickImport" styleClass="preset_button" text="Import" />
+                              <Button disable="true" mnemonicParsing="false" onAction="#clickImport" styleClass="preset_button" text="Import" />
                            </children>
                         </HBox>
                         <TextField fx:id="filterInput" onKeyReleased="#filterSelect" promptText="Level name" />

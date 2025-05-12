@@ -5,6 +5,7 @@ import engine.core.LevelData;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -20,6 +21,8 @@ public class LevelMenu {
 
 	@FXML
 	private FlowPane levelSelect;
+	@FXML
+	private ToggleButton levelViewToggle;
 
 	@FXML
 	private void buttonMainMenu() throws IOException {
@@ -30,6 +33,7 @@ public class LevelMenu {
 	@FXML
 	private void buttonChangeLevelView() {
 		viewingBuiltinLevels = !viewingBuiltinLevels;
+		levelViewToggle.setText(viewingBuiltinLevels ? "View Custom Levels" : "View Builtin Levels");
 		loadLevelSelect();
 	}
 

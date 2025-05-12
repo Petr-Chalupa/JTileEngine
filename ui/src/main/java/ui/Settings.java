@@ -20,13 +20,13 @@ public class Settings {
 	private GameSettings settings;
 
 	@FXML
-	Slider tileSizeSlider;
+	private Slider tileSizeSlider;
 	@FXML
-	ToggleButton soundsToggle;
+	private ToggleButton soundsToggle;
 	@FXML
-	VBox debugInfoBox;
+	private VBox debugInfoBox;
 	@FXML
-	ChoiceBox<Level> loggingChoiceBox;
+	private ChoiceBox<Level> loggingChoiceBox;
 
 	@FXML
 	private void buttonMainMenu() throws IOException {

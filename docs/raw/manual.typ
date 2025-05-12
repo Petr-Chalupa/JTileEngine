@@ -10,10 +10,14 @@
 
 = User Manual
 
+
+== Installation
+
+
 == Technology
 
 
-== Installation
+== Resources
 
 
 == Screens

@@ -148,14 +148,12 @@ public class LevelLoader {
 		String content = Files.readString(configPath);
 		JSONObject obj = new JSONObject(content);
 
-		// Tiles
 		for (Object item : obj.optJSONArray("tiles")) {
 			JSONObject t = (JSONObject) item;
 			Tile tile = new Tile(t.getDouble("posX"), t.getDouble("posY"), TileType.values()[t.getInt("type")]);
 			levelData.addGameObject(tile);
 		}
 
-		// Blocks
 		for (Object item : obj.optJSONArray("blocks")) {
 			JSONObject b = (JSONObject) item;
 			double x = b.getDouble("posX");
@@ -173,10 +171,9 @@ public class LevelLoader {
 			levelData.addGameObject(block);
 		}
 
-		// Entities
 		for (Object item : obj.optJSONArray("entities")) {
 			JSONObject e = (JSONObject) item;
-			String type = e.optString("class", "Entity");
+			String type = e.optString("type", "Entity");
 			double x = e.getDouble("posX");
 			double y = e.getDouble("posY");
 			double size = e.getDouble("size");
@@ -249,16 +246,16 @@ public class LevelLoader {
 
 		JSONArray entities = new JSONArray();
 		for (Entity e : levelData.getEntities()) {
-			JSONObject ent = new JSONObject();
-			ent.put("posX", e.getPosX());
-			ent.put("posY", e.getPosY());
-			ent.put("size", e.getSize());
-			ent.put("speed", e.getSpeed());
-			ent.put("health", e.getHealth());
-			ent.put("money", e.getMoney());
-			ent.put("armor", e.getArmor());
-			ent.put("class", e.getClass().getSimpleName());
-			entities.put(ent);
+			JSONObject entity = new JSONObject();
+			entity.put("posX", e.getPosX());
+			entity.put("posY", e.getPosY());
+			entity.put("size", e.getSize());
+			entity.put("speed", e.getSpeed());
+			entity.put("health", e.getHealth());
+			entity.put("money", e.getMoney());
+			entity.put("armor", e.getArmor());
+			entity.put("type", e.getClass().getSimpleName());
+			entities.put(entity);
 		}
 		obj.put("entities", entities);
 
