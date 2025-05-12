@@ -139,28 +139,26 @@ public class LevelData {
 
 	public void addGameObject(GameObject gameObject) {
 		this.gameObjects.add(gameObject);
+		if (gameObject instanceof Tile) this.tiles.add((Tile) gameObject);
+		if (gameObject instanceof Block) this.blocks.add((Block) gameObject);
+		if (gameObject instanceof Entity) this.entities.add((Entity) gameObject);
 		if (gameObject instanceof Player) this.player = (Player) gameObject;
 	}
 
 	public void removeGameObject(GameObject gameObject) {
 		this.gameObjects.remove(gameObject);
-		if (this.player == gameObject) this.player = null;
+		if (gameObject instanceof Tile) this.tiles.remove(gameObject);
+		if (gameObject instanceof Block) this.blocks.remove(gameObject);
+		if (gameObject instanceof Entity) this.entities.remove(gameObject);
+		if (gameObject instanceof Player) this.player = null;
 	}
 
-	public void addTile(Tile tile) {
-		this.tiles.add(tile);
-	}
-
-	public void addBlock(Block block) {
-		this.blocks.add(block);
-	}
-
-	public void addEntity(Entity entity) {
-		this.entities.add(entity);
-	}
-
-	public void setPlayer(Player player) {
-		this.player = player;
+	public void clearGameObjects() {
+		this.gameObjects.clear();
+		this.tiles.clear();
+		this.blocks.clear();
+		this.entities.clear();
+		this.player = null;
 	}
 
 }

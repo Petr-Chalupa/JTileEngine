@@ -53,6 +53,10 @@ public class DebugManager {
 		return instance;
 	}
 
+	public Features[] getFeatures() {
+		return Features.values();
+	}
+
 	public EnumSet<Features> getEnabledFeatures() {
 		return enabledFeatures;
 	}
@@ -71,6 +75,11 @@ public class DebugManager {
 
 	public void disableFeature(Features feature) {
 		enabledFeatures.remove(feature);
+	}
+
+	public void setFeature(Features feature, boolean enabled) {
+		if (enabled) enableFeature(feature);
+		else disableFeature(feature);
 	}
 
 	public void clearFeatures() {

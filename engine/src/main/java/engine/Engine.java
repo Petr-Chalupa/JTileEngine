@@ -1,10 +1,7 @@
 package engine;
 
-import engine.core.GameStateManager;
+import engine.core.*;
 import engine.core.GameStateManager.GameState;
-import engine.core.InputHandler;
-import engine.core.Renderer;
-import engine.core.UIManager;
 import engine.utils.DebugManager;
 import engine.utils.LevelLoader;
 import engine.utils.ResourceManager;
@@ -20,6 +17,7 @@ public class Engine {
 	private static Engine instance;
 	private final LevelLoader levelLoader;
 	private final ResourceManager resourceManager;
+	private final GameSettings gameSettings;
 	private final GameStateManager gameStateManager;
 	private final UIManager uiManager;
 	private final DebugManager debugManager;
@@ -32,6 +30,7 @@ public class Engine {
 	private Engine() {
 		this.levelLoader = LevelLoader.getInstance();
 		this.resourceManager = ResourceManager.getInstance();
+		this.gameSettings = GameSettings.getInstance();
 		this.gameStateManager = GameStateManager.getInstance();
 		this.uiManager = UIManager.getInstance();
 		this.debugManager = DebugManager.getInstance();
@@ -83,6 +82,10 @@ public class Engine {
 
 	public ResourceManager getResourceManager() {
 		return resourceManager;
+	}
+
+	public GameSettings getGameSettings() {
+		return gameSettings;
 	}
 
 	public GameStateManager getGameStateManager() {

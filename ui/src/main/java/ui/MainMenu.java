@@ -21,6 +21,11 @@ public class MainMenu {
 	}
 
 	@FXML
+	private void buttonSettings() throws IOException {
+		App.setRoot("settings");
+	}
+
+	@FXML
 	private void buttonExit() throws IOException {
 		Platform.exit();
 	}

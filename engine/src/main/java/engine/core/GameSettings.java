@@ -1,14 +1,15 @@
 package engine.core;
 
-import engine.utils.DebugManager;
-
-import java.util.EnumSet;
+import engine.utils.ResourceManager;
+import org.json.JSONObject;
 
 public class GameSettings {
 	private static GameSettings instance;
-	private final double tileSize = 64;
+	private double tileSize;
+	private boolean soundEnabled;
 
 	private GameSettings() {
+		load();
 	}
 
 	public static GameSettings getInstance() {
@@ -20,17 +21,29 @@ public class GameSettings {
 		return tileSize;
 	}
 
-	public DebugManager.Features[] getDebugFeatures() {
-		return DebugManager.Features.values();
+	public void setTileSize(double tileSize) {
+		this.tileSize = tileSize;
 	}
 
-	public EnumSet<DebugManager.Features> getEnabledDebugFeatures() {
-		return DebugManager.getInstance().getEnabledFeatures();
+	public boolean isSoundEnabled() {
+		return soundEnabled;
 	}
 
-	public void setDebugFeature(DebugManager.Features feature, boolean enabled) {
-		if (enabled) DebugManager.getInstance().enableFeature(feature);
-		else DebugManager.getInstance().disableFeature(feature);
+	public void setSoundEnabled(boolean soundEnabled) {
+		this.soundEnabled = soundEnabled;
+	}
+
+	public void load() {
+		JSONObject settings = ResourceManager.getInstance().getGameSettings();
+		tileSize = settings.optDouble("tile_size", 64);
+		soundEnabled = settings.optBoolean("sound_enabled", false);
+	}
+
+	public void save() {
+		JSONObject settings = new JSONObject();
+		settings.put("tile_size", tileSize);
+		settings.put("sound_enabled", soundEnabled);
+		ResourceManager.getInstance().saveGameSettings(settings);
 	}
 
 }

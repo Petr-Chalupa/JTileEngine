@@ -1,5 +1,7 @@
 package engine.utils;
 
+import engine.core.Camera;
+import engine.core.GameStateManager;
 import engine.core.LevelData;
 import engine.gameobjects.GameObject;
 import engine.gameobjects.blocks.*;
@@ -28,6 +30,13 @@ public class LevelLoader {
 		ResourceManager resourceManager = ResourceManager.getInstance();
 		loadAllLevelsMetadata(resourceManager.getBuiltinSavePath().resolve("levels"));
 		loadAllLevelsMetadata(resourceManager.getUserSavePath().resolve("levels"));
+
+		GameStateManager.getInstance().addListener((GameStateManager.GameState state) -> {
+			if (state == GameStateManager.GameState.UNINITIALIZED) {
+				levels.forEach((name, data) -> data.setLoaded(false));
+				currentLevelName = null;
+			}
+		});
 	}
 
 	public static LevelLoader getInstance() {
@@ -135,6 +144,7 @@ public class LevelLoader {
 
 	private void loadLevelObjects(LevelData levelData, Path configPath) throws IOException {
 		if (levelData.isLoaded()) return;
+		levelData.clearGameObjects();
 
 		String content = Files.readString(configPath);
 		JSONObject obj = new JSONObject(content);
@@ -151,8 +161,8 @@ public class LevelLoader {
 			);
 			player.setMoney(p.optInt("money", 0));
 			player.setArmor(p.optDouble("armor", 0));
-			levelData.setPlayer(player);
 			levelData.addGameObject(player);
+			Camera.getInstance().setTarget(player);
 		}
 
 		// Tiles
@@ -163,7 +173,6 @@ public class LevelLoader {
 					t.getDouble("posY"),
 					TileType.values()[t.getInt("type")]
 			);
-			levelData.addTile(tile);
 			levelData.addGameObject(tile);
 		}
 
@@ -182,7 +191,6 @@ public class LevelLoader {
 				default -> new Block(x, y, size, type);
 			};
 
-			levelData.addBlock(block);
 			levelData.addGameObject(block);
 		}
 
@@ -201,7 +209,6 @@ public class LevelLoader {
 				default -> new Entity(x, y, 1, size, speed, health);
 			};
 
-			levelData.addEntity(entity);
 			levelData.addGameObject(entity);
 		}
 

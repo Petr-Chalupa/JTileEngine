@@ -126,7 +126,6 @@ public class Renderer implements Runnable {
 		context.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
 		// Update camera
-		if (camera.getTarget() == null) camera.setTarget(levelLoader.getPlayer());
 		camera.update(canvas);
 
 		// Sort game objects based on the layer

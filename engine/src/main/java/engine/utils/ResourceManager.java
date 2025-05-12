@@ -1,6 +1,7 @@
 package engine.utils;
 
 import javafx.scene.image.Image;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,6 +54,27 @@ public class ResourceManager {
 				throw new RuntimeException("Failed to load sprite: " + path, e);
 			}
 		});
+	}
+
+	public JSONObject getGameSettings() {
+		try {
+			Path settingsPath = userSavePath.resolve("settings.json");
+			if (!Files.exists(settingsPath)) {
+				Files.copy(builtinSavePath.resolve("default_settings.json"), settingsPath);
+			}
+			return new JSONObject(Files.readString(settingsPath));
+		} catch (IOException e) {
+			throw new RuntimeException("Failed to load game settings", e);
+		}
+	}
+
+	public void saveGameSettings(JSONObject settings) {
+		try {
+			Path settingsPath = userSavePath.resolve("settings.json");
+			Files.writeString(settingsPath, settings.toString(4));
+		} catch (IOException e) {
+			throw new RuntimeException("Failed to save game settings", e);
+		}
 	}
 
 	public void importLevel(File path, String levelName) throws IOException {
