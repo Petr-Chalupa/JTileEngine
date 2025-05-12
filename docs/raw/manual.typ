@@ -8,10 +8,44 @@
 #set par(leading: 0.55em, spacing: 0.55em, first-line-indent: 1.8em, justify: true)
 #set text(font: "New Computer Modern", size: 14pt, lang: "cs")
 
-= Uživatelský manuál
+= User Manual
 
-- Screens
-- Level structure
-- ...
+== Technology
 
 
+== Installation
+
+
+== Screens
+
+=== Main Menu
+
+=== Level Selection
+
+=== Level Editor
+
+=== Settings
+
+
+== Settings file format
+
+
+== Level file format
+
+
+== Project structure
+
+=== UI
+
+=== Engine
+
+
+== Engine structure
+
+=== Core
+
+=== Game Objects
+
+=== UI
+
+=== Utils

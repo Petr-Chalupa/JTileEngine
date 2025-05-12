@@ -148,17 +148,6 @@ public class LevelLoader {
 		String content = Files.readString(configPath);
 		JSONObject obj = new JSONObject(content);
 
-		// Player
-		if (obj.has("player")) {
-			JSONObject p = obj.getJSONObject("player");
-			Player player = new Player(p.getDouble("posX"), p.getDouble("posY"), p.getDouble("size"),
-					p.getDouble("speed"), p.getDouble("health"));
-			player.setMoney(p.optInt("money", 0));
-			player.setArmor(p.optDouble("armor", 0));
-			levelData.addGameObject(player);
-			Camera.getInstance().setTarget(player);
-		}
-
 		// Tiles
 		for (Object item : obj.optJSONArray("tiles")) {
 			JSONObject t = (JSONObject) item;
@@ -195,9 +184,14 @@ public class LevelLoader {
 			double health = e.getDouble("health");
 
 			Entity entity = switch (type) {
+				case "Player" -> new Player(x, y, size, speed, health);
 				case "Enemy" -> new Enemy(x, y, size, speed, health);
 				default -> new Entity(x, y, 1, size, speed, health);
 			};
+			entity.setArmor(e.optDouble("armor", 0));
+			entity.setMoney(e.optInt("money", 0));
+
+			if (entity instanceof Player) Camera.getInstance().setTarget(entity);
 
 			levelData.addGameObject(entity);
 		}
@@ -255,31 +249,18 @@ public class LevelLoader {
 
 		JSONArray entities = new JSONArray();
 		for (Entity e : levelData.getEntities()) {
-			if (e instanceof Player) continue;
 			JSONObject ent = new JSONObject();
 			ent.put("posX", e.getPosX());
 			ent.put("posY", e.getPosY());
 			ent.put("size", e.getSize());
 			ent.put("speed", e.getSpeed());
 			ent.put("health", e.getHealth());
+			ent.put("money", e.getMoney());
+			ent.put("armor", e.getArmor());
 			ent.put("class", e.getClass().getSimpleName());
 			entities.put(ent);
 		}
 		obj.put("entities", entities);
-
-		if (levelData.getPlayer() != null) {
-			Player p = levelData.getPlayer();
-			JSONObject player = new JSONObject();
-			player.put("posX", p.getPosX());
-			player.put("posY", p.getPosY());
-			player.put("size", p.getSize());
-			player.put("speed", p.getSpeed());
-			player.put("health", p.getHealth());
-			player.put("money", p.getMoney());
-			player.put("armor", p.getArmor());
-			player.put("class", "Player");
-			obj.put("player", player);
-		}
 
 		Files.writeString(path, obj.toString(4));
 	}

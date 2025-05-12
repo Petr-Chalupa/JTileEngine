@@ -57,8 +57,7 @@ public class Settings {
 		}
 		// Logging
 		loggingChoiceBox.getItems()
-				.addAll(Level.ALL, Level.FINEST, Level.FINER, Level.FINE, Level.CONFIG, Level.INFO, Level.WARNING,
-						Level.SEVERE);
+				.addAll(Level.ALL, Level.SEVERE, Level.WARNING, Level.INFO, Level.FINE, Level.CONFIG, Level.OFF);
 		loggingChoiceBox.setValue(Engine.LOGGER.getLevel());
 	}
 
