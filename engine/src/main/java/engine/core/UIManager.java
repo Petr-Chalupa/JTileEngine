@@ -51,6 +51,12 @@ public class UIManager {
 		return bounds;
 	}
 
+	/**
+	 * Renders all registered UI components
+	 *
+	 * @param context The rendering context
+	 * @param canvas  The canvas on which to render
+	 */
 	public void render(GraphicsContext context, Canvas canvas) {
 		HashMap<UIRegion, Bounds> regionsBounds = calculateRegionsBounds(canvas);
 

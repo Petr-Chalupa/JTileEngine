@@ -32,7 +32,7 @@ public class Shop extends Block implements Interactable {
 		return this.inventory;
 	}
 
-	public void generateLoot() {
+	private void generateLoot() {
 		ItemType[] itemTypes = Arrays.stream(ItemType.values()).filter(type -> type != ItemType.MONEY).toArray(ItemType[]::new);
 		for (int i = 0; i < inventory.getSize(); i++) {
 			ItemType itemType = itemTypes[(int) (Math.random() * itemTypes.length)];
@@ -56,6 +56,11 @@ public class Shop extends Block implements Interactable {
 		}
 	}
 
+	/**
+	 * Tries to buy the currently selected item
+	 *
+	 * @param buyer Player that performs the trade
+	 */
 	public void buyItem(Player buyer) {
 		if (inventory.getSelectedItem() == null) return;
 		int itemPrice = inventory.getSelectedItem().getPrice();

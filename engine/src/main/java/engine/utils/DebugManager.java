@@ -86,6 +86,12 @@ public class DebugManager {
 		enabledFeatures.clear();
 	}
 
+	/**
+	 * Renders enabled debug info for the supplied game object
+	 *
+	 * @param context    The rendering context
+	 * @param gameObject The object for which to render debug info
+	 */
 	public void renderForGameObject(GraphicsContext context, GameObject gameObject) {
 		if (enabledFeatures.contains(Features.GAMEOBJECT_BOUNDS)) renderGameObjectBounds(context, gameObject);
 		if (enabledFeatures.contains(Features.GAMEOBJECT_COLLIDERS)) renderGameObjectCollider(context, gameObject);
@@ -197,6 +203,12 @@ public class DebugManager {
 		context.restore();
 	}
 
+	/**
+	 * Renders UI regions debug info (if enabled) for the supplied canvas
+	 *
+	 * @param context The rendering context
+	 * @param canvas  The canvas for which to render UI regions
+	 */
 	public void renderUIRegionsBounds(GraphicsContext context, Canvas canvas) {
 		double canvasWidth = canvas.getWidth();
 		double canvasHeight = canvas.getHeight();

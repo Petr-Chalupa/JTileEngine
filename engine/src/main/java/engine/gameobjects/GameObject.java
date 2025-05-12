@@ -30,6 +30,11 @@ public abstract class GameObject {
 		return sprite;
 	}
 
+	/**
+	 * Tries to set a sprite image from the supplied sprite name - uses default sprite on error
+	 *
+	 * @param sprite The name of the desired sprite
+	 */
 	public void setSprite(String sprite) {
 		try {
 			this.sprite = ResourceManager.getInstance().getImg(sprite);
@@ -78,6 +83,11 @@ public abstract class GameObject {
 		return new BoundingBox(posX, posY, size, size);
 	}
 
+	/**
+	 * Calculates bounds of the object in pixel coordinates
+	 *
+	 * @return Bounds
+	 */
 	public Bounds getRealBounds() {
 		double tileSize = GameSettings.getInstance().getTileSize();
 		return new BoundingBox(posX * tileSize, posY * tileSize, size * tileSize, size * tileSize);

@@ -29,7 +29,7 @@ public class Chest extends Block implements Interactable {
 		return this.inventory;
 	}
 
-	public void generateLoot() {
+	private void generateLoot() {
 		ItemType[] itemTypes = ItemType.values();
 		for (int i = 0; i < inventory.getSize(); i++) {
 			if (Math.random() < 0.3) {

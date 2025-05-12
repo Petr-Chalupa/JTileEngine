@@ -70,9 +70,14 @@ public class Entity extends GameObject {
 		this.health = Math.min(maxHealth, this.health + health);
 	}
 
+	/**
+	 * Decrements health of the entity with a chance to cover some damage with armor
+	 *
+	 * @param damage The amount of damage to deal
+	 */
 	public void damage(double damage) {
 		if (armor > 0 && Math.random() > 0.5) {
-			double healthDamage = armor - damage < 0 ? damage - armor : 0; // How much damage won't be covered by armor
+			double healthDamage = armor - damage < 0 ? damage - armor : 0; // Not covered damage
 			armor = Math.max(0, armor - damage);
 			health = Math.max(0, health - healthDamage);
 		} else {

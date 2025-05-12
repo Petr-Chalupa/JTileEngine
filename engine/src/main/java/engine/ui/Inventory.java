@@ -91,10 +91,23 @@ public class Inventory extends UIComponent {
 		this.items = items;
 	}
 
+	/**
+	 * Adds item at the first free slot
+	 *
+	 * @param item The item to add
+	 * @return Boolean - if the addition was successful
+	 */
 	public boolean addItem(Item item) {
-		return addItem(item, -1); // First free slot
+		return addItem(item, -1);
 	}
 
+	/**
+	 * Adds item to a specific slot
+	 *
+	 * @param item  The item to add
+	 * @param index The index of the slot to add the item to
+	 * @return Boolean - if the addition was successful
+	 */
 	public boolean addItem(Item item, int index) {
 		// Try to add to a specific index
 		if (index >= 0 && index < items.size()) {
@@ -134,7 +147,7 @@ public class Inventory extends UIComponent {
 		}
 	}
 
-	public double calculateSlotSize(double availableWidth, double availableHeight) {
+	private double calculateSlotSize(double availableWidth, double availableHeight) {
 		int rows = Math.ceilDiv(size, cols);
 		double usableHeight = availableHeight - (name != null ? nameSize : 0);
 		return Math.min((availableWidth - padding * (cols + 1)) / cols, (usableHeight - padding * (rows + 1)) / rows);

@@ -39,6 +39,9 @@ public class GameSettings {
 		this.soundEnabled = soundEnabled;
 	}
 
+	/**
+	 * Loads game settings and sets all relevant resources
+	 */
 	public void load() {
 		JSONObject settings = ResourceManager.getInstance().getGameSettings();
 		// Tile size
@@ -56,6 +59,9 @@ public class GameSettings {
 		Engine.LOGGER.setLevel(Level.parse(loggingLevel));
 	}
 
+	/**
+	 * Saves game settings from all relevant sources
+	 */
 	public void save() {
 		JSONObject settings = new JSONObject();
 		// Tile size

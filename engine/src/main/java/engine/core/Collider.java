@@ -45,6 +45,14 @@ public class Collider {
 		return box.getHeight();
 	}
 
+	/**
+	 * Calculates physical intersection of two colliders after distance change
+	 *
+	 * @param c      The collider to compare against
+	 * @param deltaX The X distance change of the supplied collider
+	 * @param deltaY The Y distance change of the supplied collider
+	 * @return Bounds - the calculated intersection
+	 */
 	public Bounds getIntersection(Collider c, double deltaX, double deltaY) {
 		double minX = Math.max(getMinX() + deltaX, c.getMinX());
 		double minY = Math.max(getMinY() + deltaY, c.getMinY());
@@ -53,6 +61,12 @@ public class Collider {
 		return (minX < maxX && minY < maxY) ? new BoundingBox(minX, minY, maxX - minX, maxY - minY) : null;
 	}
 
+	/**
+	 * Calculated distance of the centers of two colliders
+	 *
+	 * @param c The collider to calculate distance to
+	 * @return double - the calculated distance
+	 */
 	public double getDistanceTo(Collider c) {
 		double dx = this.getCenterX() - c.getCenterX();
 		double dy = this.getCenterY() - c.getCenterY();

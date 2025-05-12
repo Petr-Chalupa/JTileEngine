@@ -55,7 +55,7 @@ public class Camera {
 		if (target == null) return;
 
 		double tileSize = GameSettings.getInstance().getTileSize();
-		
+
 		LevelLoader levelLoader = LevelLoader.getInstance();
 		double mapWidth = levelLoader.getCols() * tileSize;
 		double mapHeight = levelLoader.getRows() * tileSize;
@@ -96,6 +96,12 @@ public class Camera {
 		viewBounds = new BoundingBox(viewLeft, viewTop, viewRight - viewLeft, viewBottom - viewTop);
 	}
 
+	/**
+	 * Calculates intersection visible on a screen of the supplied bounds
+	 *
+	 * @param gameObjectBounds The bounds to calculate intersection for
+	 * @return Bounds - the calculated intersection
+	 */
 	public Bounds getVisibleIntersection(Bounds gameObjectBounds) {
 		if (viewBounds == null || gameObjectBounds == null) return null;
 

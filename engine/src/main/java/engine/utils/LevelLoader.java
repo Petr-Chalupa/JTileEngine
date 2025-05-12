@@ -89,6 +89,11 @@ public class LevelLoader {
 		return level != null ? level.getPlayer() : null;
 	}
 
+	/**
+	 * Loads level of the supplied name
+	 *
+	 * @param name Name of the level to load
+	 */
 	public void loadLevel(String name) {
 		LevelData level = levels.get(name);
 		if (!level.isLoaded()) {
@@ -164,6 +169,11 @@ public class LevelLoader {
 		levelData.setLoaded(true);
 	}
 
+	/**
+	 * Saves level with the supplied name
+	 *
+	 * @param name Name of the level to save
+	 */
 	public void saveLevel(String name) {
 		try {
 			LevelData levelData = levels.get(name);

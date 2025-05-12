@@ -49,7 +49,7 @@ public class Player extends Entity {
 		return interactRange;
 	}
 
-	public void setInputHandler() {
+	private void setInputHandler() {
 		this.inputHandler = Engine.getInstance().getInputHandler();
 
 		for (int i = 1; i <= 9; i++) {

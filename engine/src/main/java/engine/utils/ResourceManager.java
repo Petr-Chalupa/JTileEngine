@@ -47,6 +47,13 @@ public class ResourceManager {
 		return userSavePath;
 	}
 
+
+	/**
+	 * Gets an image from the supplied path from cache (loads it on the first request)
+	 *
+	 * @param path Path of the image
+	 * @return Image
+	 */
 	public Image getImg(String path) {
 		return imgCache.computeIfAbsent(path, k -> {
 			try {
@@ -58,6 +65,11 @@ public class ResourceManager {
 		});
 	}
 
+	/**
+	 * Loads the game settings
+	 *
+	 * @return The settings as JSON object
+	 */
 	public JSONObject getGameSettings() {
 		try {
 			Path settingsPath = userSavePath.resolve("settings.json");
@@ -71,6 +83,11 @@ public class ResourceManager {
 		}
 	}
 
+	/**
+	 * Saves the game settings
+	 *
+	 * @param settings The settings JSON object to save
+	 */
 	public void saveGameSettings(JSONObject settings) {
 		try {
 			Path settingsPath = userSavePath.resolve("settings.json");
@@ -80,6 +97,13 @@ public class ResourceManager {
 		}
 	}
 
+	/**
+	 * Imports a level from the supplied path
+	 *
+	 * @param path      Path of the level directory
+	 * @param levelName Name of the level
+	 * @throws IOException If the level directory is invalid
+	 */
 	public void importLevel(File path, String levelName) throws IOException {
 		Path targetDir = userSavePath.resolve(levelName);
 		Files.createDirectories(targetDir);
