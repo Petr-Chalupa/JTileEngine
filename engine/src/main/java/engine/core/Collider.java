@@ -14,18 +14,22 @@ public class Collider {
 	}
 
 	public double getMinX() {
+		if (parent == null) return box.getMinX();
 		return box.getMinX() + parent.getPosX();
 	}
 
 	public double getMinY() {
+		if (parent == null) return box.getMinY();
 		return box.getMinY() + parent.getPosY();
 	}
 
 	public double getMaxX() {
+		if (parent == null) return box.getMaxX();
 		return box.getMaxX() + parent.getPosX();
 	}
 
 	public double getMaxY() {
+		if (parent == null) return box.getMaxY();
 		return box.getMaxY() + parent.getPosY();
 	}
 

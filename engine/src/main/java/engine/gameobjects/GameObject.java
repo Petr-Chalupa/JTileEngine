@@ -30,17 +30,8 @@ public abstract class GameObject {
 		return sprite;
 	}
 
-	/**
-	 * Tries to set a sprite image from the supplied sprite name - uses default sprite on error
-	 *
-	 * @param sprite The name of the desired sprite
-	 */
 	public void setSprite(String sprite) {
-		try {
-			this.sprite = ResourceManager.getInstance().getImg(sprite);
-		} catch (Exception e) {
-			System.err.println("Invalid sprite, default is being used:\n\t" + e);
-		}
+		this.sprite = ResourceManager.getInstance().getImg(sprite);
 	}
 
 	public boolean isRendered() {
