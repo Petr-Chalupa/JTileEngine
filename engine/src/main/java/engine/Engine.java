@@ -3,17 +3,12 @@ package engine;
 import engine.core.*;
 import engine.core.GameStateManager.GameState;
 import engine.utils.DebugManager;
+import engine.utils.EngineLogger;
 import engine.utils.LevelLoader;
 import engine.utils.ResourceManager;
 import javafx.scene.layout.Pane;
 
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-
 public class Engine {
-	public static final Logger LOGGER = Logger.getLogger("JTileEngine");
 	private static Engine instance;
 	private final LevelLoader levelLoader;
 	private final ResourceManager resourceManager;
@@ -21,20 +16,19 @@ public class Engine {
 	private final GameStateManager gameStateManager;
 	private final UIManager uiManager;
 	private final DebugManager debugManager;
-	private FileHandler logFileHandler;
 	private Renderer renderer;
 	private Pane renderTarget;
 	private double FPS;
 	private InputHandler inputHandler;
 
 	private Engine() {
+		EngineLogger.setup();
 		this.levelLoader = LevelLoader.getInstance();
 		this.resourceManager = ResourceManager.getInstance();
 		this.gameSettings = GameSettings.getInstance();
 		this.gameStateManager = GameStateManager.getInstance();
 		this.uiManager = UIManager.getInstance();
 		this.debugManager = DebugManager.getInstance();
-		setupLogger();
 	}
 
 	public static Engine getInstance() {
@@ -45,7 +39,7 @@ public class Engine {
 	private boolean checkInitialized(boolean throwErr) {
 		boolean initialized = gameStateManager.getState() != GameState.UNINITIALIZED;
 		if (!initialized && throwErr) {
-			LOGGER.severe("Engine must be initialized!");
+			EngineLogger.severe("Engine must be initialized!");
 			throw new IllegalStateException("Engine not initialized");
 		}
 		return initialized;
@@ -62,7 +56,7 @@ public class Engine {
 	public void setFPS(double fps) {
 		this.FPS = fps;
 		if (checkInitialized(false)) renderer.setFPS(fps);
-		LOGGER.info("FPS set to: " + fps);
+		EngineLogger.info("FPS set to: " + fps);
 	}
 
 	public boolean isPaused() {
@@ -73,7 +67,7 @@ public class Engine {
 		checkInitialized(true);
 		if (paused) gameStateManager.setState(GameState.PAUSED);
 		else gameStateManager.setState(GameState.RUNNING);
-		LOGGER.info(paused ? "Engine paused" : "Engine resumed");
+		EngineLogger.info(paused ? "Engine paused" : "Engine resumed");
 	}
 
 	public LevelLoader getLevelLoader() {
@@ -110,25 +104,9 @@ public class Engine {
 		return inputHandler;
 	}
 
-	public void setLogLevel(Level level) {
-		LOGGER.setLevel(level);
-		LOGGER.info("Log level set to: " + level);
-	}
-
-	private void setupLogger() {
-		try {
-			logFileHandler = new FileHandler(resourceManager.getUserSavePath().resolve("engine.log").toString(), true);
-			logFileHandler.setFormatter(new SimpleFormatter());
-			LOGGER.addHandler(logFileHandler);
-			LOGGER.setLevel(Level.ALL);
-		} catch (Exception e) {
-			System.err.println("Failed to setup logger: " + e.getMessage());
-		}
-	}
-
 	public void init(Pane target, double FPS) {
 		if (checkInitialized(false)) return;
-		LOGGER.info("Initializing Engine");
+		EngineLogger.info("Initializing Engine");
 		resourceManager.clearCache();
 		uiManager.clearComponents();
 		renderTarget = target;
@@ -139,15 +117,15 @@ public class Engine {
 	}
 
 	public void shutdown() {
-		LOGGER.info("Shutting down Engine");
+		EngineLogger.info("Shutting down Engine");
 		if (renderer != null) renderer.stop();
-		if (logFileHandler != null) logFileHandler.close();
 		gameStateManager.setState(GameState.UNINITIALIZED);
+		EngineLogger.close();
 	}
 
 	public void loadLevel(String id) {
 		checkInitialized(true);
-		LOGGER.info("Loading level: " + id);
+		EngineLogger.info("Loading level: " + id);
 		setPaused(true);
 		levelLoader.loadLevel(id);
 		setPaused(false);
@@ -155,7 +133,7 @@ public class Engine {
 
 	public void saveLevel(String id) {
 		checkInitialized(true);
-		LOGGER.info("Saving level: " + id);
+		EngineLogger.info("Saving level: " + id);
 		levelLoader.saveLevel(id);
 	}
 
@@ -163,13 +141,13 @@ public class Engine {
 		checkInitialized(true);
 		renderer.setPaused(true);
 		gameStateManager.setState(GameState.GAME_OVER);
-		LOGGER.info("Game over");
+		EngineLogger.info("Game over");
 	}
 
 	public void levelComplete() {
 		checkInitialized(true);
 		renderer.setPaused(true);
 		gameStateManager.setState(GameState.LEVEL_COMPLETE);
-		LOGGER.info("Level complete");
+		EngineLogger.info("Level complete");
 	}
 }

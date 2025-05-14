@@ -1,6 +1,5 @@
 package engine.utils;
 
-import engine.Engine;
 import engine.core.Camera;
 import engine.core.GameStateManager;
 import engine.core.LevelData;
@@ -105,7 +104,7 @@ public class LevelLoader {
 				Path configPath = levelPaths.get(id);
 				loadLevelObjects(level, configPath);
 			} catch (IOException e) {
-				Engine.LOGGER.severe("Failed to load level " + id + ": " + e.getMessage());
+				EngineLogger.severe("Failed to load level " + id + ": " + e.getMessage());
 			}
 		}
 		currentLevelId = id;
@@ -130,7 +129,7 @@ public class LevelLoader {
 					levels.put(id, data);
 					levelPaths.put(id, configPath);
 				} catch (IOException e) {
-					Engine.LOGGER.severe("Failed to load level metadata from " + configPath + ": " + e.getMessage());
+					EngineLogger.severe("Failed to load level metadata from " + configPath + ": " + e.getMessage());
 				}
 			}
 		}
@@ -172,7 +171,6 @@ public class LevelLoader {
 
 		for (Object item : obj.optJSONArray("entities", new JSONArray())) {
 			Entity entity = deserializeEntity((JSONObject) item);
-			System.out.println(entity.getClass().getSimpleName() + " " + entity.getPosX() + ", " + entity.getPosY() + " " + entity.getSize());
 			if (entity instanceof Player) Camera.getInstance().setTarget(entity);
 			levelData.addGameObject(entity);
 		}
@@ -190,12 +188,12 @@ public class LevelLoader {
 			LevelData levelData = levels.get(id);
 			Path configPath = levelPaths.get(id);
 			if (levelData == null || configPath == null) {
-				Engine.LOGGER.severe("Cannot save level: no data or path found for id '" + id + "'");
+				EngineLogger.severe("Cannot save level: no data or path found for id '" + id + "'");
 				return;
 			}
 			saveLevel(levelData, configPath);
 		} catch (IOException e) {
-			Engine.LOGGER.severe("Failed to save level " + id + ": " + e.getMessage());
+			EngineLogger.severe("Failed to save level " + id + ": " + e.getMessage());
 		}
 	}
 

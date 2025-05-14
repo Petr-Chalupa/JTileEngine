@@ -1,6 +1,5 @@
 package engine.utils;
 
-import engine.Engine;
 import javafx.scene.image.Image;
 import org.json.JSONObject;
 
@@ -27,7 +26,7 @@ public class ResourceManager {
 		try {
 			Files.createDirectories(userSavePath);
 		} catch (IOException e) {
-			Engine.LOGGER.severe("Failed to create user levels directory: " + e.getMessage());
+			EngineLogger.severe("Failed to create user levels directory: " + e.getMessage());
 		}
 	}
 
@@ -59,7 +58,7 @@ public class ResourceManager {
 			try {
 				return new Image(getClass().getResource("/engine/img/" + path).toString());
 			} catch (Exception e) {
-				Engine.LOGGER.severe("Failed to load image: " + path + ": " + e.getMessage());
+				EngineLogger.severe("Failed to load image: " + path + ": " + e.getMessage());
 				return null;
 			}
 		});
@@ -69,7 +68,7 @@ public class ResourceManager {
 		try {
 			return Files.list(builtinSavePath.resolve("img/")).map(path -> path.getFileName().toString()).toList();
 		} catch (IOException e) {
-			Engine.LOGGER.severe("Failed to load image names: " + e.getMessage());
+			EngineLogger.severe("Failed to load image names: " + e.getMessage());
 			return null;
 		}
 	}
@@ -87,7 +86,7 @@ public class ResourceManager {
 			}
 			return new JSONObject(Files.readString(settingsPath));
 		} catch (IOException e) {
-			Engine.LOGGER.severe("Failed to load game settings: " + e.getMessage());
+			EngineLogger.severe("Failed to load game settings: " + e.getMessage());
 			return null;
 		}
 	}
@@ -102,7 +101,7 @@ public class ResourceManager {
 			Path settingsPath = userSavePath.resolve("settings.json");
 			Files.writeString(settingsPath, settings.toString(4));
 		} catch (IOException e) {
-			Engine.LOGGER.severe("Failed to save game settings: " + e.getMessage());
+			EngineLogger.severe("Failed to save game settings: " + e.getMessage());
 		}
 	}
 
@@ -126,7 +125,7 @@ public class ResourceManager {
 
 			throw new RuntimeException("Invalid level directory: missing required files [config.json]");
 		} catch (IOException e) {
-			Engine.LOGGER.severe("Failed to import level " + levelName + ": " + e.getMessage());
+			EngineLogger.severe("Failed to import level " + levelName + ": " + e.getMessage());
 			return false;
 		}
 	}

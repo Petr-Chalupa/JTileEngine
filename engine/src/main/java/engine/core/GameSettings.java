@@ -1,8 +1,8 @@
 package engine.core;
 
-import engine.Engine;
 import engine.utils.DebugManager;
 import engine.utils.DebugManager.Features;
+import engine.utils.EngineLogger;
 import engine.utils.ResourceManager;
 import org.json.JSONObject;
 
@@ -56,7 +56,7 @@ public class GameSettings {
 		}
 		// Logging
 		String loggingLevel = settings.optString("logging", "ALL");
-		Engine.LOGGER.setLevel(Level.parse(loggingLevel));
+		EngineLogger.setLogLevel(Level.parse(loggingLevel));
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class GameSettings {
 			settings.getJSONObject("debug_info").put(feature.name(), debugManager.isFeatureEnabled(feature));
 		}
 		// Logging
-		settings.put("logging", Engine.LOGGER.getLevel().getName());
+		settings.put("logging", EngineLogger.getLogLevel().getName());
 		//
 		ResourceManager.getInstance().saveGameSettings(settings);
 	}

@@ -1,9 +1,9 @@
 package ui;
 
-import engine.Engine;
 import engine.core.GameSettings;
 import engine.utils.DebugManager;
 import engine.utils.DebugManager.Features;
+import engine.utils.EngineLogger;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.RadioButton;
@@ -55,7 +55,7 @@ public class Settings {
 		}
 		// Logging
 		loggingChoiceBox.getItems().addAll(Level.ALL, Level.SEVERE, Level.WARNING, Level.INFO, Level.FINE, Level.CONFIG, Level.OFF);
-		loggingChoiceBox.setValue(Engine.LOGGER.getLevel());
+		loggingChoiceBox.setValue(EngineLogger.getLogLevel());
 	}
 
 	private void saveSettings() {
@@ -71,7 +71,7 @@ public class Settings {
 			debugManager.setFeature(Features.values()[i], featureButton.isSelected());
 		}
 		// Logging
-		App.getEngine().setLogLevel(loggingChoiceBox.getValue());
+		EngineLogger.setLogLevel(loggingChoiceBox.getValue());
 		//
 		settings.save();
 	}
