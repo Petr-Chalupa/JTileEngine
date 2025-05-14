@@ -98,7 +98,7 @@ public class LevelMenu {
 	private static void playLevel(LevelData level) {
 		try {
 			GameView controller = (GameView) App.setRoot("game_view");
-			controller.loadLevel(level.getName());
+			controller.loadLevel(level.getId());
 		} catch (IOException e) {
 			Engine.LOGGER.severe("Failed to load level: " + e.getMessage());
 		}

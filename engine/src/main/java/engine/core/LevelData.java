@@ -9,9 +9,11 @@ import engine.gameobjects.tiles.Tile;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class LevelData {
 	// Base config data
+	private String id;
 	private String name;
 	private String author;
 	private boolean builtin;
@@ -29,11 +31,27 @@ public class LevelData {
 	private final List<Entity> entities = new ArrayList<>();
 	private Player player;
 
-	public LevelData(String name, boolean builtin) {
+	public LevelData(String id, String name, boolean builtin) {
+		this.id = id;
 		this.name = name;
+		this.author = "";
 		this.builtin = builtin;
 		this.completed = false;
 		this.thumbnail = "default_sprite.png";
+		this.created = new Date();
+		this.updated = new Date();
+		this.rows = 0;
+		this.cols = 0;
+		this.isLoaded = false;
+		this.player = null;
+	}
+
+	public LevelData(String name, boolean isBuiltin) {
+		this(UUID.randomUUID().toString(), name, isBuiltin);
+	}
+
+	public String getId() {
+		return id;
 	}
 
 	public String getName() {
@@ -94,6 +112,10 @@ public class LevelData {
 
 	public Player getPlayer() {
 		return player;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public void setName(String name) {

@@ -2,21 +2,26 @@ package ui;
 
 import engine.Engine;
 import engine.core.LevelData;
+import engine.utils.LevelLoader;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 public class LevelEditor {
 
-	@FXML
-	private Pane canvasParent;
+	private LevelData levelData;
+	private Path levelPath;
+
 	@FXML
 	private VBox selector;
 	@FXML
@@ -25,23 +30,64 @@ public class LevelEditor {
 	private VBox levelSelect;
 	@FXML
 	private TabPane editor;
+	@FXML
+	private TextField levelNameInput;
+	@FXML
+	private TextField authorInput;
+	@FXML
+	private TextField rowsInput;
+	@FXML
+	private TextField colsInput;
+	@FXML
+	private ChoiceBox<String> thumbnailBox;
 
 	@FXML
 	private void clickMainMenu() throws IOException {
-		App.getEngine().shutdown();
 		App.setRoot("main_menu");
 	}
 
 	@FXML
 	private void clickCreateNew() {
-		System.out.println("create new level");
+		levelData = new LevelData("New level", false);
+		levelPath = App.getEngine().getResourceManager().getUserSavePath().resolve("levels/" + levelData.getId() + "/config.json");
 		openEditor();
 	}
 
 	@FXML
 	private void clickImport() {
-		System.out.println("import level");
-		openEditor();
+		DirectoryChooser directoryChooser = new DirectoryChooser();
+		directoryChooser.setTitle("Select Level Folder");
+		File selectedDir = directoryChooser.showDialog(null);
+
+		if (selectedDir != null) {
+			String levelName = selectedDir.getName();
+			boolean imported = App.getEngine().getResourceManager().importLevel(selectedDir, levelName);
+
+			if (imported) {
+				LevelLoader levelLoader = App.getEngine().getLevelLoader();
+				levelLoader.loadLevel(levelName);
+				levelData = levelLoader.getCurrentLevel();
+				levelPath = levelLoader.getCurrentLevelPath();
+				if (levelData != null) openEditor();
+			} else {
+				System.err.println("Failed to import level: " + levelName);
+			}
+		}
+	}
+
+	@FXML
+	private void clickSaveConfig() {
+		try {
+			levelData.setName(levelNameInput.getText().trim());
+			levelData.setAuthor(authorInput.getText().trim());
+			levelData.setRows(Integer.parseInt(rowsInput.getText().trim()));
+			levelData.setCols(Integer.parseInt(colsInput.getText().trim()));
+			levelData.setThumbnail(thumbnailBox.getValue());
+
+			App.getEngine().getLevelLoader().saveLevel(levelData, levelPath);
+		} catch (IOException e) {
+			System.err.println("Failed to save level " + levelData.getName() + ": " + e.getMessage());
+		}
 	}
 
 	@FXML
@@ -52,11 +98,6 @@ public class LevelEditor {
 	@FXML
 	public void initialize() {
 		loadLevelSelect("");
-	}
-
-	private void openEditor() {
-		selector.setVisible(false);
-		editor.setVisible(true);
 	}
 
 	private void loadLevelSelect(String filter) {
@@ -97,7 +138,7 @@ public class LevelEditor {
 
 		Button loadButton = new Button("Load");
 		loadButton.getStyleClass().add("load_button");
-		loadButton.setOnAction(event -> loadLevel(level.getName()));
+		loadButton.setOnAction(event -> loadLevel(level.getId()));
 
 		infoBox.getChildren().addAll(nameLabel, region, loadButton);
 		levelBox.getChildren().addAll(thumbnailView, infoBox);
@@ -105,7 +146,27 @@ public class LevelEditor {
 		return levelBox;
 	}
 
-	public void loadLevel(String name) {
+	public void loadLevel(String id) {
+		LevelLoader levelLoader = App.getEngine().getLevelLoader();
+		levelLoader.loadLevel(id);
+		levelData = levelLoader.getCurrentLevel();
+		levelPath = levelLoader.getCurrentLevelPath();
 		openEditor();
+	}
+
+	private void openEditor() {
+		selector.setVisible(false);
+		editor.setVisible(true);
+
+		// Add thumbnail images
+		thumbnailBox.getItems().clear();
+		thumbnailBox.getItems().addAll(App.getEngine().getResourceManager().getAllBuiltinImageNames());
+
+		// Load level data
+		levelNameInput.setText(levelData.getName());
+		authorInput.setText(levelData.getAuthor());
+		rowsInput.setText(String.valueOf(levelData.getRows()));
+		colsInput.setText(String.valueOf(levelData.getCols()));
+		thumbnailBox.setValue(levelData.getThumbnail());
 	}
 }

@@ -22,22 +22,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class LevelLoader {
 	private static LevelLoader instance;
 	private final Map<String, LevelData> levels = new HashMap<>();
 	private final Map<String, Path> levelPaths = new HashMap<>();
-	private String currentLevelName;
+	private String currentLevelId;
 
 	private LevelLoader() {
-		ResourceManager resourceManager = ResourceManager.getInstance();
-		loadAllLevelsMetadata(resourceManager.getBuiltinSavePath().resolve("levels"));
-		loadAllLevelsMetadata(resourceManager.getUserSavePath().resolve("levels"));
+		loadAllLevelsMetadata();
 
 		GameStateManager.getInstance().addListener((GameStateManager.GameState state) -> {
 			if (state == GameStateManager.GameState.UNINITIALIZED) {
 				levels.forEach((name, data) -> data.setLoaded(false));
-				currentLevelName = null;
+				currentLevelId = null;
 			}
 		});
 	}
@@ -56,22 +55,21 @@ public class LevelLoader {
 	}
 
 	public LevelData getCurrentLevel() {
-		return currentLevelName != null ? levels.get(currentLevelName) : null;
+		return currentLevelId != null ? levels.get(currentLevelId) : null;
 	}
 
-	public String getName() {
-		LevelData level = getCurrentLevel();
-		return level != null ? level.getName() : null;
-	}
-
-	public boolean isCompleted() {
-		LevelData level = getCurrentLevel();
-		return level != null && level.isCompleted();
+	public Path getCurrentLevelPath() {
+		return currentLevelId != null ? levelPaths.get(currentLevelId) : null;
 	}
 
 	public List<GameObject> getGameObjects() {
 		LevelData level = getCurrentLevel();
 		return level != null ? level.getGameObjects() : new ArrayList<>();
+	}
+
+	public String getName() {
+		LevelData level = getCurrentLevel();
+		return level != null ? level.getName() : null;
 	}
 
 	public int getRows() {
@@ -90,35 +88,47 @@ public class LevelLoader {
 	}
 
 	/**
-	 * Loads level of the supplied name
+	 * Loads level of the supplied id
 	 *
-	 * @param name Name of the level to load
+	 * @param id Id of the level to load
 	 */
-	public void loadLevel(String name) {
-		LevelData level = levels.get(name);
+	public void loadLevel(String id) {
+		LevelData level = levels.get(id);
+		if (level == null) {
+			loadAllLevelsMetadata(); // Try to refresh metadata
+			level = levels.get(id);
+			if (level == null) return;
+		}
+
 		if (!level.isLoaded()) {
 			try {
-				Path configPath = levelPaths.get(name);
+				Path configPath = levelPaths.get(id);
 				loadLevelObjects(level, configPath);
 			} catch (IOException e) {
-				Engine.LOGGER.severe("Failed to load level " + name + ": " + e.getMessage());
+				Engine.LOGGER.severe("Failed to load level " + id + ": " + e.getMessage());
 			}
 		}
-		currentLevelName = name;
+		currentLevelId = id;
 	}
 
-	private void loadAllLevelsMetadata(Path levelsDir) {
-		File[] dirs = levelsDir.toFile().listFiles(File::isDirectory);
-		if (dirs == null) return;
+	private void loadAllLevelsMetadata() {
+		ResourceManager resourceManager = ResourceManager.getInstance();
+		File[] builtinDirs = resourceManager.getBuiltinSavePath().resolve("levels/").toFile().listFiles(File::isDirectory);
+		File[] userDirs = resourceManager.getUserSavePath().resolve("levels/").toFile().listFiles(File::isDirectory);
+		if (builtinDirs == null || userDirs == null) return;
+
+		levels.clear();
+		levelPaths.clear();
+		File[] dirs = Stream.concat(Arrays.stream(builtinDirs), Arrays.stream(userDirs)).toArray(File[]::new);
 
 		for (File dir : dirs) {
 			Path configPath = dir.toPath().resolve("config.json");
 			if (Files.exists(configPath)) {
 				try {
 					LevelData data = loadLevelMetadata(configPath);
-					String name = data.getName();
-					levels.put(name, data);
-					levelPaths.put(name, configPath);
+					String id = data.getId();
+					levels.put(id, data);
+					levelPaths.put(id, configPath);
 				} catch (IOException e) {
 					Engine.LOGGER.severe("Failed to load level metadata from " + configPath + ": " + e.getMessage());
 				}
@@ -131,6 +141,7 @@ public class LevelLoader {
 		JSONObject obj = new JSONObject(content);
 
 		LevelData level = new LevelData(
+				obj.optString("id", UUID.randomUUID().toString()),
 				obj.optString("name", configPath.getParent().getFileName().toString()),
 				obj.optBoolean("builtin", false)
 		);
@@ -151,15 +162,15 @@ public class LevelLoader {
 		String content = Files.readString(configPath);
 		JSONObject obj = new JSONObject(content);
 
-		for (Object item : obj.optJSONArray("tiles")) {
+		for (Object item : obj.optJSONArray("tiles", new JSONArray())) {
 			levelData.addGameObject(deserializeTile((JSONObject) item));
 		}
 
-		for (Object item : obj.optJSONArray("blocks")) {
+		for (Object item : obj.optJSONArray("blocks", new JSONArray())) {
 			levelData.addGameObject(deserializeBlock((JSONObject) item));
 		}
 
-		for (Object item : obj.optJSONArray("entities")) {
+		for (Object item : obj.optJSONArray("entities", new JSONArray())) {
 			Entity entity = deserializeEntity((JSONObject) item);
 			System.out.println(entity.getClass().getSimpleName() + " " + entity.getPosX() + ", " + entity.getPosY() + " " + entity.getSize());
 			if (entity instanceof Player) Camera.getInstance().setTarget(entity);
@@ -170,34 +181,42 @@ public class LevelLoader {
 	}
 
 	/**
-	 * Saves level with the supplied name
+	 * Saves level with the supplied id
 	 *
-	 * @param name Name of the level to save
+	 * @param id Id of the level to save
 	 */
-	public void saveLevel(String name) {
+	public void saveLevel(String id) {
 		try {
-			LevelData levelData = levels.get(name);
-			Path configPath = levelPaths.get(name);
+			LevelData levelData = levels.get(id);
+			Path configPath = levelPaths.get(id);
 			if (levelData == null || configPath == null) {
-				Engine.LOGGER.severe("Cannot save level: no data or path found for name '" + name + "'");
+				Engine.LOGGER.severe("Cannot save level: no data or path found for id '" + id + "'");
 				return;
 			}
 			saveLevel(levelData, configPath);
 		} catch (IOException e) {
-			Engine.LOGGER.severe("Failed to save level " + name + ": " + e.getMessage());
+			Engine.LOGGER.severe("Failed to save level " + id + ": " + e.getMessage());
 		}
 	}
 
-	private void saveLevel(LevelData levelData, Path path) throws IOException {
+	/**
+	 * Saves the supplied level to the supplied path.
+	 *
+	 * @param levelData Level data to save
+	 * @param path      Path to save the level to
+	 * @throws IOException If the level data cannot be written
+	 */
+	public void saveLevel(LevelData levelData, Path path) throws IOException {
 		JSONObject obj = new JSONObject();
 
+		obj.put("id", levelData.getId());
 		obj.put("name", levelData.getName());
 		obj.put("author", levelData.getAuthor());
 		obj.put("builtin", levelData.isBuiltin());
 		obj.put("completed", levelData.isCompleted());
 		obj.put("thumbnail", levelData.getThumbnail());
 		obj.put("created", levelData.getCreated().getTime());
-		obj.put("updated", levelData.getUpdated().getTime());
+		obj.put("updated", new Date().getTime());
 		obj.put("rows", levelData.getRows());
 		obj.put("cols", levelData.getCols());
 
@@ -219,6 +238,10 @@ public class LevelLoader {
 		}
 		obj.put("entities", entities);
 
+		if (!Files.exists(path)) {
+			Files.createDirectories(path.getParent());
+			Files.createFile(path);
+		}
 		Files.writeString(path, obj.toString(4));
 	}
 

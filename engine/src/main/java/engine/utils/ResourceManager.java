@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ResourceManager {
@@ -47,7 +48,6 @@ public class ResourceManager {
 		return userSavePath;
 	}
 
-
 	/**
 	 * Gets an image from the supplied path from cache (loads it on the first request)
 	 *
@@ -59,10 +59,19 @@ public class ResourceManager {
 			try {
 				return new Image(getClass().getResource("/engine/img/" + path).toString());
 			} catch (Exception e) {
-				Engine.LOGGER.severe("Failed to load sprite: " + path + ": " + e.getMessage());
+				Engine.LOGGER.severe("Failed to load image: " + path + ": " + e.getMessage());
 				return null;
 			}
 		});
+	}
+
+	public List<String> getAllBuiltinImageNames() {
+		try {
+			return Files.list(builtinSavePath.resolve("img/")).map(path -> path.getFileName().toString()).toList();
+		} catch (IOException e) {
+			Engine.LOGGER.severe("Failed to load image names: " + e.getMessage());
+			return null;
+		}
 	}
 
 	/**
@@ -102,20 +111,24 @@ public class ResourceManager {
 	 *
 	 * @param path      Path of the level directory
 	 * @param levelName Name of the level
-	 * @throws IOException If the level directory is invalid
+	 * @return True if the level was imported successfully, false otherwise
 	 */
-	public void importLevel(File path, String levelName) throws IOException {
-		Path targetDir = userSavePath.resolve(levelName);
-		Files.createDirectories(targetDir);
+	public boolean importLevel(File path, String levelName) {
+		try {
+			Path targetDir = userSavePath.resolve("levels/" + levelName);
+			Files.createDirectories(targetDir);
 
-		File configFile = new File(path, "config.json");
-		File mapFile = new File(path, "map.txt");
-		if (!configFile.exists() || !mapFile.exists()) {
-			throw new IOException("Invalid level directory: missing required files [config.json, map.txt]");
+			File configFile = new File(path, "config.json");
+			if (configFile.exists()) {
+				Files.copy(configFile.toPath(), targetDir.resolve("config.json"), StandardCopyOption.REPLACE_EXISTING);
+				return true;
+			}
+
+			throw new RuntimeException("Invalid level directory: missing required files [config.json]");
+		} catch (IOException e) {
+			Engine.LOGGER.severe("Failed to import level " + levelName + ": " + e.getMessage());
+			return false;
 		}
-
-		Files.copy(configFile.toPath(), targetDir.resolve("config.json"), StandardCopyOption.REPLACE_EXISTING);
-		Files.copy(mapFile.toPath(), targetDir.resolve("map.txt"), StandardCopyOption.REPLACE_EXISTING);
 	}
 
 }

@@ -15,7 +15,7 @@ import static engine.core.GameStateManager.GameState;
 
 public class GameView {
 	private Engine engine;
-	private String levelName;
+	private String levelId;
 
 	@FXML
 	private Pane canvasParent;
@@ -40,14 +40,14 @@ public class GameView {
 
 	@FXML
 	private void buttonMainMenu() throws IOException {
-		App.getEngine().saveLevel(levelName);
+		App.getEngine().saveLevel(levelId);
 		App.getEngine().shutdown();
 		App.setRoot("main_menu");
 	}
 
 	@FXML
 	private void buttonTryAgain() {
-		App.getEngine().loadLevel(levelName); // Reload level
+		App.getEngine().loadLevel(levelId); // Reload level
 	}
 
 	@FXML
@@ -67,12 +67,12 @@ public class GameView {
 		});
 	}
 
-	public void loadLevel(String name) {
+	public void loadLevel(String id) {
 		engine.init(canvasParent, 60);
-		engine.loadLevel(name);
+		engine.loadLevel(id);
 
-		levelName = name;
-		pauseMenuLevelName.setText(name);
+		levelId = id;
+		pauseMenuLevelName.setText(App.getEngine().getLevelLoader().getName());
 
 		engine.getGameStateManager().addListener((GameState state) -> {
 			pauseMenu.setVisible(false);

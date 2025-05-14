@@ -1,57 +1,105 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<StackPane prefHeight="768.0" prefWidth="1024.0" stylesheets="@../css/level_editor.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="ui.LevelEditor">
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.LevelEditor">
     <children>
         <VBox>
             <children>
                 <Button onAction="#clickMainMenu" styleClass="menu_button" text="Menu" textAlignment="CENTER">
                     <VBox.margin>
-                        <Insets left="10.0" top="10.0"/>
+                        <Insets left="30.0" top="10.0" />
                     </VBox.margin>
                 </Button>
                 <StackPane prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                     <children>
-                        <VBox fx:id="selector" alignment="TOP_CENTER" styleClass="selector" StackPane.alignment="TOP_CENTER">
+                        <VBox fx:id="selector" alignment="TOP_CENTER" styleClass="selector" visible="false" StackPane.alignment="TOP_CENTER">
                             <children>
                                 <HBox styleClass="preset_selector">
                                     <children>
-                                        <Button disable="true" mnemonicParsing="false" onAction="#clickCreateNew" styleClass="preset_button" text="Create new"/>
-                                        <Region HBox.hgrow="ALWAYS"/>
-                                        <Button disable="true" mnemonicParsing="false" onAction="#clickImport" styleClass="preset_button" text="Import"/>
+                                        <Button mnemonicParsing="false" onAction="#clickCreateNew" styleClass="preset_button" text="Create new" />
+                                        <Region HBox.hgrow="ALWAYS" />
+                                        <Button mnemonicParsing="false" onAction="#clickImport" styleClass="preset_button" text="Import" />
                                     </children>
                                 </HBox>
-                                <TextField fx:id="filterInput" onKeyReleased="#filterSelect" promptText="Level name"/>
+                                <TextField fx:id="filterInput" onKeyReleased="#filterSelect" promptText="Level name" />
                                 <ScrollPane pannable="true" prefHeight="200.0" prefWidth="200.0" styleClass="level_scroll_pane" VBox.vgrow="ALWAYS">
                                     <content>
-                                        <VBox fx:id="levelSelect" styleClass="level_select"/>
+                                        <VBox fx:id="levelSelect" styleClass="level_select" />
                                     </content>
                                 </ScrollPane>
                             </children>
                             <StackPane.margin>
-                                <Insets/>
+                                <Insets />
                             </StackPane.margin>
                         </VBox>
-                        <TabPane fx:id="editor" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" visible="false">
+                        <TabPane fx:id="editor" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
                             <tabs>
-                                <Tab text="Config"/>
+                        <Tab text="Config">
+                           <content>
+                              <AnchorPane>
+                                 <children>
+                                    <VBox>
+                                       <children>
+                                          <Label styleClass="config_label" text="Level name:" />
+                                          <TextField fx:id="levelNameInput" />
+                                          <Label layoutX="10.0" layoutY="10.0" styleClass="config_label" text="Author:" />
+                                          <TextField fx:id="authorInput" layoutX="10.0" layoutY="27.0" />
+                                          <Label styleClass="config_label" text="Rows &amp; Cols:" />
+                                          <HBox spacing="20.0">
+                                             <children>
+                                                <TextField fx:id="rowsInput" />
+                                                <TextField fx:id="colsInput" />
+                                             </children>
+                                          </HBox>
+                                          <Label styleClass="config_label" text="Thumbnail:" />
+                                          <ChoiceBox fx:id="thumbnailBox" prefWidth="150.0" styleClass="thumbnail_box" />
+                                          <Button mnemonicParsing="false" onAction="#clickSaveConfig" styleClass="preset_button" text="Save">
+                                             <VBox.margin>
+                                                <Insets top="30.0" />
+                                             </VBox.margin>
+                                          </Button>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </AnchorPane>
+                           </content>
+                        </Tab>
                                 <Tab text="Map">
                                     <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                        <AnchorPane>
                                             <children>
-                                                <Pane fx:id="canvasParent"/>
+                                                <Pane fx:id="canvasParent" />
                                             </children>
                                         </AnchorPane>
                                     </content>
                                 </Tab>
                             </tabs>
+                     <StackPane.margin>
+                        <Insets top="10.0" />
+                     </StackPane.margin>
                         </TabPane>
                     </children>
                 </StackPane>
             </children>
         </VBox>
     </children>
+   <stylesheets>
+      <URL value="@../css/main.css" />
+      <URL value="@../css/level_editor.css" />
+   </stylesheets>
 </StackPane>

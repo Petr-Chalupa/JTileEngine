@@ -145,18 +145,18 @@ public class Engine {
 		gameStateManager.setState(GameState.UNINITIALIZED);
 	}
 
-	public void loadLevel(String name) {
+	public void loadLevel(String id) {
 		checkInitialized(true);
-		LOGGER.info("Loading level: " + name);
+		LOGGER.info("Loading level: " + id);
 		setPaused(true);
-		levelLoader.loadLevel(name);
+		levelLoader.loadLevel(id);
 		setPaused(false);
 	}
 
-	public void saveLevel(String name) {
+	public void saveLevel(String id) {
 		checkInitialized(true);
-		LOGGER.info("Saving level: " + name);
-		levelLoader.saveLevel(name);
+		LOGGER.info("Saving level: " + id);
+		levelLoader.saveLevel(id);
 	}
 
 	public void gameOver() {
