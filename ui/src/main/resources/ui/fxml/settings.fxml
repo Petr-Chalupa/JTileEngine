@@ -36,7 +36,7 @@
                                 <Label layoutX="40.0" layoutY="161.0" styleClass="settings_label" text="Debug info:" />
                                 <VBox fx:id="debugInfoBox" />
                                 <Label layoutX="40.0" layoutY="262.0" styleClass="settings_label" text="Logging:" />
-                                <ChoiceBox fx:id="loggingChoiceBox" prefWidth="150.0" styleClass="logging_box" />
+                                <ChoiceBox fx:id="loggingChoiceBox" prefWidth="150.0" />
                             </children>
                             <padding>
                                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

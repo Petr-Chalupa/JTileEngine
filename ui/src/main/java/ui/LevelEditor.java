@@ -137,7 +137,7 @@ public class LevelEditor {
 		HBox.setHgrow(region, Priority.ALWAYS);
 
 		Button loadButton = new Button("Load");
-		loadButton.getStyleClass().add("load_button");
+		loadButton.getStyleClass().add("secondary");
 		loadButton.setOnAction(event -> loadLevel(level.getId()));
 
 		infoBox.getChildren().addAll(nameLabel, region, loadButton);

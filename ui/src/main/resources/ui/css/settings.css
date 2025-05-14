@@ -48,9 +48,3 @@
     -fx-min-width: 150px;
     -fx-cursor: hand;
 }
-
-.logging_box {
-    -fx-padding: 10px 0;
-    -fx-spacing: 10px;
-    -fx-cursor: hand;
-}

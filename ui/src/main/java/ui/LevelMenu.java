@@ -85,7 +85,7 @@ public class LevelMenu {
 		statusLabel.getStyleClass().add("status_label");
 
 		Button playButton = new Button("Play");
-		playButton.getStyleClass().add("play_button");
+		playButton.getStyleClass().add("secondary");
 		playButton.setOnAction(event -> playLevel(level));
 
 		statusBox.getChildren().addAll(statusCircle, statusLabel);

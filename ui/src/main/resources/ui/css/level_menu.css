@@ -58,17 +58,3 @@
     -fx-wrap-text: true;
 }
 
-.play_button {
-    -fx-background-color: #4CAF50;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-background-radius: 4px;
-    -fx-padding: 8px 16px;
-    -fx-cursor: hand;
-}
-
-.play_button:hover {
-    -fx-background-color: #45a049;
-}
-
-

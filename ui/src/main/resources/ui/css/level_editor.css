@@ -63,20 +63,7 @@
     -fx-font-weight: bold;
     -fx-wrap-text: true;
 }
-
-.load_button {
-    -fx-background-color: #4CAF50;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-background-radius: 4px;
-    -fx-padding: 8px 16px;
-    -fx-cursor: hand;
-}
-
-.load_button:hover {
-    -fx-background-color: #45a049;
-}
-
+ 
 .tab-pane {
     -fx-tab-min-width: 100px;
 }

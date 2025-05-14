@@ -27,7 +27,7 @@
                 </Button>
                 <StackPane prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                     <children>
-                        <VBox fx:id="selector" alignment="TOP_CENTER" styleClass="selector" visible="false" StackPane.alignment="TOP_CENTER">
+                        <VBox fx:id="selector" alignment="TOP_CENTER" styleClass="selector" StackPane.alignment="TOP_CENTER">
                             <children>
                                 <HBox styleClass="preset_selector">
                                     <children>
@@ -47,7 +47,7 @@
                                 <Insets />
                             </StackPane.margin>
                         </VBox>
-                        <TabPane fx:id="editor" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+                        <TabPane fx:id="editor" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" visible="false">
                             <tabs>
                         <Tab text="Config">
                            <content>
@@ -68,7 +68,7 @@
                                           </HBox>
                                           <Label styleClass="config_label" text="Thumbnail:" />
                                           <ChoiceBox fx:id="thumbnailBox" prefWidth="150.0" styleClass="thumbnail_box" />
-                                          <Button mnemonicParsing="false" onAction="#clickSaveConfig" styleClass="preset_button" text="Save">
+                                          <Button mnemonicParsing="false" onAction="#clickSaveConfig" styleClass="secondary" text="Save">
                                              <VBox.margin>
                                                 <Insets top="30.0" />
                                              </VBox.margin>
