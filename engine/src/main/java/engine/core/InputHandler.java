@@ -15,6 +15,8 @@ public class InputHandler {
 	private final Map<MouseButton, List<Consumer<MouseEvent>>> mousePressedCallbacks = new HashMap<>();
 	private final Map<MouseButton, List<Consumer<MouseEvent>>> mouseReleasedCallbacks = new HashMap<>();
 	private final List<Consumer<ScrollEvent>> mouseScrollCallbacks = new ArrayList<>();
+	private double mouseX = -1;
+	private double mouseY = -1;
 
 	public InputHandler(Scene scene) {
 		scene.setOnKeyPressed(event -> {
@@ -37,6 +39,10 @@ public class InputHandler {
 		});
 		scene.setOnScroll(event -> {
 			executeCallbacks(mouseScrollCallbacks, event);
+		});
+		scene.setOnMouseMoved(event -> {
+			mouseX = event.getX();
+			mouseY = event.getY();
 		});
 	}
 
@@ -73,6 +79,14 @@ public class InputHandler {
 
 	public boolean isMouseButtonPressed(MouseButton button) {
 		return pressedButtons.contains(button);
+	}
+
+	public double getMouseX() {
+		return mouseX;
+	}
+
+	public double getMouseY() {
+		return mouseY;
 	}
 
 	public void clear() {

@@ -34,21 +34,6 @@ public class Renderer implements Runnable {
 		target.getChildren().add(canvas);
 		canvas.widthProperty().bind(target.widthProperty());
 		canvas.heightProperty().bind(target.heightProperty());
-
-		GameStateManager.getInstance().addListener((GameStateManager.GameState newState) -> {
-			switch (newState) {
-				case PAUSED:
-				case GAME_OVER:
-				case LEVEL_COMPLETE:
-					setPaused(true);
-					break;
-				case RUNNING:
-					setPaused(false);
-					break;
-				default:
-					break;
-			}
-		});
 	}
 
 	public Canvas getCanvas() {

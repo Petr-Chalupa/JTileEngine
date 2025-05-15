@@ -4,6 +4,7 @@ import engine.core.Camera;
 import engine.core.Collider;
 import engine.core.GameSettings;
 import engine.gameobjects.GameObject;
+import engine.gameobjects.blocks.Spawner;
 import engine.gameobjects.entities.Enemy;
 import engine.gameobjects.entities.Entity;
 import engine.gameobjects.entities.Player;
@@ -18,7 +19,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 import java.util.EnumSet;
-import java.util.List;
 
 public class DebugManager {
 	public enum Features {
@@ -27,7 +27,8 @@ public class DebugManager {
 		ENTITY_FACING_DIRECTION_X,
 		PLAYER_MAX_INTERACT_RANGE,
 		ITEM_SWORD_RANGE,
-		ENEMY_SEARCH_ATTACK_RANGE,
+		ENEMY_RANGES,
+		SPAWNER_RANGES,
 		UI_REGIONS
 	}
 
@@ -42,6 +43,8 @@ public class DebugManager {
 	private final Color COLOR_ITEM_SWORD_RANGE = Color.AQUAMARINE;
 	private final Color COLOR_ENEMY_SEARCH_RANGE = Color.LIGHTBLUE;
 	private final Color COLOR_ENEMY_ATTACK_RANGE = Color.DARKBLUE;
+	private final Color COLOR_SPAWNER_ACTIVE_RANGE = Color.ORANGE;
+	private final Color COLOR_SPAWNER_SPAWN_RANGE = Color.ORANGERED;
 	private final Color COLOR_UI_REGIONS = Color.YELLOW;
 
 	private DebugManager() {
@@ -69,10 +72,6 @@ public class DebugManager {
 		enabledFeatures.add(feature);
 	}
 
-	public void enableAllFeatures() {
-		enabledFeatures.addAll(List.of(Features.values()));
-	}
-
 	public void disableFeature(Features feature) {
 		enabledFeatures.remove(feature);
 	}
@@ -98,7 +97,8 @@ public class DebugManager {
 		if (enabledFeatures.contains(Features.ENTITY_FACING_DIRECTION_X) && gameObject instanceof Entity entity) renderEntityFacingDirectionX(context, entity);
 		if (enabledFeatures.contains(Features.PLAYER_MAX_INTERACT_RANGE) && gameObject instanceof Player player) renderPlayerMaxInteractRange(context, player);
 		if (enabledFeatures.contains(Features.ITEM_SWORD_RANGE) && gameObject instanceof Player player) renderSwordRange(context, player);
-		if (enabledFeatures.contains(Features.ENEMY_SEARCH_ATTACK_RANGE) && gameObject instanceof Enemy enemy) renderEnemySearchAttackRange(context, enemy);
+		if (enabledFeatures.contains(Features.ENEMY_RANGES) && gameObject instanceof Enemy enemy) renderEnemyRanges(context, enemy);
+		if (enabledFeatures.contains(Features.SPAWNER_RANGES) && gameObject instanceof Spawner spawner) renderSpawnerRanges(context, spawner);
 	}
 
 	private void renderGameObjectBounds(GraphicsContext context, GameObject gameObject) {
@@ -168,7 +168,7 @@ public class DebugManager {
 		context.restore();
 	}
 
-	private void renderEnemySearchAttackRange(GraphicsContext context, Enemy enemy) {
+	private void renderEnemyRanges(GraphicsContext context, Enemy enemy) {
 		Collider collider = enemy.getCollider();
 		double objectCenterX = camera.worldToScreenX(collider.getCenterX());
 		double objectCenterY = camera.worldToScreenY(collider.getCenterY());
@@ -182,6 +182,23 @@ public class DebugManager {
 		context.strokeOval(objectCenterX - searchRange, objectCenterY - searchRange, 2 * searchRange, 2 * searchRange);
 		context.setStroke(COLOR_ENEMY_ATTACK_RANGE);
 		context.strokeOval(objectCenterX - attackRange, objectCenterY - attackRange, 2 * attackRange, 2 * attackRange);
+		context.restore();
+	}
+
+	private void renderSpawnerRanges(GraphicsContext context, Spawner spawner) {
+		Collider collider = spawner.getCollider();
+		double objectCenterX = camera.worldToScreenX(collider.getCenterX());
+		double objectCenterY = camera.worldToScreenY(collider.getCenterY());
+		double activeRange = spawner.getActiveRange() * GameSettings.getInstance().getTileSize();
+		double spawnRange = spawner.getSpawnRange() * GameSettings.getInstance().getTileSize();
+
+		context.save();
+		context.setStroke(COLOR_SPAWNER_ACTIVE_RANGE);
+		context.setLineWidth(1);
+		context.setLineDashes(3, 3);
+		context.strokeOval(objectCenterX - activeRange, objectCenterY - activeRange, 2 * activeRange, 2 * activeRange);
+		context.setStroke(COLOR_SPAWNER_SPAWN_RANGE);
+		context.strokeOval(objectCenterX - spawnRange, objectCenterY - spawnRange, 2 * spawnRange, 2 * spawnRange);
 		context.restore();
 	}
 

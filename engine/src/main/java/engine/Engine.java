@@ -67,6 +67,7 @@ public class Engine {
 		checkInitialized(true);
 		if (paused) gameStateManager.setState(GameState.PAUSED);
 		else gameStateManager.setState(GameState.RUNNING);
+		if (renderer != null) renderer.setPaused(paused);
 		EngineLogger.info(paused ? "Engine paused" : "Engine resumed");
 	}
 
@@ -129,12 +130,6 @@ public class Engine {
 		setPaused(true);
 		levelLoader.loadLevel(id);
 		setPaused(false);
-	}
-
-	public void saveLevel(String id) {
-		checkInitialized(true);
-		EngineLogger.info("Saving level: " + id);
-		levelLoader.saveLevel(id);
 	}
 
 	public void gameOver() {

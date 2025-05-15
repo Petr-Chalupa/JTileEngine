@@ -99,14 +99,15 @@ public class Entity extends GameObject {
 		if (!isInMap(deltaX, deltaY)) return false;
 		return levelLoader.getGameObjects()
 				.stream()
-				.filter(gameObject -> !gameObject.equals(this)
-						&& gameObject.isRendered()
-						&& !(gameObject instanceof Item))
+				.filter(gameObject -> gameObject.isRendered()
+						&& !gameObject.equals(this)
+						&& !(gameObject instanceof Item)
+						&& !(gameObject instanceof Entity))
 				.allMatch(gameObject -> {
 					Bounds intersection = collider.getIntersection(gameObject.getCollider(), deltaX, deltaY);
 					return intersection == null
-							|| (gameObject instanceof Block && !((Block) gameObject).isSolid())
-							|| (gameObject instanceof Tile && ((Tile) gameObject).isWalkable());
+							|| (gameObject instanceof Block block && !block.isSolid())
+							|| (gameObject instanceof Tile tile && tile.isWalkable());
 				});
 	}
 

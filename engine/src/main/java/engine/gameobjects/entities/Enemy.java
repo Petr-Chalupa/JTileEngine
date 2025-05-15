@@ -39,6 +39,7 @@ public class Enemy extends Entity {
 		double damage = 1;
 
 		Player player = LevelLoader.getInstance().getPlayer();
+		if (player == null) return;
 		double distance = player.getCollider().getDistanceTo(this.getCollider());
 		// Movement
 		if (distance <= searchRange) moveTowardsPlayer(deltaTime);

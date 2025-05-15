@@ -40,7 +40,6 @@ public class GameView {
 
 	@FXML
 	private void buttonMainMenu() throws IOException {
-		App.getEngine().saveLevel(levelId);
 		App.getEngine().shutdown();
 		App.setRoot("main_menu");
 	}

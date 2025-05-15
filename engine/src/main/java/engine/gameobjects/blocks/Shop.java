@@ -9,11 +9,10 @@ import engine.gameobjects.items.*;
 import engine.ui.Inventory;
 import engine.ui.UIRegion;
 
-import java.util.Arrays;
-
 public class Shop extends Block implements Interactable {
 	private final Inventory inventory;
 	private boolean isOpen = false;
+	private double refreshCooldownElapsed = 0;
 
 	public Shop(double posX, double posY, double size) {
 		super(posX, posY, size, BlockType.SHOP);
@@ -33,26 +32,31 @@ public class Shop extends Block implements Interactable {
 	}
 
 	private void generateLoot() {
-		ItemType[] itemTypes = Arrays.stream(ItemType.values()).filter(type -> type != ItemType.MONEY).toArray(ItemType[]::new);
+		inventory.clear();
+
+		ItemType[] itemTypes = ItemType.values();
 		for (int i = 0; i < inventory.getSize(); i++) {
 			ItemType itemType = itemTypes[(int) (Math.random() * itemTypes.length)];
-			Item item = null;
-			switch (itemType) {
-				case MEAT:
-				case GRANULE:
-				case TREAT:
-					item = new Food(posX, posY, itemType == ItemType.MEAT ? Food.FoodType.MEAT : itemType == ItemType.GRANULE ? Food.FoodType.GRANULE : Food.FoodType.TREAT);
-					break;
-				case ARMOR:
-					item = new Armor(posX, posY);
-					break;
-				case HUMAN:
-					item = new Human(posX, posY);
-					break;
-				default:
-					break;
-			}
+			Item item = switch (itemType) {
+				case MEAT, GRANULE, TREAT ->
+						new Food(posX, posY, itemType == ItemType.MEAT ? Food.FoodType.MEAT : itemType == ItemType.GRANULE ? Food.FoodType.GRANULE : Food.FoodType.TREAT);
+				case ARMOR -> new Armor(posX, posY);
+				case HUMAN -> new Human(posX, posY);
+				default -> null;
+			};
 			if (item != null) inventory.addItem(item, i);
+			else i--; // Repeat for this slot
+		}
+	}
+
+	@Override
+	public void update(double deltaTime) {
+		refreshCooldownElapsed += deltaTime;
+		double refreshCooldown = 30;
+
+		if (!isOpen && refreshCooldownElapsed >= refreshCooldown) {
+			refreshCooldownElapsed = 0;
+			generateLoot();
 		}
 	}
 

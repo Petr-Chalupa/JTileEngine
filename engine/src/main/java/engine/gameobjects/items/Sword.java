@@ -19,15 +19,15 @@ public class Sword extends Item {
 		switch (swordType) {
 			case STRONG:
 				this.name = "Strong Sword";
-				this.maxUses = 50;
+				this.maxUses = 250;
 				this.price = 10;
-				this.damage = 2;
-				this.range = 3;
+				this.damage = 5;
+				this.range = 2.5;
 				this.maxHitsPerAttack = 2;
 				break;
 			case BASIC:
 				this.name = "Basic Sword";
-				this.maxUses = 10;
+				this.maxUses = 100;
 				this.price = 2;
 				this.damage = 1;
 				this.range = 1;

@@ -60,17 +60,17 @@ public class LevelEditor {
 		File selectedDir = directoryChooser.showDialog(null);
 
 		if (selectedDir != null) {
-			String levelName = selectedDir.getName();
-			boolean imported = App.getEngine().getResourceManager().importLevel(selectedDir, levelName);
+			String levelId = selectedDir.getName();
+			boolean imported = App.getEngine().getResourceManager().importLevel(selectedDir, levelId);
 
 			if (imported) {
 				LevelLoader levelLoader = App.getEngine().getLevelLoader();
-				levelLoader.loadLevel(levelName);
+				levelLoader.loadLevel(levelId);
 				levelData = levelLoader.getCurrentLevel();
 				levelPath = levelLoader.getCurrentLevelPath();
 				if (levelData != null) openEditor();
 			} else {
-				System.err.println("Failed to import level: " + levelName);
+				System.err.println("Failed to import level: " + levelId);
 			}
 		}
 	}

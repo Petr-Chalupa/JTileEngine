@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -56,7 +57,12 @@ public class ResourceManager {
 	public Image getImg(String path) {
 		return imgCache.computeIfAbsent(path, k -> {
 			try {
-				return new Image(getClass().getResource("/engine/img/" + path).toString());
+				URL resource = getClass().getResource("/engine/img/" + path);
+				if (resource == null) {
+					resource = getClass().getResource("/engine/img/default_sprite.png");
+					EngineLogger.warning("Failed to load image: " + path + ", using the default");
+				}
+				return new Image(resource.toString());
 			} catch (Exception e) {
 				EngineLogger.severe("Failed to load image: " + path + ": " + e.getMessage());
 				return null;
@@ -108,13 +114,13 @@ public class ResourceManager {
 	/**
 	 * Imports a level from the supplied path
 	 *
-	 * @param path      Path of the level directory
-	 * @param levelName Name of the level
+	 * @param path    Path of the level directory
+	 * @param levelId Id of the level
 	 * @return True if the level was imported successfully, false otherwise
 	 */
-	public boolean importLevel(File path, String levelName) {
+	public boolean importLevel(File path, String levelId) {
 		try {
-			Path targetDir = userSavePath.resolve("levels/" + levelName);
+			Path targetDir = userSavePath.resolve("levels/" + levelId);
 			Files.createDirectories(targetDir);
 
 			File configFile = new File(path, "config.json");
@@ -125,7 +131,7 @@ public class ResourceManager {
 
 			throw new RuntimeException("Invalid level directory: missing required files [config.json]");
 		} catch (IOException e) {
-			EngineLogger.severe("Failed to import level " + levelName + ": " + e.getMessage());
+			EngineLogger.severe("Failed to import level " + levelId + ": " + e.getMessage());
 			return false;
 		}
 	}

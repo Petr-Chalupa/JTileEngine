@@ -12,6 +12,7 @@ import engine.gameobjects.items.*;
 import engine.gameobjects.tiles.Tile;
 import engine.gameobjects.tiles.TileType;
 import engine.ui.Inventory;
+import engine.ui.Inventory.InventorySlot;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -249,7 +250,7 @@ public class LevelLoader {
 		JSONArray obj = new JSONArray();
 		for (int i = 0; i < inventory.getSize(); i++) {
 			JSONArray slotObj = new JSONArray();
-			inventory.getSlot(i).forEach(item -> slotObj.put(serializeItem(item)));
+			inventory.getSlot(i).getItems().forEach(item -> slotObj.put(serializeItem(item)));
 			obj.put(slotObj);
 		}
 		return obj;
@@ -307,16 +308,16 @@ public class LevelLoader {
 
 	/* -------------- DESERIALIZATION ------------ */
 
-	private List<List<Item>> deserializeInventory(JSONArray obj) {
-		List<List<Item>> items = new ArrayList<>();
+	private List<InventorySlot> deserializeInventory(JSONArray obj) {
+		List<InventorySlot> slots = new ArrayList<>();
 		for (Object slotObj : obj) {
-			List<Item> slot = new ArrayList<>();
+			InventorySlot slot = new InventorySlot();
 			for (Object itemObj : (JSONArray) slotObj) {
 				slot.add(deserializeItem((JSONObject) itemObj));
 			}
-			items.add(slot);
+			slots.add(slot);
 		}
-		return items;
+		return slots;
 	}
 
 	private Block deserializeBlock(JSONObject obj) {
@@ -328,6 +329,7 @@ public class LevelLoader {
 			case CHEST -> new Chest(x, y, size);
 			case SHOP -> new Shop(x, y, size);
 			case STONE -> new Stone(x, y, size);
+			case SPAWNER -> new Spawner(x, y, size);
 		};
 		if (block instanceof Chest chest && obj.has("inventory")) chest.getInventory().setItems(deserializeInventory(obj.getJSONArray("inventory")));
 		if (block instanceof Shop shop && obj.has("inventory")) shop.getInventory().setItems(deserializeInventory(obj.getJSONArray("inventory")));
@@ -369,6 +371,7 @@ public class LevelLoader {
 			case GRANULE -> new Food(x, y, Food.FoodType.GRANULE);
 			case TREAT -> new Food(x, y, Food.FoodType.TREAT);
 			case HUMAN -> new Human(x, y);
+			case KEY -> new Key(x, y);
 		};
 		item.setName(name);
 		item.setMaxUses(maxUses);

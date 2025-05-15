@@ -8,7 +8,8 @@ public enum ItemType {
 	MEAT("meat_sprite.png"),
 	GRANULE("granule_sprite.png"),
 	TREAT("treat_sprite.png"),
-	HUMAN("human_sprite.png");
+	HUMAN("human_sprite.png"),
+	KEY("key_sprite.png");
 
 	private final String spritePath;
 

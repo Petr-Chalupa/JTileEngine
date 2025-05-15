@@ -3,7 +3,8 @@ package engine.gameobjects.tiles;
 public enum TileType {
 	GRASS("tile_sprite_grass.png", true),
 	WATER("tile_sprite_water.png", false),
-	LAVA("tile_sprite_lava.png", false);
+	LAVA("tile_sprite_lava.png", false),
+	SAND("tile_sprite_sand.png", true);
 
 	private final String spritePath;
 	private final boolean isWalkable;
