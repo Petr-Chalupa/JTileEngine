@@ -38,7 +38,8 @@
     -fx-background-radius: 5px;
     -fx-padding: 10px;
     -fx-spacing: 10px;
-    -fx-pref-width: 495px;
+    -fx-pref-width: 475px;
+    -fx-max-width: 500px;
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 4, 0, 0, 0);
 }
 
@@ -63,7 +64,7 @@
     -fx-font-weight: bold;
     -fx-wrap-text: true;
 }
- 
+
 .tab-pane {
     -fx-tab-min-width: 100px;
 }
