@@ -85,7 +85,7 @@ The main technologies used include:
 - JSON (org.json)
 
 = Assets
-Assets such as the logo and sprites, used in both the `ui` and `engine`, were manually created for the engine using the free online editor *Piskel*. Sprites are created as $64 times 64$ pixel images. Examples are shown below:
+Assets such as the logo and sprites, used in both the `ui` and `engine`, were manually created for the engine using the free online editor *Piskel*. Sprites are defined as $64 times 64$ pixel images. Examples are shown below:
 
 #v(1em)
 #grid(
@@ -118,40 +118,40 @@ jtileengine/
 ├── ui/             # JavaFX GUI
 │   └── pom.xml
 ```
-This design was chosen, because it allows to change the GUI more easily, while not interfering with the engine itself.
+This design was chosen because it allows the graphical user interface to be changed more easily, while not interfering with the engine itself.
 
 == User interface
 - Contains the JavaFX front-end logic and layout
 - Depends on the `engine` module
 - The main entry point is `ui.App`
 \
-Layout of the graphical user interface was built by *Gluon Scene Builder* and therefore different screens are also different `fxml` files. These interface is styled mostly by `CSS` for its convenience and better scalability (sharing styles across files etc.).
+Layout of the GUI was built by *Gluon Scene Builder* and therefore different screens are also different `fxml` files. These interface are mostly styled by `CSS` for its convenience and better scalability (sharing styles across files etc.). Every screen has its own style sheet, and there is one style sheet containing general shared styles.
 
 #pagebreak()
 
 /* ------------------------------------ */
 
 === Main Menu
-This screen is the application’s landing page.
+This screen is the application’s landing page. \
 Functions:
-- Start the game (opens the *Level Menu* with built-in levels pre-selected)
+- Start game (opens the *Level Menu* with built-in levels pre-selected)
 - Access *Settings* and *Level Editor*
 
 === Level Menu
-This screen is where the users can select which level to play. There is a toggle button to switch between built-in levels and custom (imported or created) levels.
+This screen is where user can select which level to play. There is a toggle button to switch between built-in and custom (imported or created) levels.
 
 === Level Editor
-This screen consists of two parts. Firstly, there is a level selection box and secondly the actual editor. User can select from already loaded custom levels or import or create a new level. The editor itself is divided into config settings and map editor.
+This screen consists of two parts. Firstly, there is a level selection box and secondly the actual editor. User can select from already loaded custom levels, import or create a new level. The editor itself is divided into configuration settings and map editor.
 
 === Settings
-This screen is used to allow user to change the engine-wide settings regarding rendered tile size, logging or rendering debug information. The settings are used directly without the need to restart the app and are also reloaded on startup.
+This screen allows user to change the engine-wide settings regarding rendered tile size, logging or rendering debug information. The settings are used directly without the need to restart the app and they are also reloaded on startup.
 
 #pagebreak()
 
 /* ------------------------------------ */
 
 === Game view
-This screen is used to render the actual game to. Game can be paused by the `ESC` key or by clicking on the pause button in the left upper corner of the screen.
+This screen is where the actual game is rendered to. The game can be paused by pressing the `ESC` key or by clicking on the pause button in the left upper corner of the screen.
 
 #v(1em)
 #figure(
@@ -190,7 +190,7 @@ engine/
 ```
 
 === Engine.java
-This class is the main entry point of the engine. It exposes engine resources and methods for easy life-cycle controlling such as `init`, `loadLevel` and `shutdown`. While it is not strictly enforced, accessing engine components via this main class is strongly advised (rather than accessing them directly).
+This class is the main entry point of the engine. It exposes engine resources and methods for easy life-cycle control such as `init`, `loadLevel` and `shutdown`. While it is not strictly enforced, accessing engine components via this main class is strongly advised (rather than accessing them directly).
 
 === Core
 This directory holds the most important engine classes responsible for the game loop, input handling, rendering, game camera etc. Game loop is executed on a dedicated thread handled by the `Renderer` class.
@@ -224,9 +224,9 @@ This directory holds the most important engine classes responsible for the game 
 
 /* ------------------------------------ */
 
-All loaded level data is stored inside `LevelData`. It is important that every get request for game objects returns a copy of list of those objects ensuring asynchronous list update safety. Loaded engine settings are kept in the `GameSettings`. State of the engine is handled by `GameStateManager`.
+All loaded level data is stored inside `LevelData`. It is important that every request for game objects returns a copy of list of those objects ensuring asynchronous list update safety. Loaded engine settings are kept in the `GameSettings`. State of the engine is handled by `GameStateManager`.
 
-The game camera (`Camera` class) handles what should be viewed and therefore rendered at any given time. It has a target (`Player` by default) that it follows and keeps in the center of the screen. Also it ensures that the view does not overflow off the map, so the camera may not intentionally move when the player is near the map boundary (especially in a corner).
+The game camera (`Camera` class) handles what should be viewed and therefore rendered at any given time. It has a target (`Player` by default) that it follows and keeps in the center of the screen. It also ensures that the view does not overflow off the map, so the camera may not intentionally move when the player is near the map boundary (especially in a corner).
 
 In addition to controlling the game loop itself, `Renderer` also renders visible game objects. It should also be noted that for objects which are on the edge of the view, only the visible part is rendered. Rendering is based on layering, so objects in a lower layer may be overdrawn by objects in a higher layer (background is drawn first).
 
@@ -244,7 +244,7 @@ $
 /* ------------------------------------ */
 
 === Game objects
-Every game object inherits the main properties and methods from `GameObject`. Position of game object is relative to world and has to be converted to screen position if needed. This is intentional because it allows to separate actual render scaling (tile size) and object coordinates. Game object may implement the interface `Interactable`.
+Every game object inherits the main properties and methods from `GameObject`. Position of game object is relative to the world and has to be converted to screen position if needed. This is intentional because it allows to separate actual render scaling (tile size) and object coordinates. Game object may implement the interface `Interactable`.
 
 #v(1em)
 ```

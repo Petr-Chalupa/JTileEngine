@@ -41,8 +41,6 @@ public class Player extends Entity {
 		setSprite("player_sprite.png");
 		setInputHandler();
 		setCollider(0.1 * size, 0.6 * size, 0.8 * size, 0.4 * size);
-
-		inventory.addItem(new Sword(posX, posY, Sword.SwordType.STRONG)); // Test only!
 	}
 
 	public double getInteractRange() {
