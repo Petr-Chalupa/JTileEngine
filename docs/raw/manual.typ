@@ -125,7 +125,7 @@ This design was chosen because it allows the graphical user interface to be chan
 - Depends on the `engine` module
 - The main entry point is `ui.App`
 \
-Layout of the GUI was built by *Gluon Scene Builder* and therefore different screens are also different `fxml` files. These interface are mostly styled by `CSS` for its convenience and better scalability (sharing styles across files etc.). Every screen has its own style sheet, and there is one style sheet containing general shared styles.
+Layout of the GUI was built by *Gluon Scene Builder* and therefore different screens are also different `fxml` files. The interface is mostly styled by `CSS` for its convenience and better scalability (sharing styles across files etc.). Every screen has its own style sheet, and there is one style sheet containing general shared styles.
 
 #pagebreak()
 
