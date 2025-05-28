@@ -49,6 +49,7 @@ public class Player extends Entity {
 
 	private void setInputHandler() {
 		this.inputHandler = Engine.getInstance().getInputHandler();
+		if (inputHandler == null) return;
 
 		for (int i = 1; i <= 9; i++) {
 			KeyCode digitKey = KeyCode.getKeyCode(String.valueOf(i));

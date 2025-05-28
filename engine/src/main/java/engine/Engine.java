@@ -96,12 +96,10 @@ public class Engine {
 	}
 
 	public Renderer getRenderer() {
-		checkInitialized(true);
 		return renderer;
 	}
 
 	public InputHandler getInputHandler() {
-		checkInitialized(true);
 		return inputHandler;
 	}
 
