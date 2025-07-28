@@ -4,8 +4,6 @@
 
 _Petr Chalupa, PJV, 2025_
 
-Project vision (CP1), object design (CP2) and manual are in the `docs` folder.
-
 ## Installation
 
 ### Prerequisites
